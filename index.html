@@ -156,14 +156,6 @@
   @keyframes spinAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
   /* ---------- WATERMARK CHONG COPY ---------- */
-  #watermarkOverlay {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.5;
-    background-repeat: repeat;
-  }
   .thumb-wrap { position: relative; }
   .card-watermark,
   .modal-watermark {
@@ -171,11 +163,11 @@
     inset: 0;
     pointer-events: none;
     z-index: 6;
-    opacity: 0.9;
+    opacity: 0.55;
     background-repeat: repeat;
-    background-size: 170px 85px;
+    background-size: 220px 130px;
   }
-  .modal-watermark { background-size: 340px 170px; }
+  .modal-watermark { background-size: 380px 220px; }
 
   /* ---------- LOGIN ---------- */
   #loginScreen {
@@ -553,19 +545,7 @@ async function callApi(params) {
 }
 
 function saveSession() {
-  if (currentUser) {
-    localStorage.setItem("tpdesign_thanhvien_session", JSON.stringify(currentUser));
-  } else {
-    localStorage.removeItem("tpdesign_thanhvien_session");
-  }
-}
-
-function loadSession() {
-  const raw = localStorage.getItem("tpdesign_thanhvien_session");
-  if (raw) {
-    try { return JSON.parse(raw); } catch (e) { return null; }
-  }
-  return null;
+  // Khong luu phien dang nhap nua - moi lan tai lai trang (F5) se bat buoc dang nhap lai.
 }
 
 /* ============ LOGIN ============ */
@@ -657,11 +637,10 @@ function enterApp() {
   document.getElementById("appScreen").style.display = "block";
   document.getElementById("userGreeting").textContent = "Xin chào, " + currentUser.hoTen;
   document.getElementById("userPoints").textContent = currentUser.diem;
-  setupWatermark();
   loadPosts();
 }
 
-/* ============ CHU CHIM (WATERMARK) ============ */
+/* ============ CHU CHIM (WATERMARK TREN ANH) ============ */
 function buildWatermarkDataUri(text) {
   const safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const svg =
@@ -674,21 +653,7 @@ function buildWatermarkDataUri(text) {
 }
 
 function watermarkText() {
-  const now = new Date();
-  const ngay = now.toLocaleDateString("vi-VN");
-  const gio = now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-  return `${currentUser.username} • ${ngay} ${gio}`;
-}
-
-function setupWatermark() {
-  let overlay = document.getElementById("watermarkOverlay");
-  if (!overlay) {
-    overlay = document.createElement("div");
-    overlay.id = "watermarkOverlay";
-    document.body.appendChild(overlay);
-  }
-  const dataUri = buildWatermarkDataUri(watermarkText());
-  overlay.style.backgroundImage = dataUri;
+  return "tpdesignpptx";
 }
 
 function setupModalWatermark() {
@@ -872,13 +837,7 @@ async function handleDownload(id, btnEl) {
 }
 
 /* ============ KHỞI TẠO ============ */
-(function init() {
-  const saved = loadSession();
-  if (saved) {
-    currentUser = saved;
-    enterApp();
-  }
-})();
+// Không tự đăng nhập lại khi tải lại trang (F5) - luôn yêu cầu nhập lại tài khoản.
 
 /* ============ CHỐNG TẢI ẢNH / SAO CHÉP ẢNH ============ */
 document.addEventListener("contextmenu", e => {
