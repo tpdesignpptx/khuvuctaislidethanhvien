@@ -152,6 +152,9 @@
   }
   .btn-outline:hover { background: rgba(34,211,238,0.1); }
 
+  .spin { display: inline-block; animation: spinAnim 0.8s linear infinite; }
+  @keyframes spinAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
   /* ---------- LOGIN ---------- */
   #loginScreen {
     max-width: 380px;
@@ -229,6 +232,11 @@
     background: rgba(255,255,255,0.05);
     display: block;
     cursor: pointer;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: auto;
   }
 
   .card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
@@ -316,7 +324,22 @@
     max-height: 55vh;
     object-fit: contain;
     display: block;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
+  .modal-imgwrap {
+    position: relative;
+  }
+  .modal-imgwrap::after {
+    /* lop chan trong suot ngan long-press / keo tha luu anh tren mobile */
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+  }
+  .modal-imgwrap .modal-nav { z-index: 4; }
   .modal-nav {
     position: absolute;
     top: 50%;
@@ -426,6 +449,7 @@
       <div class="user-info">
         <span id="userGreeting"></span>
         <span class="point-pill">⭐ <span id="userPoints">0</span> điểm</span>
+        <button class="btn btn-ghost" id="btnRefresh" title="Làm mới điểm & danh sách bài">🔄 Làm mới</button>
         <button class="btn btn-ghost" id="btnLogout">Đăng xuất</button>
       </div>
     </header>
@@ -474,12 +498,15 @@ let posts = [];
 let currentPreview = { post: null, index: 0 };
 
 /* ============ HELPERS ============ */
-function showToast(msg, type = "ok") {
+/* ============ TOAST ============ */
+function showToast(msg, type = "ok", zaloContact = false) {
   const el = document.getElementById("toast");
-  el.textContent = msg;
+  el.innerHTML = zaloContact
+    ? `${escapeHtml(msg)} <a href="https://zalo.me/84773181186" target="_blank" style="color:#22d3ee;font-weight:800;text-decoration:underline;">Liên hệ Zalo</a>`
+    : escapeHtml(msg);
   el.className = "show " + type;
   clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => { el.className = type; }, 3000);
+  showToast._t = setTimeout(() => { el.className = type; }, zaloContact ? 6000 : 3000);
 }
 
 async function callApi(params) {
@@ -557,6 +584,38 @@ document.getElementById("btnLogout").addEventListener("click", () => {
   document.getElementById("loginUsername").value = "";
   document.getElementById("loginPassword").value = "";
 });
+
+document.getElementById("btnRefresh").addEventListener("click", refreshPointsAndPosts);
+
+async function refreshPointsAndPosts() {
+  if (!currentUser) return;
+  const btn = document.getElementById("btnRefresh");
+  const icon = btn.querySelector(".spin") || btn;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">🔄</span> Đang làm mới...';
+
+  try {
+    const data = await callApi({
+      action: "login",
+      username: currentUser.username,
+      password: currentUser.password
+    });
+    if (data.success) {
+      currentUser.diem = data.diem;
+      document.getElementById("userPoints").textContent = currentUser.diem;
+      saveSession();
+      await loadPosts();
+      showToast("Đã làm mới điểm và danh sách bài.", "ok");
+    } else {
+      showToast(data.message || "Không thể làm mới.", "err");
+    }
+  } catch (e) {
+    showToast("Không thể kết nối máy chủ.", "err");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "🔄 Làm mới";
+  }
+}
 
 function enterApp() {
   document.getElementById("loginScreen").style.display = "none";
@@ -715,7 +774,7 @@ async function handleDownload(id, btnEl) {
       showToast(data.message || "Tải thành công!", "ok");
       if (data.link) window.open(data.link, "_blank");
     } else {
-      showToast(data.message || "Không thể tải về.", "err");
+      showToast(data.message || "Không thể tải về.", "err", !!data.canNapDiem);
     }
   } catch (e) {
     showToast("Không thể kết nối máy chủ.", "err");
@@ -732,6 +791,21 @@ async function handleDownload(id, btnEl) {
     enterApp();
   }
 })();
+
+/* ============ CHỐNG TẢI ẢNH / SAO CHÉP ẢNH ============ */
+document.addEventListener("contextmenu", e => {
+  if (e.target.tagName === "IMG") e.preventDefault();
+});
+document.addEventListener("dragstart", e => {
+  if (e.target.tagName === "IMG") e.preventDefault();
+});
+// Chan phim tat luu trang / xem nguon (khong chan duoc 100% nhung han che nguoi thuong)
+document.addEventListener("keydown", e => {
+  const key = e.key.toLowerCase();
+  if ((e.ctrlKey || e.metaKey) && (key === "s" || key === "u")) {
+    e.preventDefault();
+  }
+});
 </script>
 
 </body>
