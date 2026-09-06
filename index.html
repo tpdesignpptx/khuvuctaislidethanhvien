@@ -155,6 +155,30 @@
   .spin { display: inline-block; animation: spinAnim 0.8s linear infinite; }
   @keyframes spinAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+  /* ---------- WATERMARK CHONG COPY ---------- */
+  #watermarkOverlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.06;
+    background-repeat: repeat;
+    mix-blend-mode: screen;
+  }
+  .thumb-wrap { position: relative; }
+  .card-watermark,
+  .modal-watermark {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 6;
+    opacity: 0.22;
+    background-repeat: repeat;
+    background-size: 160px 90px;
+    mix-blend-mode: screen;
+  }
+  .modal-watermark { background-size: 320px 160px; }
+
   /* ---------- LOGIN ---------- */
   #loginScreen {
     max-width: 380px;
@@ -469,6 +493,7 @@
     <div class="modal-imgwrap">
       <button class="modal-nav prev" id="modalPrev">‹</button>
       <img id="modalImg" src="" alt="Xem trước">
+      <div class="modal-watermark" id="modalWatermark"></div>
       <button class="modal-nav next" id="modalNext">›</button>
     </div>
     <div class="modal-dots" id="modalDots"></div>
@@ -622,7 +647,51 @@ function enterApp() {
   document.getElementById("appScreen").style.display = "block";
   document.getElementById("userGreeting").textContent = "Xin chào, " + currentUser.hoTen;
   document.getElementById("userPoints").textContent = currentUser.diem;
+  setupWatermark();
   loadPosts();
+}
+
+/* ============ CHU CHIM (WATERMARK) ============ */
+function buildWatermarkDataUri(text) {
+  const safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const svg =
+    "<svg xmlns='http://www.w3.org/2000/svg' width='320' height='160'>" +
+    "<text x='0' y='90' font-size='15' fill='white' font-family='Arial, sans-serif' " +
+    "transform='rotate(-28 160 80)'>" + safe + "</text></svg>";
+  return "url(\"data:image/svg+xml;utf8," + encodeURIComponent(svg) + "\")";
+}
+
+function watermarkText() {
+  const now = new Date();
+  const ngay = now.toLocaleDateString("vi-VN");
+  const gio = now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  return `${currentUser.username} • ${ngay} ${gio}`;
+}
+
+function setupWatermark() {
+  let overlay = document.getElementById("watermarkOverlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "watermarkOverlay";
+    document.body.appendChild(overlay);
+  }
+  const dataUri = buildWatermarkDataUri(watermarkText());
+  overlay.style.backgroundImage = dataUri;
+}
+
+function setupModalWatermark() {
+  const el = document.getElementById("modalWatermark");
+  if (!el || !currentUser) return;
+  el.style.backgroundImage = buildWatermarkDataUri(watermarkText());
+}
+
+/* ============ CANH BAO KHI CO THAO TAC TAI/SAO CHEP ============ */
+let _lastWarnTime = 0;
+function showCopyWarning() {
+  const now = Date.now();
+  if (now - _lastWarnTime < 2500) return; // tranh spam toast lien tuc
+  _lastWarnTime = now;
+  showToast("⚠️ Nghiêm cấm sao chép, chụp hoặc tải nội dung khi chưa được phép. Nội dung đã được đóng dấu tên tài khoản để đối chiếu khi vi phạm.", "err");
 }
 
 /* ============ LOAD POSTS ============ */
@@ -672,7 +741,10 @@ function renderPosts() {
     const card = document.createElement("div");
     card.className = "card glass";
     card.innerHTML = `
-      <img class="card-thumb" src="${escapeAttr(thumb)}" alt="${escapeAttr(post.tieuDe)}" loading="lazy" onerror="this.style.opacity=0.2">
+      <div class="thumb-wrap">
+        <img class="card-thumb" src="${escapeAttr(thumb)}" alt="${escapeAttr(post.tieuDe)}" loading="lazy" onerror="this.style.opacity=0.2">
+        <div class="card-watermark"></div>
+      </div>
       <div class="card-body">
         <div class="card-title">${escapeHtml(post.tieuDe)}</div>
         <div class="card-desc">${escapeHtml(post.moTa)}</div>
@@ -688,6 +760,9 @@ function renderPosts() {
     `;
     grid.appendChild(card);
   });
+
+  const wmUri = buildWatermarkDataUri(watermarkText());
+  grid.querySelectorAll(".card-watermark").forEach(el => { el.style.backgroundImage = wmUri; });
 
   grid.querySelectorAll("[data-preview]").forEach(btn => {
     btn.addEventListener("click", () => openPreview(btn.getAttribute("data-preview")));
@@ -713,6 +788,7 @@ function openPreview(id) {
   if (!post) return;
   currentPreview = { post, index: 0 };
   renderPreviewModal();
+  setupModalWatermark();
   document.getElementById("modalOverlay").style.display = "flex";
 }
 
@@ -794,16 +870,26 @@ async function handleDownload(id, btnEl) {
 
 /* ============ CHỐNG TẢI ẢNH / SAO CHÉP ẢNH ============ */
 document.addEventListener("contextmenu", e => {
-  if (e.target.tagName === "IMG") e.preventDefault();
+  if (e.target.tagName === "IMG") {
+    e.preventDefault();
+    showCopyWarning();
+  }
 });
 document.addEventListener("dragstart", e => {
-  if (e.target.tagName === "IMG") e.preventDefault();
+  if (e.target.tagName === "IMG") {
+    e.preventDefault();
+    showCopyWarning();
+  }
 });
 // Chan phim tat luu trang / xem nguon (khong chan duoc 100% nhung han che nguoi thuong)
 document.addEventListener("keydown", e => {
   const key = e.key.toLowerCase();
-  if ((e.ctrlKey || e.metaKey) && (key === "s" || key === "u")) {
+  if ((e.ctrlKey || e.metaKey) && (key === "s" || key === "u" || key === "p")) {
     e.preventDefault();
+    showCopyWarning();
+  }
+  if (key === "printscreen") {
+    showCopyWarning();
   }
 });
 </script>
