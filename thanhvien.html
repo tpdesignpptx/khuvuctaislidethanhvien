@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Khu Vực Thành Viên - TP Design PPTX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-1: #0f0c29;
+    --bg-2: #1a1440;
+    --bg-3: #24123f;
+    --accent: #8b5cf6;
+    --accent-2: #ec4899;
+    --accent-3: #22d3ee;
+    --glass: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.14);
+    --text-main: #f4f2ff;
+    --text-dim: #b8b3d1;
+    --danger: #f87171;
+    --success: #34d399;
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    color: var(--text-main);
+    background: radial-gradient(circle at 20% 20%, var(--bg-2), var(--bg-1) 60%),
+                radial-gradient(circle at 80% 80%, var(--bg-3), transparent 60%);
+    background-color: var(--bg-1);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 50%, rgba(139,92,246,0.18), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgba(236,72,153,0.15), transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(34,211,238,0.12), transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+    animation: floatBg 18s ease-in-out infinite alternate;
+  }
+
+  @keyframes floatBg {
+    from { transform: translate(0,0) scale(1); }
+    to { transform: translate(-2%, 2%) scale(1.05); }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+
+  /* ---------- HEADER ---------- */
+  header.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    margin-bottom: 26px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 18px;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  .point-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(139,92,246,0.25), rgba(236,72,153,0.25));
+    border: 1px solid var(--glass-border);
+    font-weight: 700;
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .btn {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-size: 14px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(139,92,246,0.35);
+  }
+  .btn-primary:hover:not(:disabled) { box-shadow: 0 8px 24px rgba(139,92,246,0.5); }
+
+  .btn-ghost {
+    background: rgba(255,255,255,0.08);
+    color: var(--text-main);
+    border: 1px solid var(--glass-border);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.14); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--accent-3);
+    border: 1px solid rgba(34,211,238,0.5);
+  }
+  .btn-outline:hover { background: rgba(34,211,238,0.1); }
+
+  /* ---------- LOGIN ---------- */
+  #loginScreen {
+    max-width: 380px;
+    margin: 8vh auto 0;
+    padding: 36px 30px;
+    text-align: center;
+  }
+  #loginScreen h1 {
+    font-size: 20px;
+    margin: 6px 0 4px;
+  }
+  #loginScreen p.sub {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    margin-bottom: 26px;
+  }
+  .field {
+    text-align: left;
+    margin-bottom: 16px;
+  }
+  .field label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 14.5px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .field input:focus { border-color: var(--accent); }
+  #loginScreen .btn-primary { width: 100%; padding: 13px; font-size: 15px; margin-top: 6px; }
+  .login-error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 14px;
+    min-height: 16px;
+  }
+
+  /* ---------- MAIN APP ---------- */
+  #appScreen { display: none; }
+
+  .section-title {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 8px 4px 16px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+  }
+
+  .card {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover { transform: translateY(-4px); }
+
+  .card-thumb {
+    width: 100%;
+    aspect-ratio: 16/10;
+    object-fit: cover;
+    background: rgba(255,255,255,0.05);
+    display: block;
+    cursor: pointer;
+  }
+
+  .card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+  .card-title { font-size: 15.5px; font-weight: 700; line-height: 1.35; }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+
+  .badge-diem {
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(34,211,238,0.15);
+    color: var(--accent-3);
+    border: 1px solid rgba(34,211,238,0.3);
+  }
+
+  .card-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .card-actions .btn { flex: 1; padding: 9px 10px; font-size: 13px; }
+
+  .owned-tag {
+    font-size: 11.5px;
+    color: var(--success);
+    font-weight: 700;
+  }
+
+  /* ---------- SKELETON ---------- */
+  .skeleton { animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+  .skel-thumb { width:100%; aspect-ratio:16/10; background: rgba(255,255,255,0.08); }
+  .skel-line { height: 12px; border-radius: 6px; background: rgba(255,255,255,0.08); margin: 8px 16px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+  }
+
+  /* ---------- MODAL PREVIEW ---------- */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5,3,20,0.75);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-box {
+    max-width: 640px;
+    width: 100%;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-imgwrap {
+    position: relative;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-imgwrap img {
+    width: 100%;
+    max-height: 55vh;
+    object-fit: contain;
+    display: block;
+  }
+  .modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    border: none;
+    color: #fff;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-nav.prev { left: 12px; }
+  .modal-nav.next { right: 12px; }
+  .modal-dots {
+    text-align: center;
+    padding: 8px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .modal-info { padding: 16px 20px 20px; }
+  .modal-info h3 { margin: 0 0 6px; font-size: 17px; }
+  .modal-info p { margin: 0 0 14px; font-size: 13.5px; color: var(--text-dim); line-height: 1.5; }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+    font-size: 16px;
+  }
+
+  /* ---------- TOAST ---------- */
+  #toast {
+    position: fixed;
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%) translateY(20px);
+    padding: 13px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s ease;
+    max-width: 90vw;
+    text-align: center;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  #toast.ok { background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.4); color: var(--success); }
+  #toast.err { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.4); color: var(--danger); }
+
+  footer.credit {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 12.5px;
+    margin-top: 40px;
+  }
+
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    header.topbar { padding: 14px 16px; }
+    .user-info { width: 100%; justify-content: space-between; }
+  }
+  @media (max-width: 360px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ===================== LOGIN ===================== -->
+  <div id="loginScreen" class="glass">
+    <div class="brand" style="justify-content:center; font-size:20px;">TP DESIGN PPTX</div>
+    <h1>Khu Vực Thành Viên</h1>
+    <p class="sub">Đăng nhập để xem kho mẫu và đổi điểm tải về</p>
+
+    <div class="field">
+      <label>Tên đăng nhập</label>
+      <input type="text" id="loginUsername" autocomplete="username" placeholder="Nhập tài khoản">
+    </div>
+    <div class="field">
+      <label>Mật khẩu</label>
+      <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Nhập mật khẩu">
+    </div>
+    <button class="btn btn-primary" id="btnLogin">Đăng nhập</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+
+  <!-- ===================== APP ===================== -->
+  <div id="appScreen">
+    <header class="topbar glass">
+      <div class="brand">TP DESIGN PPTX</div>
+      <div class="user-info">
+        <span id="userGreeting"></span>
+        <span class="point-pill">⭐ <span id="userPoints">0</span> điểm</span>
+        <button class="btn btn-ghost" id="btnLogout">Đăng xuất</button>
+      </div>
+    </header>
+
+    <div class="section-title">Kho bài đăng</div>
+    <div id="postsGrid" class="grid"></div>
+    <div id="emptyState" class="empty-state" style="display:none;">Bạn chưa được gửi bài nào. Liên hệ để được thêm mẫu mới.</div>
+  </div>
+
+  <footer class="credit">© TP Design PPTX — Khu vực thành viên</footer>
+</div>
+
+<!-- ===================== MODAL PREVIEW ===================== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box glass" style="position:relative;">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-imgwrap">
+      <button class="modal-nav prev" id="modalPrev">‹</button>
+      <img id="modalImg" src="" alt="Xem trước">
+      <button class="modal-nav next" id="modalNext">›</button>
+    </div>
+    <div class="modal-dots" id="modalDots"></div>
+    <div class="modal-info">
+      <h3 id="modalTitle"></h3>
+      <p id="modalDesc"></p>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span class="badge-diem" id="modalDiem"></span>
+        <button class="btn btn-primary" id="modalDownloadBtn" style="flex:1;">Tải về</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============ CẤU HÌNH ============ */
+const CONFIG = {
+  // Dán URL Web App Apps Script sau khi deploy (kết thúc bằng /exec)
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzI3prflljwE56-jd6LC9eCcD1Cl8Nv8FhLc6_hvgOcmDEEMVv0JWdkjt3FFikFxtdSsw/exec"
+};
+
+/* ============ STATE ============ */
+let currentUser = null; // { username, password, hoTen, diem }
+let posts = [];
+let currentPreview = { post: null, index: 0 };
+
+/* ============ HELPERS ============ */
+function showToast(msg, type = "ok") {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.className = "show " + type;
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => { el.className = type; }, 3000);
+}
+
+async function callApi(params) {
+  const url = new URL(CONFIG.APPS_SCRIPT_URL);
+  Object.keys(params).forEach(k => url.searchParams.set(k, params[k]));
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error("Lỗi kết nối máy chủ");
+  return res.json();
+}
+
+function saveSession() {
+  if (currentUser) {
+    localStorage.setItem("tpdesign_thanhvien_session", JSON.stringify(currentUser));
+  } else {
+    localStorage.removeItem("tpdesign_thanhvien_session");
+  }
+}
+
+function loadSession() {
+  const raw = localStorage.getItem("tpdesign_thanhvien_session");
+  if (raw) {
+    try { return JSON.parse(raw); } catch (e) { return null; }
+  }
+  return null;
+}
+
+/* ============ LOGIN ============ */
+document.getElementById("btnLogin").addEventListener("click", doLogin);
+document.getElementById("loginPassword").addEventListener("keydown", e => {
+  if (e.key === "Enter") doLogin();
+});
+
+async function doLogin() {
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const errEl = document.getElementById("loginError");
+  errEl.textContent = "";
+
+  if (!username || !password) {
+    errEl.textContent = "Vui lòng nhập đầy đủ thông tin.";
+    return;
+  }
+
+  const btn = document.getElementById("btnLogin");
+  btn.disabled = true;
+  btn.textContent = "Đang kiểm tra...";
+
+  try {
+    const data = await callApi({ action: "login", username, password });
+    if (data.success) {
+      currentUser = {
+        username: data.username,
+        password: password,
+        hoTen: data.hoTen,
+        diem: data.diem
+      };
+      saveSession();
+      enterApp();
+    } else {
+      errEl.textContent = data.message || "Đăng nhập thất bại.";
+    }
+  } catch (e) {
+    errEl.textContent = "Không thể kết nối máy chủ. Thử lại sau.";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Đăng nhập";
+  }
+}
+
+document.getElementById("btnLogout").addEventListener("click", () => {
+  currentUser = null;
+  saveSession();
+  document.getElementById("appScreen").style.display = "none";
+  document.getElementById("loginScreen").style.display = "block";
+  document.getElementById("loginUsername").value = "";
+  document.getElementById("loginPassword").value = "";
+});
+
+function enterApp() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("appScreen").style.display = "block";
+  document.getElementById("userGreeting").textContent = "Xin chào, " + currentUser.hoTen;
+  document.getElementById("userPoints").textContent = currentUser.diem;
+  loadPosts();
+}
+
+/* ============ LOAD POSTS ============ */
+function renderSkeleton() {
+  const grid = document.getElementById("postsGrid");
+  grid.innerHTML = "";
+  for (let i = 0; i < 4; i++) {
+    const card = document.createElement("div");
+    card.className = "card glass skeleton";
+    card.innerHTML = `<div class="skel-thumb"></div><div class="skel-line" style="width:70%"></div><div class="skel-line" style="width:90%"></div>`;
+    grid.appendChild(card);
+  }
+}
+
+async function loadPosts() {
+  renderSkeleton();
+  try {
+    const data = await callApi({
+      action: "getPosts",
+      username: currentUser.username,
+      password: currentUser.password
+    });
+    if (data.success) {
+      posts = data.data || [];
+      renderPosts();
+    } else {
+      showToast(data.message || "Không tải được danh sách bài.", "err");
+    }
+  } catch (e) {
+    showToast("Không thể kết nối máy chủ.", "err");
+  }
+}
+
+function renderPosts() {
+  const grid = document.getElementById("postsGrid");
+  const emptyState = document.getElementById("emptyState");
+  grid.innerHTML = "";
+
+  if (!posts.length) {
+    emptyState.style.display = "block";
+    return;
+  }
+  emptyState.style.display = "none";
+
+  posts.forEach(post => {
+    const thumb = (post.anhPreview && post.anhPreview[0]) || "";
+    const card = document.createElement("div");
+    card.className = "card glass";
+    card.innerHTML = `
+      <img class="card-thumb" src="${escapeAttr(thumb)}" alt="${escapeAttr(post.tieuDe)}" loading="lazy" onerror="this.style.opacity=0.2">
+      <div class="card-body">
+        <div class="card-title">${escapeHtml(post.tieuDe)}</div>
+        <div class="card-desc">${escapeHtml(post.moTa)}</div>
+        <div class="card-meta">
+          <span class="badge-diem">⭐ ${post.diemCan} điểm</span>
+          <span style="font-size:11.5px;color:var(--text-dim)">${escapeHtml(post.ngayDang || "")}</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-outline" data-preview="${post.id}">Xem trước</button>
+          <button class="btn btn-primary" data-download="${post.id}">Tải về</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  grid.querySelectorAll("[data-preview]").forEach(btn => {
+    btn.addEventListener("click", () => openPreview(btn.getAttribute("data-preview")));
+  });
+  grid.querySelectorAll("[data-download]").forEach(btn => {
+    btn.addEventListener("click", () => handleDownload(btn.getAttribute("data-download"), btn));
+  });
+  grid.querySelectorAll(".card-thumb").forEach((img, i) => {
+    img.addEventListener("click", () => openPreview(posts[i].id));
+  });
+}
+
+function escapeHtml(str) {
+  return String(str || "").replace(/[&<>"']/g, m => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[m]));
+}
+function escapeAttr(str) { return escapeHtml(str); }
+
+/* ============ PREVIEW MODAL ============ */
+function openPreview(id) {
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  currentPreview = { post, index: 0 };
+  renderPreviewModal();
+  document.getElementById("modalOverlay").style.display = "flex";
+}
+
+function renderPreviewModal() {
+  const { post, index } = currentPreview;
+  const imgs = post.anhPreview && post.anhPreview.length ? post.anhPreview : [""];
+  document.getElementById("modalImg").src = imgs[index] || "";
+  document.getElementById("modalTitle").textContent = post.tieuDe;
+  document.getElementById("modalDesc").textContent = post.moTa;
+  document.getElementById("modalDiem").textContent = "⭐ " + post.diemCan + " điểm";
+  document.getElementById("modalDots").textContent = imgs.length > 1 ? `${index + 1} / ${imgs.length}` : "";
+  document.getElementById("modalPrev").style.display = imgs.length > 1 ? "flex" : "none";
+  document.getElementById("modalNext").style.display = imgs.length > 1 ? "flex" : "none";
+}
+
+document.getElementById("modalPrev").addEventListener("click", () => {
+  const imgs = currentPreview.post.anhPreview;
+  currentPreview.index = (currentPreview.index - 1 + imgs.length) % imgs.length;
+  renderPreviewModal();
+});
+document.getElementById("modalNext").addEventListener("click", () => {
+  const imgs = currentPreview.post.anhPreview;
+  currentPreview.index = (currentPreview.index + 1) % imgs.length;
+  renderPreviewModal();
+});
+document.getElementById("modalClose").addEventListener("click", closePreview);
+document.getElementById("modalOverlay").addEventListener("click", e => {
+  if (e.target.id === "modalOverlay") closePreview();
+});
+function closePreview() {
+  document.getElementById("modalOverlay").style.display = "none";
+}
+document.getElementById("modalDownloadBtn").addEventListener("click", () => {
+  const id = currentPreview.post.id;
+  closePreview();
+  handleDownload(id, null);
+});
+
+/* ============ DOWNLOAD ============ */
+async function handleDownload(id, btnEl) {
+  if (!currentUser) return;
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+
+  if (btnEl) { btnEl.disabled = true; btnEl.textContent = "Đang xử lý..."; }
+
+  try {
+    const data = await callApi({
+      action: "download",
+      username: currentUser.username,
+      password: currentUser.password,
+      id: id
+    });
+
+    if (data.success) {
+      currentUser.diem = data.diemConLai;
+      document.getElementById("userPoints").textContent = currentUser.diem;
+      saveSession();
+      showToast(data.message || "Tải thành công!", "ok");
+      if (data.link) window.open(data.link, "_blank");
+    } else {
+      showToast(data.message || "Không thể tải về.", "err");
+    }
+  } catch (e) {
+    showToast("Không thể kết nối máy chủ.", "err");
+  } finally {
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = "Tải về"; }
+  }
+}
+
+/* ============ KHỞI TẠO ============ */
+(function init() {
+  const saved = loadSession();
+  if (saved) {
+    currentUser = saved;
+    enterApp();
+  }
+})();
+</script>
+
+</body>
+</html>
