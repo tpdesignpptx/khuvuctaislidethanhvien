@@ -6,22 +6,34 @@
 <title>Khu Vực Thành Viên - TP Design PPTX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-1: #0f0c29;
-    --bg-2: #1a1440;
-    --bg-3: #24123f;
-    --accent: #8b5cf6;
-    --accent-2: #ec4899;
-    --accent-3: #22d3ee;
-    --glass: rgba(255,255,255,0.06);
-    --glass-border: rgba(255,255,255,0.14);
-    --text-main: #f4f2ff;
-    --text-dim: #b8b3d1;
-    --danger: #f87171;
-    --success: #34d399;
-    --radius: 20px;
+    --bg-0: #05040f;
+    --bg-1: #0c0924;
+    --bg-2: #180f3d;
+    --aurora-violet: #7c5cff;
+    --aurora-pink: #ff5cb0;
+    --aurora-cyan: #33e6c9;
+
+    --glass-fill-hi: rgba(255,255,255,0.14);
+    --glass-fill-lo: rgba(255,255,255,0.03);
+    --glass-edge-hi: rgba(255,255,255,0.65);
+    --glass-edge-lo: rgba(255,255,255,0.08);
+    --glass-shadow: rgba(3,2,12,0.55);
+
+    --text-main: #f6f4ff;
+    --text-dim: #b2ace0;
+    --text-faint: #7c76a3;
+    --danger: #ff7a7a;
+    --danger-soft: rgba(255,122,122,0.14);
+    --success: #3fe0a5;
+    --success-soft: rgba(63,224,165,0.14);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    --font-display: 'Sora', 'Be Vietnam Pro', sans-serif;
+    --font-body: 'Be Vietnam Pro', sans-serif;
   }
 
   * { box-sizing: border-box; }
@@ -29,50 +41,80 @@
   body {
     margin: 0;
     min-height: 100vh;
-    font-family: 'Be Vietnam Pro', sans-serif;
+    font-family: var(--font-body);
     color: var(--text-main);
-    background: radial-gradient(circle at 20% 20%, var(--bg-2), var(--bg-1) 60%),
-                radial-gradient(circle at 80% 80%, var(--bg-3), transparent 60%);
-    background-color: var(--bg-1);
-    background-attachment: fixed;
+    background: var(--bg-0);
     position: relative;
     overflow-x: hidden;
   }
 
-  body::before {
-    content: "";
+  /* ---------- LIQUID AURORA BACKDROP ---------- */
+  .aurora {
+    position: fixed;
+    inset: -10%;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(70px) saturate(150%);
+    opacity: 0.75;
+  }
+  .aurora span {
+    position: absolute;
+    border-radius: 50%;
+    mix-blend-mode: screen;
+  }
+  .aurora span:nth-child(1) { width: 46vw; height: 46vw; left: -8%; top: -6%; background: var(--aurora-violet); animation: drift1 22s ease-in-out infinite alternate; }
+  .aurora span:nth-child(2) { width: 40vw; height: 40vw; right: -10%; top: 6%; background: var(--aurora-pink); animation: drift2 26s ease-in-out infinite alternate; }
+  .aurora span:nth-child(3) { width: 38vw; height: 38vw; left: 20%; bottom: -14%; background: var(--aurora-cyan); animation: drift3 30s ease-in-out infinite alternate; }
+  @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(6%, 8%) scale(1.12); } }
+  @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-8%, 6%) scale(0.94); } }
+  @keyframes drift3 { from { transform: translate(0,0) scale(1); } to { transform: translate(4%, -10%) scale(1.08); } }
+
+  .grain {
     position: fixed;
     inset: 0;
-    background:
-      radial-gradient(circle at 15% 50%, rgba(139,92,246,0.18), transparent 40%),
-      radial-gradient(circle at 85% 30%, rgba(236,72,153,0.15), transparent 40%),
-      radial-gradient(circle at 50% 90%, rgba(34,211,238,0.12), transparent 40%);
+    z-index: 1;
     pointer-events: none;
-    z-index: 0;
-    animation: floatBg 18s ease-in-out infinite alternate;
-  }
-
-  @keyframes floatBg {
-    from { transform: translate(0,0) scale(1); }
-    to { transform: translate(-2%, 2%) scale(1.05); }
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   .wrap {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     max-width: 1100px;
     margin: 0 auto;
     padding: 28px 18px 60px;
   }
 
+  /* ---------- LIQUID GLASS SURFACE ---------- */
   .glass {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    position: relative;
+    background:
+      linear-gradient(155deg, var(--glass-fill-hi), var(--glass-fill-lo) 55%);
+    border: 1px solid var(--glass-edge-lo);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 var(--glass-edge-hi),
+      inset 0 -12px 24px -18px rgba(0,0,0,0.5),
+      0 20px 50px -12px var(--glass-shadow);
+    overflow: hidden;
   }
+  .glass::before {
+    /* dai sang phan xa quet cheo tren be mat kinh */
+    content: "";
+    position: absolute;
+    top: -60%;
+    left: -30%;
+    width: 55%;
+    height: 220%;
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.16) 48%, rgba(255,255,255,0.02) 58%, transparent 65%);
+    transform: rotate(8deg);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glass > * { position: relative; z-index: 1; }
 
   /* ---------- HEADER ---------- */
   header.topbar {
@@ -80,39 +122,51 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 22px;
-    margin-bottom: 26px;
+    margin-bottom: 22px;
     flex-wrap: wrap;
     gap: 12px;
   }
 
   .brand {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 800;
+    align-items: baseline;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-weight: 700;
     font-size: 18px;
-    background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+    letter-spacing: 0.2px;
+    background: linear-gradient(90deg, var(--aurora-cyan), var(--aurora-violet), var(--aurora-pink));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  .brand small {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    color: var(--text-faint);
+    -webkit-text-fill-color: var(--text-faint);
   }
 
   .user-info {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
     font-size: 14px;
     color: var(--text-dim);
+    flex-wrap: wrap;
   }
 
   .point-pill {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
+    gap: 7px;
+    padding: 8px 15px;
     border-radius: 999px;
-    background: linear-gradient(90deg, rgba(139,92,246,0.25), rgba(236,72,153,0.25));
-    border: 1px solid var(--glass-border);
+    background: linear-gradient(120deg, rgba(124,92,255,0.28), rgba(255,92,176,0.22));
+    border: 1px solid var(--glass-edge-lo);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
     font-weight: 700;
     color: #fff;
     font-size: 14px;
@@ -121,36 +175,37 @@
   .btn {
     border: none;
     cursor: pointer;
-    font-family: inherit;
+    font-family: var(--font-body);
     font-weight: 600;
-    border-radius: 12px;
+    border-radius: 999px;
     padding: 10px 18px;
-    font-size: 14px;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    font-size: 13.5px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease;
   }
   .btn:active { transform: scale(0.96); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn-primary {
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    background: linear-gradient(120deg, var(--aurora-violet), var(--aurora-pink));
     color: #fff;
-    box-shadow: 0 6px 18px rgba(139,92,246,0.35);
+    box-shadow: 0 8px 20px -4px rgba(124,92,255,0.55), inset 0 1px 0 rgba(255,255,255,0.35);
   }
-  .btn-primary:hover:not(:disabled) { box-shadow: 0 8px 24px rgba(139,92,246,0.5); }
+  .btn-primary:hover:not(:disabled) { box-shadow: 0 10px 26px -4px rgba(124,92,255,0.7), inset 0 1px 0 rgba(255,255,255,0.45); }
 
   .btn-ghost {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.07);
     color: var(--text-main);
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--glass-edge-lo);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
   }
-  .btn-ghost:hover { background: rgba(255,255,255,0.14); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.13); }
 
   .btn-outline {
     background: transparent;
-    color: var(--accent-3);
-    border: 1px solid rgba(34,211,238,0.5);
+    color: var(--aurora-cyan);
+    border: 1px solid rgba(51,230,201,0.45);
   }
-  .btn-outline:hover { background: rgba(34,211,238,0.1); }
+  .btn-outline:hover { background: rgba(51,230,201,0.1); }
 
   .spin { display: inline-block; animation: spinAnim 0.8s linear infinite; }
   @keyframes spinAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -169,16 +224,32 @@
   }
   .modal-watermark { background-size: 380px 220px; }
 
+  /* ---------- TOPUP BANNER ---------- */
+  .topup-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 20px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .topup-banner .tb-text { font-size: 13.5px; color: var(--text-dim); line-height: 1.5; }
+  .topup-banner .tb-text strong { color: var(--text-main); font-family: var(--font-display); font-weight: 600; }
+  .topup-banner .tb-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
   /* ---------- LOGIN ---------- */
   #loginScreen {
     max-width: 380px;
     margin: 8vh auto 0;
-    padding: 36px 30px;
+    padding: 40px 32px;
     text-align: center;
   }
   #loginScreen h1 {
-    font-size: 20px;
-    margin: 6px 0 4px;
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 700;
+    margin: 8px 0 4px;
   }
   #loginScreen p.sub {
     color: var(--text-dim);
@@ -198,16 +269,16 @@
   .field input {
     width: 100%;
     padding: 12px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-edge-lo);
     background: rgba(255,255,255,0.05);
     color: var(--text-main);
     font-family: inherit;
     font-size: 14.5px;
     outline: none;
-    transition: border-color 0.15s ease;
+    transition: border-color 0.15s ease, background 0.15s ease;
   }
-  .field input:focus { border-color: var(--accent); }
+  .field input:focus { border-color: var(--aurora-violet); background: rgba(255,255,255,0.08); }
   #loginScreen .btn-primary { width: 100%; padding: 13px; font-size: 15px; margin-top: 6px; }
   .login-error {
     color: var(--danger);
@@ -215,14 +286,41 @@
     margin-top: 14px;
     min-height: 16px;
   }
+  .login-terms-link {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 12.5px;
+    color: var(--text-faint);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  .login-terms-link:hover { color: var(--aurora-cyan); }
 
   /* ---------- MAIN APP ---------- */
   #appScreen { display: none; }
 
   .section-title {
-    font-size: 19px;
-    font-weight: 700;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
     margin: 8px 4px 16px;
+  }
+  .section-title .link-mini {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--aurora-cyan);
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-decoration: underline;
   }
 
   .grid {
@@ -235,9 +333,9 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
-  .card:hover { transform: translateY(-4px); }
+  .card:hover { transform: translateY(-5px); }
 
   .card-thumb {
     width: 100%;
@@ -253,9 +351,9 @@
     pointer-events: auto;
   }
 
-  .card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card-body { padding: 15px 16px 17px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 
-  .card-title { font-size: 15.5px; font-weight: 700; line-height: 1.35; }
+  .card-title { font-family: var(--font-display); font-size: 15.5px; font-weight: 600; line-height: 1.35; }
 
   .card-desc {
     font-size: 13px;
@@ -278,11 +376,11 @@
   .badge-diem {
     font-size: 12.5px;
     font-weight: 700;
-    padding: 5px 10px;
+    padding: 5px 11px;
     border-radius: 999px;
-    background: rgba(34,211,238,0.15);
-    color: var(--accent-3);
-    border: 1px solid rgba(34,211,238,0.3);
+    background: rgba(51,230,201,0.15);
+    color: var(--aurora-cyan);
+    border: 1px solid rgba(51,230,201,0.3);
   }
 
   .card-actions { display: flex; gap: 8px; margin-top: 10px; }
@@ -306,13 +404,14 @@
     color: var(--text-dim);
   }
 
-  /* ---------- MODAL PREVIEW ---------- */
+  /* ---------- MODAL SHARED ---------- */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(5,3,20,0.75);
-    backdrop-filter: blur(6px);
+    background: rgba(3,2,12,0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     z-index: 100;
     align-items: center;
     justify-content: center;
@@ -326,6 +425,22 @@
     flex-direction: column;
     overflow: hidden;
   }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+    font-size: 16px;
+  }
+
+  /* ---------- MODAL PREVIEW ---------- */
   .modal-imgwrap {
     position: relative;
     background: #000;
@@ -342,9 +457,6 @@
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
-  }
-  .modal-imgwrap {
-    position: relative;
   }
   .modal-imgwrap::after {
     /* lop chan trong suot ngan long-press / keo tha luu anh tren mobile */
@@ -379,22 +491,68 @@
     color: var(--text-dim);
   }
   .modal-info { padding: 16px 20px 20px; }
-  .modal-info h3 { margin: 0 0 6px; font-size: 17px; }
+  .modal-info h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 17px; font-weight: 600; }
   .modal-info p { margin: 0 0 14px; font-size: 13.5px; color: var(--text-dim); line-height: 1.5; }
-  .modal-close {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    background: rgba(255,255,255,0.12);
-    border: none;
-    color: #fff;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 5;
-    font-size: 16px;
+
+  /* ---------- MODAL TERMS & GUIDE ---------- */
+  #termsOverlay .modal-box { max-width: 620px; max-height: 82vh; }
+  .terms-body {
+    padding: 26px 26px 24px;
+    overflow-y: auto;
   }
+  .terms-body h2 {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    padding-right: 30px;
+  }
+  .terms-body > p.terms-sub {
+    font-size: 13px;
+    color: var(--text-faint);
+    margin: 0 0 20px;
+  }
+  .terms-section { margin-bottom: 20px; }
+  .terms-section:last-child { margin-bottom: 0; }
+  .terms-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-size: 14.5px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--text-main);
+  }
+  .terms-section h4 .ic {
+    width: 26px; height: 26px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    background: linear-gradient(135deg, rgba(124,92,255,0.3), rgba(255,92,176,0.22));
+    flex-shrink: 0;
+  }
+  .terms-section p, .terms-section li {
+    font-size: 13.3px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .terms-section ul { margin: 0; padding-left: 20px; }
+  .terms-section li { margin-bottom: 5px; }
+  .terms-contact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-edge-lo);
+  }
+  .terms-contact .tc-text { font-size: 13px; color: var(--text-dim); }
+  .terms-contact .tc-text strong { color: var(--text-main); }
 
   /* ---------- TOAST ---------- */
   #toast {
@@ -419,34 +577,54 @@
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
   #toast.ok {
-    background: rgba(16, 60, 45, 0.55);
-    border: 1.5px solid rgba(52,211,153,0.6);
-    color: #6ff5c4;
+    background: rgba(10, 50, 40, 0.55);
+    border: 1.5px solid rgba(63,224,165,0.6);
+    color: #8ff5cf;
   }
   #toast.err {
-    background: rgba(70, 15, 20, 0.6);
-    border: 1.5px solid rgba(248,113,113,0.65);
+    background: rgba(60, 14, 20, 0.6);
+    border: 1.5px solid rgba(255,122,122,0.65);
     color: #ffb3b0;
   }
 
   footer.credit {
     text-align: center;
-    color: var(--text-dim);
+    color: var(--text-faint);
     font-size: 12.5px;
     margin-top: 40px;
   }
+  footer.credit button {
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    text-decoration: underline;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12.5px;
+    padding: 0;
+    margin-left: 4px;
+  }
+  footer.credit button:hover { color: var(--aurora-cyan); }
 
   @media (max-width: 520px) {
     .grid { grid-template-columns: 1fr 1fr; }
     header.topbar { padding: 14px 16px; }
     .user-info { width: 100%; justify-content: space-between; }
+    .topup-banner { flex-direction: column; align-items: flex-start; }
   }
   @media (max-width: 360px) {
     .grid { grid-template-columns: 1fr; }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aurora span { animation: none; }
+  }
 </style>
 </head>
 <body>
+
+<div class="aurora"><span></span><span></span><span></span></div>
+<div class="grain"></div>
 
 <div class="wrap">
 
@@ -466,12 +644,13 @@
     </div>
     <button class="btn btn-primary" id="btnLogin">Đăng nhập</button>
     <div class="login-error" id="loginError"></div>
+    <button class="login-terms-link" id="btnOpenTermsFromLogin">Điều khoản sử dụng & hướng dẫn nạp điểm</button>
   </div>
 
   <!-- ===================== APP ===================== -->
   <div id="appScreen">
     <header class="topbar glass">
-      <div class="brand">TP DESIGN PPTX</div>
+      <div class="brand">TP DESIGN PPTX <small>Khu vực thành viên</small></div>
       <div class="user-info">
         <span id="userGreeting"></span>
         <span class="point-pill">⭐ <span id="userPoints">0</span> điểm</span>
@@ -480,12 +659,26 @@
       </div>
     </header>
 
-    <div class="section-title">Kho bài đăng</div>
+    <div class="topup-banner glass">
+      <div class="tb-text">Hết điểm tải mẫu? <strong>Liên hệ admin để nạp thêm điểm</strong> qua Zalo, xử lý trong ít phút.</div>
+      <div class="tb-actions">
+        <button class="btn btn-outline" id="btnOpenTermsFromBanner">Xem hướng dẫn</button>
+        <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center;">💬 Nạp điểm qua Zalo</a>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <span>Kho bài đăng</span>
+      <button class="link-mini" id="btnOpenTermsFromSection">Điều khoản & hướng dẫn</button>
+    </div>
     <div id="postsGrid" class="grid"></div>
     <div id="emptyState" class="empty-state" style="display:none;">Bạn chưa được gửi bài nào. Liên hệ để được thêm mẫu mới.</div>
   </div>
 
-  <footer class="credit">© TP Design PPTX — Khu vực thành viên</footer>
+  <footer class="credit">
+    © TP Design PPTX — Khu vực thành viên
+    <button id="btnOpenTermsFromFooter">Điều khoản & hướng dẫn</button>
+  </footer>
 </div>
 
 <!-- ===================== MODAL PREVIEW ===================== -->
@@ -510,6 +703,54 @@
   </div>
 </div>
 
+<!-- ===================== MODAL ĐIỀU KHOẢN & HƯỚNG DẪN ===================== -->
+<div class="modal-overlay" id="termsOverlay">
+  <div class="modal-box glass" style="position:relative;">
+    <button class="modal-close" id="termsClose">✕</button>
+    <div class="terms-body">
+      <h2>Điều khoản sử dụng & hướng dẫn nạp điểm</h2>
+      <p class="terms-sub">Vui lòng đọc kỹ trước khi sử dụng khu vực thành viên.</p>
+
+      <div class="terms-section">
+        <h4><span class="ic">⭐</span>Cách nạp điểm</h4>
+        <ul>
+          <li>Mỗi mẫu thiết kế yêu cầu một số điểm nhất định để tải về, hiển thị ngay trên thẻ mẫu.</li>
+          <li>Để nạp thêm điểm, nhắn tin trực tiếp cho admin qua Zalo bên dưới, kèm theo tên đăng nhập của bạn.</li>
+          <li>Admin xác nhận và cộng điểm vào tài khoản, thường trong vài phút trong giờ làm việc.</li>
+          <li>Sau khi được cộng điểm, bấm "Làm mới" trên trang để cập nhật số điểm mới nhất.</li>
+        </ul>
+      </div>
+
+      <div class="terms-contact">
+        <div class="tc-text">Liên hệ admin: <strong>Zalo 0773 181 186</strong></div>
+        <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center;">💬 Nhắn Zalo ngay</a>
+      </div>
+
+      <div class="terms-section">
+        <h4><span class="ic">📥</span>Quy định tải & sử dụng mẫu</h4>
+        <ul>
+          <li>Điểm sẽ bị trừ ngay khi bấm "Tải về" thành công, vui lòng kiểm tra kỹ mẫu ở phần "Xem trước" trước khi tải.</li>
+          <li>Mẫu đã tải chỉ dùng cho mục đích cá nhân hoặc công việc của thành viên, không đăng bán lại hoặc phát tán công khai dưới mọi hình thức.</li>
+          <li>Không chia sẻ tài khoản đăng nhập cho người khác; mọi hoạt động dưới tài khoản của bạn là trách nhiệm của bạn.</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h4><span class="ic">🔒</span>Bảo vệ nội dung</h4>
+        <ul>
+          <li>Ảnh xem trước được đóng dấu tên tài khoản để đối chiếu, việc chụp màn hình, sao chép hoặc tải ảnh xem trước khi chưa được phép là không được phép.</li>
+          <li>Trường hợp phát hiện vi phạm, admin có quyền tạm khoá tài khoản để xác minh.</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h4><span class="ic">🛟</span>Cần hỗ trợ?</h4>
+        <p>Nếu gặp lỗi khi đăng nhập, tải mẫu, hoặc có thắc mắc về điểm, hãy nhắn Zalo cho admin — luôn có mặt để hỗ trợ bạn.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -529,7 +770,7 @@ let currentPreview = { post: null, index: 0 };
 function showToast(msg, type = "ok", zaloContact = false) {
   const el = document.getElementById("toast");
   el.innerHTML = zaloContact
-    ? `${escapeHtml(msg)} <a href="https://zalo.me/84773181186" target="_blank" style="color:#22d3ee;font-weight:800;text-decoration:underline;">Liên hệ Zalo</a>`
+    ? `${escapeHtml(msg)} <a href="https://zalo.me/84773181186" target="_blank" style="color:#33e6c9;font-weight:800;text-decoration:underline;">Liên hệ Zalo</a>`
     : escapeHtml(msg);
   el.className = "show " + type;
   clearTimeout(showToast._t);
@@ -605,7 +846,6 @@ document.getElementById("btnRefresh").addEventListener("click", refreshPointsAnd
 async function refreshPointsAndPosts() {
   if (!currentUser) return;
   const btn = document.getElementById("btnRefresh");
-  const icon = btn.querySelector(".spin") || btn;
   btn.disabled = true;
   btn.innerHTML = '<span class="spin">🔄</span> Đang làm mới...';
 
@@ -727,7 +967,7 @@ function renderPosts() {
         <div class="card-desc">${escapeHtml(post.moTa)}</div>
         <div class="card-meta">
           <span class="badge-diem">⭐ ${post.diemCan} điểm</span>
-          <span style="font-size:11.5px;color:var(--text-dim)">${escapeHtml(post.ngayDang || "")}</span>
+          <span style="font-size:11.5px;color:var(--text-faint)">${escapeHtml(post.ngayDang || "")}</span>
         </div>
         <div class="card-actions">
           <button class="btn btn-outline" data-preview="${post.id}">Xem trước</button>
@@ -802,6 +1042,25 @@ document.getElementById("modalDownloadBtn").addEventListener("click", () => {
   const id = currentPreview.post.id;
   closePreview();
   handleDownload(id, null);
+});
+
+/* ============ MODAL ĐIỀU KHOẢN & HƯỚNG DẪN ============ */
+function openTerms() {
+  document.getElementById("termsOverlay").style.display = "flex";
+}
+function closeTerms() {
+  document.getElementById("termsOverlay").style.display = "none";
+}
+document.getElementById("termsClose").addEventListener("click", closeTerms);
+document.getElementById("termsOverlay").addEventListener("click", e => {
+  if (e.target.id === "termsOverlay") closeTerms();
+});
+document.getElementById("btnOpenTermsFromLogin").addEventListener("click", openTerms);
+document.getElementById("btnOpenTermsFromBanner").addEventListener("click", openTerms);
+document.getElementById("btnOpenTermsFromSection").addEventListener("click", openTerms);
+document.getElementById("btnOpenTermsFromFooter").addEventListener("click", openTerms);
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { closeTerms(); closePreview(); }
 });
 
 /* ============ DOWNLOAD ============ */
