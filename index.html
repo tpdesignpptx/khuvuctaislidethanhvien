@@ -102,7 +102,6 @@
     overflow: hidden;
   }
   .glass::before {
-    /* dai sang phan xa quet cheo tren be mat kinh */
     content: "";
     position: absolute;
     top: -60%;
@@ -218,11 +217,11 @@
     inset: 0;
     pointer-events: none;
     z-index: 6;
-    opacity: 0.55;
+    opacity: 0.35; /* Độ mờ vừa phải để thấy rõ chữ nhưng không che khuất hoàn toàn mẫu */
     background-repeat: repeat;
-    background-size: 220px 130px;
+    background-size: 200px 100px;
   }
-  .modal-watermark { background-size: 380px 220px; }
+  .modal-watermark { background-size: 260px 130px; }
 
   /* ---------- TOPUP BANNER ---------- */
   .topup-banner {
@@ -459,7 +458,6 @@
     user-select: none;
   }
   .modal-imgwrap::after {
-    /* lop chan trong suot ngan long-press / keo tha luu anh tren mobile */
     content: "";
     position: absolute;
     inset: 0;
@@ -738,7 +736,7 @@
       <div class="terms-section">
         <h4><span class="ic">🔒</span>Bảo vệ nội dung</h4>
         <ul>
-          <li>Ảnh xem trước được đóng dấu tên tài khoản để đối chiếu, việc chụp màn hình, sao chép hoặc tải ảnh xem trước khi chưa được phép là không được phép.</li>
+          <li>Ảnh xem trước được đóng dấu chữ mờ thương hiệu, việc chụp màn hình, sao chép hoặc tải ảnh xem trước khi chưa được phép là không được phép.</li>
           <li>Trường hợp phát hiện vi phạm, admin có quyền tạm khoá tài khoản để xác minh.</li>
         </ul>
       </div>
@@ -756,16 +754,14 @@
 <script>
 /* ============ CẤU HÌNH ============ */
 const CONFIG = {
-  // Dán URL Web App Apps Script sau khi deploy (kết thúc bằng /exec)
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbx9TBGqaK2E6LNTJBlAFLIh-sHGXoW7vOOcRVMb_4uvnZuT7gHdGWSAuWjVXYfguo5HWg/exec"
 };
 
 /* ============ STATE ============ */
-let currentUser = null; // { username, password, hoTen, diem }
+let currentUser = null; 
 let posts = [];
 let currentPreview = { post: null, index: 0 };
 
-/* ============ HELPERS ============ */
 /* ============ TOAST ============ */
 function showToast(msg, type = "ok", zaloContact = false) {
   const el = document.getElementById("toast");
@@ -785,9 +781,7 @@ async function callApi(params) {
   return res.json();
 }
 
-function saveSession() {
-  // Khong luu phien dang nhap nua - moi lan tai lai trang (F5) se bat buoc dang nhap lai.
-}
+function saveSession() {}
 
 /* ============ LOGIN ============ */
 document.getElementById("btnLogin").addEventListener("click", doLogin);
@@ -880,35 +874,36 @@ function enterApp() {
   loadPosts();
 }
 
-/* ============ CHU CHIM (WATERMARK TREN ANH) ============ */
+/* ============ HỆ THỐNG WATERMARK CHỮ MỜ "TP DESIGN PPTX" ============ */
 function buildWatermarkDataUri(text) {
   const safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const svg =
-    "<svg xmlns='http://www.w3.org/2000/svg' width='340' height='170'>" +
-    "<g transform='rotate(-28 170 85)'>" +
-    "<rect x='0' y='66' width='270' height='36' rx='8' fill='black' fill-opacity='0.55'/>" +
-    "<text x='14' y='90' font-size='16' font-weight='700' fill='white' font-family='Arial, sans-serif'>" +
-    safe + "</text></g></svg>";
-  return "url(\"data:image/svg+xml;utf8," + encodeURIComponent(svg) + "\")";
+  // Tạo SVG lặp lại pattern chứa chữ TP DESIGN PPTX xoay góc nghiêng
+  const svg = `
+    <svg xmlns='http://www.w3.org/2000/svg' width='260' height='130'>
+      <g transform='rotate(-25 130 65)'>
+        <text x='15' y='60' font-size='15' font-weight='800' fill='rgba(255, 255, 255, 0.45)' font-family="Sora, 'Be Vietnam Pro', Arial, sans-serif" letter-spacing="1px">${safe}</text>
+      </g>
+    </svg>`;
+  return "url(\"data:image/svg+xml;utf8," + encodeURIComponent(svg.trim()) + "\")";
 }
 
 function watermarkText() {
-  return "tpdesignpptx";
+  return "TP DESIGN PPTX";
 }
 
 function setupModalWatermark() {
   const el = document.getElementById("modalWatermark");
-  if (!el || !currentUser) return;
+  if (!el) return;
   el.style.backgroundImage = buildWatermarkDataUri(watermarkText());
 }
 
-/* ============ CANH BAO KHI CO THAO TAC TAI/SAO CHEP ============ */
+/* ============ CẢNH BÁO KHI CÓ THẢO TÁC TẢI/SAO CHÉP ============ */
 let _lastWarnTime = 0;
 function showCopyWarning() {
   const now = Date.now();
-  if (now - _lastWarnTime < 2500) return; // tranh spam toast lien tuc
+  if (now - _lastWarnTime < 2500) return;
   _lastWarnTime = now;
-  showToast("⚠️ Nghiêm cấm sao chép, chụp hoặc tải nội dung khi chưa được phép. Nội dung đã được đóng dấu tên tài khoản để đối chiếu khi vi phạm.", "err");
+  showToast("⚠️ Nghiêm cấm sao chép, chụp hoặc tải ảnh xem trước khi chưa được phép.", "err");
 }
 
 /* ============ LOAD POSTS ============ */
@@ -1095,10 +1090,7 @@ async function handleDownload(id, btnEl) {
   }
 }
 
-/* ============ KHỞI TẠO ============ */
-// Không tự đăng nhập lại khi tải lại trang (F5) - luôn yêu cầu nhập lại tài khoản.
-
-/* ============ CHỐNG TẢI ẢNH / SAO CHÉP ẢNH ============ */
+/* ============ CHỐNG TẢI ẢNH / SAO CHÉP ============ */
 document.addEventListener("contextmenu", e => {
   if (e.target.tagName === "IMG") {
     e.preventDefault();
@@ -1111,7 +1103,6 @@ document.addEventListener("dragstart", e => {
     showCopyWarning();
   }
 });
-// Chan phim tat luu trang / xem nguon (khong chan duoc 100% nhung han che nguoi thuong)
 document.addEventListener("keydown", e => {
   const key = e.key.toLowerCase();
   if ((e.ctrlKey || e.metaKey) && (key === "s" || key === "u" || key === "p")) {
