@@ -518,7 +518,7 @@
   }
   .terms-section h4 .ic {
     width: 26px; height: 26px;
-    border-radius: 9px;
+    border-radius: 99px;
     display: flex; align-items: center; justify-content: center;
     font-size: 13px;
     background: linear-gradient(135deg, rgba(124,92,255,0.3), rgba(255,92,176,0.22));
@@ -746,9 +746,9 @@
 <div id="toast"></div>
 
 <script>
-/* ============ CẤU HÌNH APPS SCRIPT URL MỚI ============ */
+/* ============ CẤU HÌNH LINK APPS SCRIPT URL MỚI ============ */
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwi5sfWvgrpgDh3f4vlLOc5_YTYixUcHHeNRsdc9SRFYHN6Nx_rNK0k0lCmMxS36mBlxQ/exec"
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwzclT9nn4SzbIVg9guGTtrTDu9trrUE1HjaIR2PArq7frs1JOPHkNtGX8XiYCCPcCCBw/exec"
 };
 
 /* ============ STATE ============ */
@@ -918,7 +918,7 @@ function showCopyWarning() {
   showToast("⚠️ Nghiêm cấm sao chép, chụp hoặc tải ảnh xem trước khi chưa được phép.", "err");
 }
 
-/* ============ LOAD POSTS ============ */
+/* ============ LOAD POSTS (TRUYỀN THÊM USERNAME & PASSWORD ĐỂ LỌC BÀI ĐĂNG CỦA USER) ============ */
 function renderSkeleton() {
   const grid = document.getElementById("postsGrid");
   grid.innerHTML = "";
