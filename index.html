@@ -217,7 +217,7 @@
     inset: 0;
     pointer-events: none;
     z-index: 6;
-    opacity: 0.35; /* Độ mờ vừa phải để thấy rõ chữ nhưng không che khuất hoàn toàn mẫu */
+    opacity: 0.35;
     background-repeat: repeat;
     background-size: 200px 100px;
   }
@@ -384,12 +384,6 @@
 
   .card-actions { display: flex; gap: 8px; margin-top: 10px; }
   .card-actions .btn { flex: 1; padding: 9px 10px; font-size: 13px; }
-
-  .owned-tag {
-    font-size: 11.5px;
-    color: var(--success);
-    font-weight: 700;
-  }
 
   /* ---------- SKELETON ---------- */
   .skeleton { animation: pulse 1.4s ease-in-out infinite; }
@@ -727,7 +721,7 @@
       <div class="terms-section">
         <h4><span class="ic">📥</span>Quy định tải & sử dụng mẫu</h4>
         <ul>
-          <li>Điểm sẽ bị trừ ngay khi bấm "Tải về" thành công, vui lòng kiểm tra kỹ mẫu ở phần "Xem trước" trước khi tải.</li>
+          <li>Điểm sẽ bị trừ mỗi lần bấm "Tải về" thành công, vui lòng kiểm tra kỹ mẫu ở phần "Xem trước" trước khi tải.</li>
           <li>Mẫu đã tải chỉ dùng cho mục đích cá nhân hoặc công việc của thành viên, không đăng bán lại hoặc phát tán công khai dưới mọi hình thức.</li>
           <li>Không chia sẻ tài khoản đăng nhập cho người khác; mọi hoạt động dưới tài khoản của bạn là trách nhiệm của bạn.</li>
         </ul>
@@ -752,15 +746,36 @@
 <div id="toast"></div>
 
 <script>
-/* ============ CẤU HÌNH ============ */
+/* ============ CẤU HÌNH APPS SCRIPT URL MỚI ============ */
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbx9TBGqaK2E6LNTJBlAFLIh-sHGXoW7vOOcRVMb_4uvnZuT7gHdGWSAuWjVXYfguo5HWg/exec"
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyvhNB9VTk-h1hkmDH1qxPhHzKVQXo3upDPpY-WGC0e4sEopOH9O_KavHWrsYsJn2NnuQ/exec"
 };
 
 /* ============ STATE ============ */
 let currentUser = null; 
 let posts = [];
 let currentPreview = { post: null, index: 0 };
+
+/* ============ SESSION MANAGEMENT ============ */
+function saveSession() {
+  if (currentUser) {
+    localStorage.setItem("tp_user", JSON.stringify(currentUser));
+  } else {
+    localStorage.removeItem("tp_user");
+  }
+}
+
+function checkSessionOnLoad() {
+  const saved = localStorage.getItem("tp_user");
+  if (saved) {
+    try {
+      currentUser = JSON.parse(saved);
+      enterApp();
+    } catch(e) {
+      localStorage.removeItem("tp_user");
+    }
+  }
+}
 
 /* ============ TOAST ============ */
 function showToast(msg, type = "ok", zaloContact = false) {
@@ -780,8 +795,6 @@ async function callApi(params) {
   if (!res.ok) throw new Error("Lỗi kết nối máy chủ");
   return res.json();
 }
-
-function saveSession() {}
 
 /* ============ LOGIN ============ */
 document.getElementById("btnLogin").addEventListener("click", doLogin);
@@ -874,10 +887,9 @@ function enterApp() {
   loadPosts();
 }
 
-/* ============ HỆ THỐNG WATERMARK CHỮ MỜ "TP DESIGN PPTX" ============ */
+/* ============ WATERMARK CHỮ MỜ ============ */
 function buildWatermarkDataUri(text) {
   const safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  // Tạo SVG lặp lại pattern chứa chữ TP DESIGN PPTX xoay góc nghiêng
   const svg = `
     <svg xmlns='http://www.w3.org/2000/svg' width='260' height='130'>
       <g transform='rotate(-25 130 65)'>
@@ -897,7 +909,7 @@ function setupModalWatermark() {
   el.style.backgroundImage = buildWatermarkDataUri(watermarkText());
 }
 
-/* ============ CẢNH BÁO KHI CÓ THẢO TÁC TẢI/SAO CHÉP ============ */
+/* ============ CẢNH BÁO SAO CHÉP ============ */
 let _lastWarnTime = 0;
 function showCopyWarning() {
   const now = Date.now();
@@ -1039,7 +1051,7 @@ document.getElementById("modalDownloadBtn").addEventListener("click", () => {
   handleDownload(id, null);
 });
 
-/* ============ MODAL ĐIỀU KHOẢN & HƯỚNG DẪN ============ */
+/* ============ MODAL TERMS & GUIDE ============ */
 function openTerms() {
   document.getElementById("termsOverlay").style.display = "flex";
 }
@@ -1064,6 +1076,8 @@ async function handleDownload(id, btnEl) {
   const post = posts.find(p => p.id === id);
   if (!post) return;
 
+  const newTab = window.open('about:blank', '_blank');
+
   if (btnEl) { btnEl.disabled = true; btnEl.textContent = "Đang xử lý..."; }
 
   try {
@@ -1079,11 +1093,27 @@ async function handleDownload(id, btnEl) {
       document.getElementById("userPoints").textContent = currentUser.diem;
       saveSession();
       showToast(data.message || "Tải thành công!", "ok");
-      if (data.link) window.open(data.link, "_blank");
+      
+      if (data.link) {
+        if (newTab) {
+          newTab.location.href = data.link;
+        } else {
+          const downloadAnchor = document.createElement("a");
+          downloadAnchor.href = data.link;
+          downloadAnchor.target = "_blank";
+          document.body.appendChild(downloadAnchor);
+          downloadAnchor.click();
+          downloadAnchor.remove();
+        }
+      } else if (newTab) {
+        newTab.close();
+      }
     } else {
+      if (newTab) newTab.close();
       showToast(data.message || "Không thể tải về.", "err", !!data.canNapDiem);
     }
   } catch (e) {
+    if (newTab) newTab.close();
     showToast("Không thể kết nối máy chủ.", "err");
   } finally {
     if (btnEl) { btnEl.disabled = false; btnEl.textContent = "Tải về"; }
@@ -1113,6 +1143,9 @@ document.addEventListener("keydown", e => {
     showCopyWarning();
   }
 });
+
+/* KHÔI PHỤC PHIÊN ĐĂNG NHẬP KHI TẢI TRANG */
+window.addEventListener("DOMContentLoaded", checkSessionOnLoad);
 </script>
 
 </body>
