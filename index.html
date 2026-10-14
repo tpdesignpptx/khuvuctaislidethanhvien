@@ -871,11 +871,14 @@ document.getElementById("btnOpenTermsFromSection").addEventListener("click", ope
 document.getElementById("btnOpenTermsFromFooter").addEventListener("click", openTerms);
 document.addEventListener("keydown", e => { if (e.key === "Escape") { closeTerms(); closePreview(); } });
 
-/* ============ DOWNLOAD (FIX CHỐNG SAFARI SAFARI BLOCK TRÊN IPHONE) ============ */
+/* ============ DOWNLOAD (CƠ CHẾ MỞ TAB TRƯỚC BẢO ĐẢM KHÔNG BỊ SAFARI CHẶN) ============ */
 async function handleDownload(id, btnEl) {
   if (!currentUser) return;
   const post = posts.find(p => p.id === id);
   if (!post) return;
+
+  // 1. MỞ TAB TRỐNG NGAY LẬP TỨC TRONG KHI BẤM NÚT ĐỂ SAFARI KHÔNG CHẶN
+  const newTab = window.open('about:blank', '_blank');
 
   if (btnEl) { btnEl.disabled = true; btnEl.textContent = "Đang xử lý..."; }
 
@@ -896,13 +899,21 @@ async function handleDownload(id, btnEl) {
       if (data.link) {
         let targetUrl = data.link.trim();
         
-        // Mở link gốc trong tab mới để Safari cho phép mở chuẩn không bị chặn
-        window.open(targetUrl, "_blank");
+        // 2. CHUYỂN HƯỚNG TAB ĐÃ MỞ SẴN TỚI LINK DRIVE / CANVA
+        if (newTab) {
+          newTab.location.href = targetUrl;
+        } else {
+          window.location.href = targetUrl;
+        }
+      } else if (newTab) {
+        newTab.close();
       }
     } else {
+      if (newTab) newTab.close();
       showToast(data.message || "Không thể tải về.", "err", !!data.canNapDiem);
     }
   } catch (e) {
+    if (newTab) newTab.close();
     showToast("Không thể kết nối máy chủ.", "err");
   } finally {
     if (btnEl) { btnEl.disabled = false; btnEl.textContent = "Tải về"; }
