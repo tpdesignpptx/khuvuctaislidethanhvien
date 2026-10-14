@@ -433,19 +433,21 @@
     font-size: 16px;
   }
 
-  /* ---------- MODAL PREVIEW ---------- */
+  /* ---------- MODAL PREVIEW (MƯỢT CHUYỂN ẢNH) ---------- */
   .modal-imgwrap {
     position: relative;
     background: #000;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 250px;
   }
   .modal-imgwrap img {
     width: 100%;
     max-height: 55vh;
     object-fit: contain;
     display: block;
+    transition: opacity 0.12s ease-in-out;
     -webkit-user-drag: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -746,7 +748,7 @@
 <div id="toast"></div>
 
 <script>
-/* ============ CẤU HÌNH LINK APPS SCRIPT URL MỚI ============ */
+/* ============ CẤU HÌNH APPS SCRIPT URL ============ */
 const CONFIG = {
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwzclT9nn4SzbIVg9guGTtrTDu9trrUE1HjaIR2PArq7frs1JOPHkNtGX8XiYCCPcCCBw/exec"
 };
@@ -755,6 +757,7 @@ const CONFIG = {
 let currentUser = null; 
 let posts = [];
 let currentPreview = { post: null, index: 0 };
+let preloadedImages = {}; // Bộ nhớ đệm lưu ảnh sẵn giúp chuyển slide siêu mượt
 
 /* ============ SESSION MANAGEMENT ============ */
 function saveSession() {
@@ -918,7 +921,7 @@ function showCopyWarning() {
   showToast("⚠️ Nghiêm cấm sao chép, chụp hoặc tải ảnh xem trước khi chưa được phép.", "err");
 }
 
-/* ============ LOAD POSTS (TRUYỀN THÊM USERNAME & PASSWORD ĐỂ LỌC BÀI ĐĂNG CỦA USER) ============ */
+/* ============ LOAD POSTS ============ */
 function renderSkeleton() {
   const grid = document.getElementById("postsGrid");
   grid.innerHTML = "";
@@ -1006,10 +1009,25 @@ function escapeHtml(str) {
 }
 function escapeAttr(str) { return escapeHtml(str); }
 
-/* ============ PREVIEW MODAL ============ */
+/* ============ PREVIEW MODAL (ĐÃ TỐI ƯU TẢI TRƯỚC ẢNH GIÚP CHUYỂN SLIDE MƯỢT TỨC THÌ) ============ */
+function preloadPostImages(post) {
+  if (!post || !post.anhPreview || !post.anhPreview.length) return;
+  post.anhPreview.forEach(url => {
+    if (url && !preloadedImages[url]) {
+      const img = new Image();
+      img.src = url;
+      preloadedImages[url] = img;
+    }
+  });
+}
+
 function openPreview(id) {
   const post = posts.find(p => p.id === id);
   if (!post) return;
+  
+  // Tải trước toàn bộ ảnh xem trước của bài vào RAM trình duyệt
+  preloadPostImages(post);
+  
   currentPreview = { post, index: 0 };
   renderPreviewModal();
   setupModalWatermark();
@@ -1019,7 +1037,15 @@ function openPreview(id) {
 function renderPreviewModal() {
   const { post, index } = currentPreview;
   const imgs = post.anhPreview && post.anhPreview.length ? post.anhPreview : [""];
-  document.getElementById("modalImg").src = imgs[index] || "";
+  const modalImg = document.getElementById("modalImg");
+  
+  // Hiệu ứng mờ nhẹ khi chuyển ảnh
+  modalImg.style.opacity = "0.3";
+  modalImg.src = imgs[index] || "";
+  
+  modalImg.onload = () => { modalImg.style.opacity = "1"; };
+  modalImg.onerror = () => { modalImg.style.opacity = "1"; };
+  
   document.getElementById("modalTitle").textContent = post.tieuDe;
   document.getElementById("modalDesc").textContent = post.moTa;
   document.getElementById("modalDiem").textContent = "⭐ " + post.diemCan + " điểm";
@@ -1070,13 +1096,11 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") { closeTerms(); closePreview(); }
 });
 
-/* ============ DOWNLOAD ============ */
+/* ============ DOWNLOAD (SỬA LỖI XOAY VÒNG VÒNG VÀ CHẶN POPUP TRÊN IPHONE / SAFARI) ============ */
 async function handleDownload(id, btnEl) {
   if (!currentUser) return;
   const post = posts.find(p => p.id === id);
   if (!post) return;
-
-  const newTab = window.open('about:blank', '_blank');
 
   if (btnEl) { btnEl.disabled = true; btnEl.textContent = "Đang xử lý..."; }
 
@@ -1095,25 +1119,26 @@ async function handleDownload(id, btnEl) {
       showToast(data.message || "Tải thành công!", "ok");
       
       if (data.link) {
-        if (newTab) {
-          newTab.location.href = data.link;
-        } else {
-          const downloadAnchor = document.createElement("a");
-          downloadAnchor.href = data.link;
-          downloadAnchor.target = "_blank";
-          document.body.appendChild(downloadAnchor);
-          downloadAnchor.click();
-          downloadAnchor.remove();
+        // Tối ưu hóa link Google Drive giúp kích hoạt tải thẳng về điện thoại không qua Viewer
+        let directLink = data.link;
+        if (directLink.includes("drive.google.com/file/d/")) {
+          const fileId = directLink.split("/file/d/")[1].split("/")[0];
+          directLink = `https://drive.google.com/uc?export=download&id=${fileId}`;
         }
-      } else if (newTab) {
-        newTab.close();
+
+        // Tự động kích hoạt tải xuống tương thích tốt nhất cho Safari iPhone & Android
+        const a = document.createElement("a");
+        a.href = directLink;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => a.remove(), 1000);
       }
     } else {
-      if (newTab) newTab.close();
       showToast(data.message || "Không thể tải về.", "err", !!data.canNapDiem);
     }
   } catch (e) {
-    if (newTab) newTab.close();
     showToast("Không thể kết nối máy chủ.", "err");
   } finally {
     if (btnEl) { btnEl.disabled = false; btnEl.textContent = "Tải về"; }
