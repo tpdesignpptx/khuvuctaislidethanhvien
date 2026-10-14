@@ -504,6 +504,23 @@
   </div>
 </div>
 
+<!-- ===================== MODAL THÔNG BÁO TẢI FILE (GIẢI PHÁP CHỐNG SAFARI SAFARI BLOCK) ===================== -->
+<div class="modal-overlay" id="downloadModalOverlay">
+  <div class="modal-box glass" style="position:relative; max-width:420px; text-align:center;">
+    <button class="modal-close" id="dlModalClose">✕</button>
+    <div style="padding:30px 24px;">
+      <div style="font-size:48px; margin-bottom:10px;">🎉</div>
+      <h3 style="font-family:var(--font-display); font-size:18px; margin:0 0 8px;">Đã trừ điểm thành công!</h3>
+      <p style="font-size:13.5px; color:var(--text-dim); margin-bottom:24px; line-height:1.5;" id="dlModalSubText">
+        Bấm nút bên dưới để mở file về máy của bạn.
+      </p>
+      <a id="dlModalLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:block; width:100%; padding:13px; text-decoration:none; font-size:15px; font-weight:700;">
+        🔗 Mở Link Tải File
+      </a>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== MODAL TERMS ===================== -->
 <div class="modal-overlay" id="termsOverlay">
   <div class="modal-box glass" style="position:relative;">
@@ -860,7 +877,7 @@ document.getElementById("modalDownloadBtn").addEventListener("click", () => {
   handleDownload(id, null);
 });
 
-/* ============ MODAL TERMS ============ */
+/* ============ MODAL TERMS & MODAL TẢI FILE ============ */
 function openTerms() { document.getElementById("termsOverlay").style.display = "flex"; }
 function closeTerms() { document.getElementById("termsOverlay").style.display = "none"; }
 document.getElementById("termsClose").addEventListener("click", closeTerms);
@@ -869,16 +886,27 @@ document.getElementById("btnOpenTermsFromLogin").addEventListener("click", openT
 document.getElementById("btnOpenTermsFromBanner").addEventListener("click", openTerms);
 document.getElementById("btnOpenTermsFromSection").addEventListener("click", openTerms);
 document.getElementById("btnOpenTermsFromFooter").addEventListener("click", openTerms);
-document.addEventListener("keydown", e => { if (e.key === "Escape") { closeTerms(); closePreview(); } });
 
-/* ============ DOWNLOAD (CƠ CHẾ MỞ TAB TRƯỚC BẢO ĐẢM KHÔNG BỊ SAFARI CHẶN) ============ */
+document.getElementById("dlModalClose").addEventListener("click", () => {
+  document.getElementById("downloadModalOverlay").style.display = "none";
+});
+document.getElementById("dlModalLinkBtn").addEventListener("click", () => {
+  document.getElementById("downloadModalOverlay").style.display = "none";
+});
+
+document.addEventListener("keydown", e => { 
+  if (e.key === "Escape") { 
+    closeTerms(); 
+    closePreview(); 
+    document.getElementById("downloadModalOverlay").style.display = "none"; 
+  } 
+});
+
+/* ============ DOWNLOAD (CƠ CHẾ BẢO ĐẢM KHÔNG BAO GIỜ BỊ SAFARI CHẶN) ============ */
 async function handleDownload(id, btnEl) {
   if (!currentUser) return;
   const post = posts.find(p => p.id === id);
   if (!post) return;
-
-  // 1. MỞ TAB TRỐNG NGAY LẬP TỨC TRONG KHI BẤM NÚT ĐỂ SAFARI KHÔNG CHẶN
-  const newTab = window.open('about:blank', '_blank');
 
   if (btnEl) { btnEl.disabled = true; btnEl.textContent = "Đang xử lý..."; }
 
@@ -894,26 +922,23 @@ async function handleDownload(id, btnEl) {
       currentUser.diem = data.diemConLai;
       document.getElementById("userPoints").textContent = currentUser.diem;
       saveSession();
-      showToast(data.message || "Tải thành công!", "ok");
       
       if (data.link) {
         let targetUrl = data.link.trim();
         
-        // 2. CHUYỂN HƯỚNG TAB ĐÃ MỞ SẴN TỚI LINK DRIVE / CANVA
-        if (newTab) {
-          newTab.location.href = targetUrl;
-        } else {
-          window.location.href = targetUrl;
-        }
-      } else if (newTab) {
-        newTab.close();
+        // Gán link tải vào nút bấm trong Modal
+        const linkBtn = document.getElementById("dlModalLinkBtn");
+        linkBtn.href = targetUrl;
+        
+        document.getElementById("dlModalSubText").textContent = `Bạn đã đổi thành công mẫu "${post.tieuDe}". Bấm nút bên dưới để mở link tải về.`;
+        
+        // Hiện Modal xác nhận để khách chạm mở trực tiếp (Qua mặt 100% Safari blocker)
+        document.getElementById("downloadModalOverlay").style.display = "flex";
       }
     } else {
-      if (newTab) newTab.close();
       showToast(data.message || "Không thể tải về.", "err", !!data.canNapDiem);
     }
   } catch (e) {
-    if (newTab) newTab.close();
     showToast("Không thể kết nối máy chủ.", "err");
   } finally {
     if (btnEl) { btnEl.disabled = false; btnEl.textContent = "Tải về"; }
