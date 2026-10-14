@@ -86,7 +86,6 @@
     padding: 20px 14px 60px;
   }
 
-  /* ---------- LIQUID GLASS SURFACE ---------- */
   .glass {
     position: relative;
     background: linear-gradient(155deg, var(--glass-fill-hi), var(--glass-fill-lo) 55%);
@@ -97,21 +96,7 @@
     box-shadow: inset 0 1px 0 var(--glass-edge-hi), inset 0 -12px 24px -18px rgba(0,0,0,0.5), 0 20px 50px -12px var(--glass-shadow);
     overflow: hidden;
   }
-  .glass::before {
-    content: "";
-    position: absolute;
-    top: -60%;
-    left: -30%;
-    width: 55%;
-    height: 220%;
-    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.16) 48%, rgba(255,255,255,0.02) 58%, transparent 65%);
-    transform: rotate(8deg);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .glass > * { position: relative; z-index: 1; }
 
-  /* ---------- HEADER ---------- */
   header.topbar {
     display: flex;
     align-items: center;
@@ -129,19 +114,10 @@
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 18px;
-    letter-spacing: 0.2px;
     background: linear-gradient(90deg, var(--aurora-cyan), var(--aurora-violet), var(--aurora-pink));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-  }
-  .brand small {
-    font-family: var(--font-body);
-    font-weight: 500;
-    font-size: 11px;
-    letter-spacing: 0.3px;
-    color: var(--text-faint);
-    -webkit-text-fill-color: var(--text-faint);
   }
 
   .user-info {
@@ -161,11 +137,9 @@
     border-radius: 999px;
     background: linear-gradient(120deg, rgba(124,92,255,0.28), rgba(255,92,176,0.22));
     border: 1px solid var(--glass-edge-lo);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
     font-weight: 700;
     color: #fff;
     font-size: 13px;
-    white-space: nowrap;
   }
 
   .btn {
@@ -176,22 +150,18 @@
     border-radius: 999px;
     padding: 9px 16px;
     font-size: 13px;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    transition: all 0.15s ease;
   }
-  .btn:active { transform: scale(0.96); }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn-primary {
     background: linear-gradient(120deg, var(--aurora-violet), var(--aurora-pink));
     color: #fff;
-    box-shadow: 0 8px 20px -4px rgba(124,92,255,0.55), inset 0 1px 0 rgba(255,255,255,0.35);
   }
 
   .btn-ghost {
     background: rgba(255,255,255,0.07);
     color: var(--text-main);
     border: 1px solid var(--glass-edge-lo);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
   }
 
   .btn-outline {
@@ -200,23 +170,6 @@
     border: 1px solid rgba(51,230,201,0.45);
   }
 
-  .spin { display: inline-block; animation: spinAnim 0.8s linear infinite; }
-  @keyframes spinAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-  /* ---------- WATERMARK ---------- */
-  .thumb-wrap { position: relative; width: 100%; }
-  .card-watermark,
-  .modal-watermark {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 6;
-    opacity: 0.35;
-    background-repeat: repeat;
-    background-size: 200px 100px;
-  }
-
-  /* ---------- TOPUP BANNER ---------- */
   .topup-banner {
     display: flex;
     align-items: center;
@@ -225,19 +178,14 @@
     padding: 16px 20px;
     margin-bottom: 22px;
   }
-  .topup-banner .tb-text { font-size: 13.5px; color: var(--text-dim); line-height: 1.5; }
-  .topup-banner .tb-text strong { color: var(--text-main); font-family: var(--font-display); font-weight: 600; }
-  .topup-banner .tb-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  /* ---------- LOGIN ---------- */
   #loginScreen {
     max-width: 380px;
     margin: 8vh auto 0;
     padding: 36px 24px;
     text-align: center;
   }
-  #loginScreen h1 { font-family: var(--font-display); font-size: 21px; font-weight: 700; margin: 8px 0 4px; }
-  #loginScreen p.sub { color: var(--text-dim); font-size: 13.5px; margin-bottom: 26px; }
+
   .field { text-align: left; margin-bottom: 16px; }
   .field label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
   .field input {
@@ -247,28 +195,10 @@
     border: 1px solid var(--glass-edge-lo);
     background: rgba(255,255,255,0.05);
     color: var(--text-main);
-    font-family: inherit;
-    font-size: 14.5px;
     outline: none;
   }
-  #loginScreen .btn-primary { width: 100%; padding: 13px; font-size: 15px; margin-top: 6px; }
-  .login-error { color: var(--danger); font-size: 13px; margin-top: 14px; min-height: 16px; }
-  .login-terms-link { display: inline-block; margin-top: 18px; font-size: 12.5px; color: var(--text-faint); text-decoration: underline; background: none; border: none; cursor: pointer; }
 
-  /* ---------- MAIN APP ---------- */
   #appScreen { display: none; }
-
-  .section-title {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 600;
-    margin: 8px 4px 16px;
-  }
-  .section-title .link-mini { font-size: 12.5px; font-weight: 600; color: var(--aurora-cyan); cursor: pointer; background: none; border: none; text-decoration: underline; }
 
   .grid {
     display: grid;
@@ -288,80 +218,12 @@
     aspect-ratio: 16/10;
     object-fit: cover;
     background: rgba(255,255,255,0.05);
-    display: block;
     cursor: pointer;
   }
 
-  .card-body {
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
-  }
-
-  .card-title {
-    font-family: var(--font-display);
-    font-size: 14.5px;
-    font-weight: 600;
-    line-height: 1.35;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .card-desc {
-    font-size: 12.5px;
-    color: var(--text-dim);
-    line-height: 1.45;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .card-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-top: 4px;
-    flex-wrap: wrap;
-  }
-
-  .badge-diem {
-    font-size: 11.5px;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: rgba(51,230,201,0.15);
-    color: var(--aurora-cyan);
-    border: 1px solid rgba(51,230,201,0.3);
-    white-space: nowrap;
-    display: inline-block;
-  }
-
-  .card-actions {
-    display: flex;
-    gap: 6px;
-    margin-top: auto;
-    padding-top: 6px;
-  }
-  .card-actions .btn {
-    flex: 1;
-    padding: 8px 6px;
-    font-size: 12px;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .skeleton { animation: pulse 1.4s ease-in-out infinite; }
-  @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
-  .skel-thumb { width:100%; aspect-ratio:16/10; background: rgba(255,255,255,0.08); }
-  .skel-line { height: 12px; border-radius: 6px; background: rgba(255,255,255,0.08); margin: 8px 16px; }
-
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+  .card-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card-title { font-size: 14.5px; font-weight: 600; }
+  .card-desc { font-size: 12.5px; color: var(--text-dim); }
 
   .modal-overlay {
     display: none;
@@ -369,82 +231,22 @@
     inset: 0;
     background: rgba(3,2,12,0.72);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     z-index: 100;
     align-items: center;
     justify-content: center;
     padding: 16px;
   }
-  .modal-box { max-width: 620px; width: 100%; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; }
-  .modal-close { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; z-index: 5; }
-
-  .modal-imgwrap { position: relative; background: #000; display: flex; align-items: center; justify-content: center; min-height: 200px; }
-  .modal-imgwrap img { width: 100%; max-height: 50vh; object-fit: contain; display: block; transition: opacity 0.12s ease-in-out; }
-  .modal-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .modal-nav.prev { left: 10px; }
-  .modal-nav.next { right: 10px; }
-  .modal-dots { text-align: center; padding: 6px; font-size: 12px; color: var(--text-dim); }
-  .modal-info { padding: 14px 16px 16px; }
-  .modal-info h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 16px; font-weight: 600; }
-  .modal-info p { margin: 0 0 12px; font-size: 13px; color: var(--text-dim); line-height: 1.45; }
-
-  #termsOverlay .modal-box { max-width: 600px; max-height: 82vh; }
-  .terms-body { padding: 20px; overflow-y: auto; }
-  .terms-body h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin: 0 0 4px; }
-  .terms-body > p.terms-sub { font-size: 12.5px; color: var(--text-faint); margin: 0 0 16px; }
-  .terms-section { margin-bottom: 16px; }
-  .terms-section h4 { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; margin: 0 0 6px; }
-  .terms-section p, .terms-section li { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
-  .terms-contact { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 12px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.05); }
-
-  /* ---------- STYLES CHO POPUP LƯU Ý KHI ĐĂNG NHẬP ---------- */
-  .notice-list {
-    text-align: left;
-    margin: 16px 0 24px;
-    padding: 0;
-    list-style: none;
-  }
-  .notice-list li {
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--text-dim);
-    margin-bottom: 12px;
-    padding-left: 24px;
-    position: relative;
-  }
-  .notice-list li::before {
-    content: "📌";
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-  .notice-list strong {
-    color: var(--aurora-cyan);
-  }
+  .modal-box { max-width: 440px; width: 100%; overflow: hidden; position: relative; }
+  .modal-close { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
 
   #toast {
-    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); padding: 12px 20px; border-radius: 12px; font-size: 13.5px; font-weight: 700; z-index: 200; opacity: 0; pointer-events: none; transition: all 0.25s ease; max-width: 90vw; text-align: center; backdrop-filter: blur(16px);
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); padding: 12px 20px; border-radius: 12px; font-size: 13.5px; font-weight: 700; z-index: 200; opacity: 0; pointer-events: none; transition: all 0.25s ease;
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
-  #toast.ok { background: rgba(10, 50, 40, 0.7); border: 1px solid rgba(63,224,165,0.6); color: #8ff5cf; }
-  #toast.err { background: rgba(60, 14, 20, 0.7); border: 1px solid rgba(255,122,122,0.65); color: #ffb3b0; }
+  #toast.ok { background: rgba(10, 50, 40, 0.8); border: 1px solid rgba(63,224,165,0.6); color: #8ff5cf; }
+  #toast.err { background: rgba(60, 14, 20, 0.8); border: 1px solid rgba(255,122,122,0.65); color: #ffb3b0; }
 
   footer.credit { text-align: center; color: var(--text-faint); font-size: 12px; margin-top: 32px; }
-  footer.credit button { background: none; border: none; color: var(--text-faint); text-decoration: underline; cursor: pointer; font-size: 12px; }
-
-  @media (max-width: 520px) {
-    .wrap { padding: 12px 10px 40px; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    header.topbar { padding: 12px 14px; flex-direction: column; align-items: flex-start; gap: 10px; }
-    .user-info { width: 100%; justify-content: space-between; gap: 6px; }
-    .topup-banner { flex-direction: column; align-items: flex-start; padding: 12px 14px; gap: 10px; }
-    .topup-banner .tb-actions { width: 100%; justify-content: space-between; }
-    .card-body { padding: 10px; gap: 6px; }
-    .card-title { font-size: 13.5px; }
-    .card-desc { font-size: 11.5px; }
-    .badge-diem { font-size: 10.5px; padding: 3px 8px; }
-    .card-actions .btn { padding: 7px 4px; font-size: 11.5px; }
-  }
 </style>
 </head>
 <body>
@@ -454,7 +256,7 @@
 
 <div class="wrap">
 
-  <!-- ===================== LOGIN ===================== -->
+  <!-- LOGIN -->
   <div id="loginScreen" class="glass">
     <div class="brand" style="justify-content:center; font-size:20px;">TP DESIGN PPTX</div>
     <h1>Khu Vực Thành Viên</h1>
@@ -462,280 +264,123 @@
 
     <div class="field">
       <label>Tên đăng nhập</label>
-      <input type="text" id="loginUsername" autocomplete="username" placeholder="Nhập tài khoản">
+      <input type="text" id="loginUsername" placeholder="Nhập tài khoản">
     </div>
     <div class="field">
       <label>Mật khẩu</label>
-      <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Nhập mật khẩu">
+      <input type="password" id="loginPassword" placeholder="Nhập mật khẩu">
     </div>
-    <button class="btn btn-primary" id="btnLogin">Đăng nhập</button>
-    <div class="login-error" id="loginError"></div>
-    <button class="login-terms-link" id="btnOpenTermsFromLogin">Điều khoản sử dụng & hướng dẫn nạp điểm</button>
+    <button class="btn btn-primary" id="btnLogin" style="width:100%;">Đăng nhập</button>
+    <div id="loginError" style="color:var(--danger); font-size:13px; margin-top:10px;"></div>
   </div>
 
-  <!-- ===================== APP ===================== -->
+  <!-- MAIN APP -->
   <div id="appScreen">
     <header class="topbar glass">
-      <div class="brand">TP DESIGN PPTX <small>Khu vực thành viên</small></div>
+      <div class="brand">TP DESIGN PPTX</div>
       <div class="user-info">
         <span id="userGreeting"></span>
         <span class="point-pill">⭐ <span id="userPoints">0</span> điểm</span>
-        <button class="btn btn-ghost" id="btnRefresh" title="Làm mới">🔄 Làm mới</button>
+        <button class="btn btn-ghost" id="btnChangePassModal">🔑 Đổi MK</button>
         <button class="btn btn-ghost" id="btnLogout">Đăng xuất</button>
       </div>
     </header>
 
     <div class="topup-banner glass">
-      <div class="tb-text">Hết điểm tải mẫu? <strong>Liên hệ admin để nạp thêm điểm</strong> qua Zalo.</div>
-      <div class="tb-actions">
-        <button class="btn btn-outline" id="btnOpenTermsFromBanner">Xem hướng dẫn</button>
-        <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center;">💬 Nạp điểm qua Zalo</a>
-      </div>
+      <div>Hết điểm tải mẫu? <strong>Liên hệ admin để nạp thêm điểm</strong>.</div>
+      <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" style="text-decoration:none;">💬 Zalo Admin</a>
     </div>
 
-    <div class="section-title">
-      <span>Kho bài đăng</span>
-      <button class="link-mini" id="btnOpenTermsFromSection">Điều khoản & hướng dẫn</button>
-    </div>
-    <div id="postsGrid" class="grid"></div>
-    <div id="emptyState" class="empty-state" style="display:none;">Bạn chưa được gửi bài nào. Liên hệ để được thêm mẫu mới.</div>
+    <div class="grid" id="postsGrid"></div>
   </div>
 
-  <footer class="credit">
-    © TP Design PPTX — Khu vực thành viên
-    <button id="btnOpenTermsFromFooter">Điều khoản & hướng dẫn</button>
-  </footer>
+  <footer class="credit">© TP Design PPTX — Khu vực thành viên</footer>
 </div>
 
-<!-- ===================== MODAL WELCOME (THÔNG BÁO LƯU Ý KHI ĐĂNG NHẬP) ===================== -->
-<div class="modal-overlay" id="welcomeNoticeOverlay">
-  <div class="modal-box glass" style="position:relative; max-width:440px; text-align:center;">
-    <button class="modal-close" id="noticeClose">✕</button>
-    <div style="padding:28px 22px 24px;">
-      <div style="font-size:42px; margin-bottom:8px;">📢</div>
-      <h3 style="font-family:var(--font-display); font-size:18px; margin:0 0 6px;">Lưu Ý Tải File</h3>
-      <p style="font-size:12.5px; color:var(--text-faint); margin:0;">Vui lòng đọc kỹ trước khi tiến hành tải mẫu:</p>
-      
-      <ul class="notice-list">
-        <li>Mẫu <strong>slide định dạng PowerPoint (.pptx)</strong> hỗ trợ tải về trực tiếp trên cả <strong>iPhone (iOS)</strong> và <strong>Máy tính</strong>.</li>
-        <li>Mẫu <strong>poster định dạng hình ảnh (.png)</strong> bắt buộc phải <strong>sử dụng Máy tính</strong> để tải về và giải nén chuẩn nhất.</li>
-      </ul>
-
-      <button class="btn btn-primary" id="btnConfirmNotice" style="width:100%; padding:12px; font-size:14px; font-weight:700;">
-        Đã hiểu và tiếp tục
-      </button>
+<!-- MODAL ĐỔI MẬT KHẨU -->
+<div class="modal-overlay" id="changePassOverlay">
+  <div class="modal-box glass" style="padding:24px;">
+    <button class="modal-close" id="cpClose">✕</button>
+    <h3 style="margin-top:0;">🔑 Đổi Mật Khẩu</h3>
+    <div class="field">
+      <label>Mật khẩu cũ</label>
+      <input type="password" id="oldPasswordInput" placeholder="Nhập mật khẩu hiện tại">
     </div>
+    <div class="field">
+      <label>Mật khẩu mới</label>
+      <input type="password" id="newPasswordInput" placeholder="Nhập mật khẩu mới">
+    </div>
+    <button class="btn btn-primary" id="btnSubmitChangePass" style="width:100%; margin-top:10px;">Cập nhật mật khẩu</button>
   </div>
 </div>
 
-<!-- ===================== MODAL PREVIEW ===================== -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-box glass" style="position:relative;">
-    <button class="modal-close" id="modalClose">✕</button>
-    <div class="modal-imgwrap">
-      <button class="modal-nav prev" id="modalPrev">‹</button>
-      <img id="modalImg" src="" alt="Xem trước">
-      <div class="modal-watermark" id="modalWatermark"></div>
-      <button class="modal-nav next" id="modalNext">›</button>
-    </div>
-    <div class="modal-dots" id="modalDots"></div>
-    <div class="modal-info">
-      <h3 id="modalTitle"></h3>
-      <p id="modalDesc"></p>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <span class="badge-diem" id="modalDiem"></span>
-        <button class="btn btn-primary" id="modalDownloadBtn" style="flex:1;">Tải về</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== MODAL BẢO TẢI SLIDE TRỰC TIẾP ===================== -->
+<!-- MODAL BẢO TẢI SLIDE chuẩn iOS -->
 <div class="modal-overlay" id="downloadModalOverlay">
-  <div class="modal-box glass" style="position:relative; max-width:420px; text-align:center;">
+  <div class="modal-box glass" style="text-align:center; padding:28px 20px;">
     <button class="modal-close" id="dlModalClose">✕</button>
-    <div style="padding:28px 20px;">
-      <div style="font-size:46px; margin-bottom:8px;">📊</div>
-      <h3 style="font-family:var(--font-display); font-size:18px; margin:0 0 6px;">Đã trừ điểm thành công!</h3>
-      <p style="font-size:13px; color:var(--text-dim); margin-bottom:20px; line-height:1.5;" id="dlModalSubText">
-        Chạm nút bên dưới để mở link tải file về máy.
-      </p>
-      <a id="dlModalLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:block; width:100%; padding:12px; text-decoration:none; font-size:14.5px; font-weight:700;">
-        📥 Mở Link Tải File
-      </a>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== MODAL TERMS ===================== -->
-<div class="modal-overlay" id="termsOverlay">
-  <div class="modal-box glass" style="position:relative;">
-    <button class="modal-close" id="termsClose">✕</button>
-    <div class="terms-body">
-      <h2>Điều khoản sử dụng & hướng dẫn nạp điểm</h2>
-      <p class="terms-sub">Vui lòng đọc kỹ trước khi sử dụng khu vực thành viên.</p>
-
-      <div class="terms-section">
-        <h4><span class="ic">⭐</span>Cách nạp điểm</h4>
-        <ul>
-          <li>Mỗi mẫu thiết kế yêu cầu một số điểm nhất định để tải về, hiển thị ngay trên thẻ mẫu.</li>
-          <li>Để nạp thêm điểm, nhắn tin trực tiếp cho admin qua Zalo bên dưới, kèm theo tên đăng nhập của bạn.</li>
-          <li>Admin xác nhận và cộng điểm vào tài khoản, thường trong vài phút trong giờ làm việc.</li>
-        </ul>
-      </div>
-
-      <div class="terms-contact">
-        <div class="tc-text">Liên hệ admin: <strong>Zalo 0773 181 186</strong></div>
-        <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center;">💬 Nhắn Zalo ngay</a>
-      </div>
-
-      <div class="terms-section">
-        <h4><span class="ic">📥</span>Quy định tải & sử dụng mẫu</h4>
-        <ul>
-          <li>Điểm sẽ bị trừ mỗi lần bấm "Tải về" thành công, vui lòng kiểm tra kỹ mẫu ở phần "Xem trước" trước khi tải.</li>
-          <li>Mẫu đã tải chỉ dùng cho mục đích cá nhân hoặc công việc của thành viên.</li>
-        </ul>
-      </div>
-    </div>
+    <div style="font-size:46px; margin-bottom:8px;">📊</div>
+    <h3>Đã trừ điểm thành công!</h3>
+    <p style="font-size:13px; color:var(--text-dim); margin-bottom:20px;" id="dlModalSubText">Chạm nút bên dưới để tải Slide (.pptx) về máy.</p>
+    <a id="dlModalLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:block; text-decoration:none; padding:12px;">📥 Tải Slide PPTX Ngay</a>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-/* ============ CONFIG ============ */
 const CONFIG = {
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwzclT9nn4SzbIVg9guGTtrTDu9trrUE1HjaIR2PArq7frs1JOPHkNtGX8XiYCCPcCCBw/exec"
 };
 
-/* ============ STATE ============ */
 let currentUser = null; 
 let posts = [];
-let currentPreview = { post: null, index: 0 };
-let preloadedImages = {};
 
-/* ============ SESSION ============ */
 function saveSession() {
-  if (currentUser) {
-    localStorage.setItem("tp_user", JSON.stringify(currentUser));
-  } else {
-    localStorage.removeItem("tp_user");
-  }
+  if (currentUser) localStorage.setItem("tp_user", JSON.stringify(currentUser));
+  else localStorage.removeItem("tp_user");
 }
 
 function checkSessionOnLoad() {
   const saved = localStorage.getItem("tp_user");
   if (saved) {
-    try {
-      currentUser = JSON.parse(saved);
-      enterApp();
-    } catch(e) {
-      localStorage.removeItem("tp_user");
-    }
+    try { currentUser = JSON.parse(saved); enterApp(); } catch(e) { localStorage.removeItem("tp_user"); }
   }
 }
 
-/* ============ TOAST ============ */
-function showToast(msg, type = "ok", zaloContact = false) {
+function showToast(msg, type = "ok") {
   const el = document.getElementById("toast");
-  el.innerHTML = zaloContact
-    ? `${escapeHtml(msg)} <a href="https://zalo.me/84773181186" target="_blank" style="color:#33e6c9;font-weight:800;text-decoration:underline;">Liên hệ Zalo</a>`
-    : escapeHtml(msg);
+  el.textContent = msg;
   el.className = "show " + type;
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => { el.className = type; }, zaloContact ? 6000 : 3000);
+  setTimeout(() => { el.className = type; }, 3000);
 }
 
 async function callApi(params) {
   const url = new URL(CONFIG.APPS_SCRIPT_URL);
   Object.keys(params).forEach(k => url.searchParams.set(k, params[k]));
   const res = await fetch(url.toString());
-  if (!res.ok) throw new Error("Lỗi kết nối máy chủ");
   return res.json();
 }
 
-/* ============ LOGIN ============ */
-document.getElementById("btnLogin").addEventListener("click", doLogin);
-document.getElementById("loginPassword").addEventListener("keydown", e => {
-  if (e.key === "Enter") doLogin();
-});
-
-async function doLogin() {
+document.getElementById("btnLogin").addEventListener("click", async () => {
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value;
-  const errEl = document.getElementById("loginError");
-  errEl.textContent = "";
+  if (!username || !password) return;
 
-  if (!username || !password) {
-    errEl.textContent = "Vui lòng nhập đầy đủ thông tin.";
-    return;
+  const data = await callApi({ action: "login", username, password });
+  if (data.success) {
+    currentUser = { username: data.username, password: password, hoTen: data.hoTen, diem: data.diem };
+    saveSession();
+    enterApp();
+  } else {
+    document.getElementById("loginError").textContent = data.message;
   }
-
-  const btn = document.getElementById("btnLogin");
-  btn.disabled = true;
-  btn.textContent = "Đang kiểm tra...";
-
-  try {
-    const data = await callApi({ action: "login", username, password });
-    if (data.success) {
-      currentUser = {
-        username: data.username,
-        password: password,
-        hoTen: data.hoTen,
-        diem: data.diem
-      };
-      saveSession();
-      enterApp();
-    } else {
-      errEl.textContent = data.message || "Đăng nhập thất bại.";
-    }
-  } catch (e) {
-    errEl.textContent = "Không thể kết nối máy chủ. Thử lại sau.";
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Đăng nhập";
-  }
-}
-
-document.getElementById("btnLogout").addEventListener("click", () => {
-  currentUser = null;
-  saveSession();
-  document.getElementById("appScreen").style.display = "none";
-  document.getElementById("loginScreen").style.display = "block";
-  document.getElementById("loginUsername").value = "";
-  document.getElementById("loginPassword").value = "";
 });
 
-document.getElementById("btnRefresh").addEventListener("click", refreshPointsAndPosts);
-
-async function refreshPointsAndPosts() {
-  if (!currentUser) return;
-  const btn = document.getElementById("btnRefresh");
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin">🔄</span> Đang làm mới...';
-
-  try {
-    const data = await callApi({
-      action: "login",
-      username: currentUser.username,
-      password: currentUser.password
-    });
-    if (data.success) {
-      currentUser.diem = data.diem;
-      document.getElementById("userPoints").textContent = currentUser.diem;
-      saveSession();
-      await loadPosts();
-      showToast("Đã làm mới điểm và danh sách bài.", "ok");
-    } else {
-      showToast(data.message || "Không thể làm mới.", "err");
-    }
-  } catch (e) {
-    showToast("Không thể kết nối máy chủ.", "err");
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = "🔄 Làm mới";
-  }
-}
+document.getElementById("btnLogout").addEventListener("click", () => {
+  currentUser = null; saveSession();
+  document.getElementById("appScreen").style.display = "none";
+  document.getElementById("loginScreen").style.display = "block";
+});
 
 function enterApp() {
   document.getElementById("loginScreen").style.display = "none";
@@ -743,280 +388,89 @@ function enterApp() {
   document.getElementById("userGreeting").textContent = "Xin chào, " + currentUser.hoTen;
   document.getElementById("userPoints").textContent = currentUser.diem;
   loadPosts();
-  
-  // HIỂN THỊ POPUP THÔNG BÁO LƯU Ý TẢI FILE
-  showWelcomeNotice();
-}
-
-function showWelcomeNotice() {
-  document.getElementById("welcomeNoticeOverlay").style.display = "flex";
-}
-
-document.getElementById("noticeClose").addEventListener("click", () => {
-  document.getElementById("welcomeNoticeOverlay").style.display = "none";
-});
-document.getElementById("btnConfirmNotice").addEventListener("click", () => {
-  document.getElementById("welcomeNoticeOverlay").style.display = "none";
-});
-
-/* ============ WATERMARK ============ */
-function buildWatermarkDataUri(text) {
-  const safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const svg = `
-    <svg xmlns='http://www.w3.org/2000/svg' width='260' height='130'>
-      <g transform='rotate(-25 130 65)'>
-        <text x='15' y='60' font-size='15' font-weight='800' fill='rgba(255, 255, 255, 0.45)' font-family="Sora, 'Be Vietnam Pro', Arial, sans-serif" letter-spacing="1px">${safe}</text>
-      </g>
-    </svg>`;
-  return "url(\"data:image/svg+xml;utf8," + encodeURIComponent(svg.trim()) + "\")";
-}
-
-function watermarkText() { return "TP DESIGN PPTX"; }
-
-function setupModalWatermark() {
-  const el = document.getElementById("modalWatermark");
-  if (!el) return;
-  el.style.backgroundImage = buildWatermarkDataUri(watermarkText());
-}
-
-/* ============ CẢNH BÁO SAO CHÉP ============ */
-let _lastWarnTime = 0;
-function showCopyWarning() {
-  const now = Date.now();
-  if (now - _lastWarnTime < 2500) return;
-  _lastWarnTime = now;
-  showToast("⚠️ Nghiêm cấm sao chép, chụp hoặc tải ảnh xem trước khi chưa được phép.", "err");
-}
-
-/* ============ LOAD POSTS ============ */
-function renderSkeleton() {
-  const grid = document.getElementById("postsGrid");
-  grid.innerHTML = "";
-  for (let i = 0; i < 4; i++) {
-    const card = document.createElement("div");
-    card.className = "card glass skeleton";
-    card.innerHTML = `<div class="skel-thumb"></div><div class="skel-line" style="width:70%"></div><div class="skel-line" style="width:90%"></div>`;
-    grid.appendChild(card);
-  }
 }
 
 async function loadPosts() {
-  renderSkeleton();
-  try {
-    const data = await callApi({
-      action: "getPosts",
-      username: currentUser.username,
-      password: currentUser.password
-    });
-    if (data.success) {
-      posts = data.data || [];
-      renderPosts();
-    } else {
-      showToast(data.message || "Không tải được danh sách bài.", "err");
-    }
-  } catch (e) {
-    showToast("Không thể kết nối máy chủ.", "err");
-  }
+  const data = await callApi({ action: "getPosts", username: currentUser.username, password: currentUser.password });
+  if (data.success) { posts = data.data || []; renderPosts(); }
 }
 
 function renderPosts() {
   const grid = document.getElementById("postsGrid");
-  const emptyState = document.getElementById("emptyState");
   grid.innerHTML = "";
-
-  if (!posts.length) {
-    emptyState.style.display = "block";
-    return;
-  }
-  emptyState.style.display = "none";
-
   posts.forEach(post => {
     const thumb = (post.anhPreview && post.anhPreview[0]) || "";
     const card = document.createElement("div");
     card.className = "card glass";
     card.innerHTML = `
-      <div class="thumb-wrap">
-        <img class="card-thumb" src="${escapeAttr(thumb)}" alt="${escapeAttr(post.tieuDe)}" loading="lazy" onerror="this.style.opacity=0.2">
-        <div class="card-watermark"></div>
-      </div>
+      <img class="card-thumb" src="${thumb}">
       <div class="card-body">
-        <div class="card-title">${escapeHtml(post.tieuDe)}</div>
-        <div class="card-desc">${escapeHtml(post.moTa)}</div>
-        <div class="card-meta">
-          <span class="badge-diem">⭐ ${post.diemCan} điểm</span>
-          <span style="font-size:10.5px;color:var(--text-faint)">${escapeHtml(post.ngayDang || "")}</span>
-        </div>
-        <div class="card-actions">
-          <button class="btn btn-outline" data-preview="${post.id}">Xem trước</button>
-          <button class="btn btn-primary" id="btn-dl-${post.id}" data-download="${post.id}">Tải về</button>
-        </div>
+        <div class="card-title">${post.tieuDe}</div>
+        <div class="card-desc">${post.moTa}</div>
+        <button class="btn btn-primary" onclick="handleDownload('${post.id}')">Tải về (${post.diemCan} điểm)</button>
       </div>
     `;
     grid.appendChild(card);
   });
-
-  const wmUri = buildWatermarkDataUri(watermarkText());
-  grid.querySelectorAll(".card-watermark").forEach(el => { el.style.backgroundImage = wmUri; });
-
-  grid.querySelectorAll("[data-preview]").forEach(btn => {
-    btn.addEventListener("click", () => openPreview(btn.getAttribute("data-preview")));
-  });
-  grid.querySelectorAll("[data-download]").forEach(btn => {
-    btn.addEventListener("click", () => handleDownload(btn.getAttribute("data-download"), btn));
-  });
-  grid.querySelectorAll(".card-thumb").forEach((img, i) => {
-    img.addEventListener("click", () => openPreview(posts[i].id));
-  });
 }
 
-function escapeHtml(str) {
-  return String(str || "").replace(/[&<>"']/g, m => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  }[m]));
+// XỬ LÝ TẢI FILE CHUẨN IOS SAFARI
+async function handleDownload(id) {
+  const data = await callApi({ action: "download", username: currentUser.username, password: currentUser.password, id: id });
+  if (data.success) {
+    currentUser.diem = data.diemConLai;
+    document.getElementById("userPoints").textContent = currentUser.diem;
+    saveSession();
+
+    document.getElementById("dlModalLinkBtn").href = data.link;
+    document.getElementById("downloadModalOverlay").style.display = "flex";
+  } else {
+    showToast(data.message, "err");
+  }
 }
-function escapeAttr(str) { return escapeHtml(str); }
-
-/* ============ PREVIEW MODAL ============ */
-function preloadPostImages(post) {
-  if (!post || !post.anhPreview || !post.anhPreview.length) return;
-  post.anhPreview.forEach(url => {
-    if (url && !preloadedImages[url]) {
-      const img = new Image();
-      img.src = url;
-      preloadedImages[url] = img;
-    }
-  });
-}
-
-function openPreview(id) {
-  const post = posts.find(p => p.id === id);
-  if (!post) return;
-  
-  preloadPostImages(post);
-  currentPreview = { post, index: 0 };
-  renderPreviewModal();
-  setupModalWatermark();
-  document.getElementById("modalOverlay").style.display = "flex";
-}
-
-function renderPreviewModal() {
-  const { post, index } = currentPreview;
-  const imgs = post.anhPreview && post.anhPreview.length ? post.anhPreview : [""];
-  const modalImg = document.getElementById("modalImg");
-  
-  modalImg.style.opacity = "0.3";
-  modalImg.src = imgs[index] || "";
-  
-  modalImg.onload = () => { modalImg.style.opacity = "1"; };
-  modalImg.onerror = () => { modalImg.style.opacity = "1"; };
-  
-  document.getElementById("modalTitle").textContent = post.tieuDe;
-  document.getElementById("modalDesc").textContent = post.moTa;
-  document.getElementById("modalDiem").textContent = "⭐ " + post.diemCan + " điểm";
-  document.getElementById("modalDots").textContent = imgs.length > 1 ? `${index + 1} / ${imgs.length}` : "";
-  document.getElementById("modalPrev").style.display = imgs.length > 1 ? "flex" : "none";
-  document.getElementById("modalNext").style.display = imgs.length > 1 ? "flex" : "none";
-}
-
-document.getElementById("modalPrev").addEventListener("click", () => {
-  const imgs = currentPreview.post.anhPreview;
-  currentPreview.index = (currentPreview.index - 1 + imgs.length) % imgs.length;
-  renderPreviewModal();
-});
-document.getElementById("modalNext").addEventListener("click", () => {
-  const imgs = currentPreview.post.anhPreview;
-  currentPreview.index = (currentPreview.index + 1) % imgs.length;
-  renderPreviewModal();
-});
-document.getElementById("modalClose").addEventListener("click", closePreview);
-document.getElementById("modalOverlay").addEventListener("click", e => { if (e.target.id === "modalOverlay") closePreview(); });
-function closePreview() { document.getElementById("modalOverlay").style.display = "none"; }
-document.getElementById("modalDownloadBtn").addEventListener("click", () => {
-  const id = currentPreview.post.id;
-  closePreview();
-  const mainBtn = document.getElementById(`btn-dl-${id}`);
-  handleDownload(id, mainBtn);
-});
-
-/* ============ MODAL TERMS & MODAL TẢI SLIDE ============ */
-function openTerms() { document.getElementById("termsOverlay").style.display = "flex"; }
-function closeTerms() { document.getElementById("termsOverlay").style.display = "none"; }
-document.getElementById("termsClose").addEventListener("click", closeTerms);
-document.getElementById("termsOverlay").addEventListener("click", e => { if (e.target.id === "termsOverlay") closeTerms(); });
-document.getElementById("btnOpenTermsFromLogin").addEventListener("click", openTerms);
-document.getElementById("btnOpenTermsFromBanner").addEventListener("click", openTerms);
-document.getElementById("btnOpenTermsFromSection").addEventListener("click", openTerms);
-document.getElementById("btnOpenTermsFromFooter").addEventListener("click", openTerms);
 
 document.getElementById("dlModalClose").addEventListener("click", () => {
   document.getElementById("downloadModalOverlay").style.display = "none";
 });
-document.getElementById("dlModalLinkBtn").addEventListener("click", () => {
-  document.getElementById("downloadModalOverlay").style.display = "none";
+
+// CHỨC NĂNG ĐỔI MẬT KHẨU
+document.getElementById("btnChangePassModal").addEventListener("click", () => {
+  document.getElementById("changePassOverlay").style.display = "flex";
+});
+document.getElementById("cpClose").addEventListener("click", () => {
+  document.getElementById("changePassOverlay").style.display = "none";
 });
 
-document.addEventListener("keydown", e => { 
-  if (e.key === "Escape") { 
-    closeTerms(); 
-    closePreview(); 
-    document.getElementById("downloadModalOverlay").style.display = "none"; 
-    document.getElementById("welcomeNoticeOverlay").style.display = "none"; 
-  } 
-});
+document.getElementById("btnSubmitChangePass").addEventListener("click", async () => {
+  const oldPass = document.getElementById("oldPasswordInput").value;
+  const newPass = document.getElementById("newPasswordInput").value;
 
-/* ============ DOWNLOAD (CƠ CHẾ XỬ LÝ CHUYÊN CHO SLIDE PPTX) ============ */
-async function handleDownload(id, btnEl) {
-  if (!currentUser) return;
-  const post = posts.find(p => p.id === id);
-  if (!post) return;
-
-  if (btnEl) { btnEl.disabled = true; btnEl.textContent = "Đang xử lý..."; }
-
-  try {
-    const data = await callApi({
-      action: "download",
-      username: currentUser.username,
-      password: currentUser.password,
-      id: id
-    });
-
-    if (data.success) {
-      currentUser.diem = data.diemConLai;
-      document.getElementById("userPoints").textContent = currentUser.diem;
-      saveSession();
-      
-      if (data.link) {
-        let slideUrl = data.link.trim();
-        
-        if (slideUrl.includes("docs.google.com/presentation/d/")) {
-          const fileId = slideUrl.split("/presentation/d/")[1].split("/")[0];
-          slideUrl = `https://docs.google.com/presentation/d/${fileId}/export/pptx`;
-        }
-
-        const linkBtn = document.getElementById("dlModalLinkBtn");
-        linkBtn.href = slideUrl;
-        
-        document.getElementById("dlModalSubText").textContent = `Bạn đã đổi thành công "${post.tieuDe}". Bấm nút bên dưới để mở link tải file về thiết bị.`;
-        
-        document.getElementById("downloadModalOverlay").style.display = "flex";
-      }
-    } else {
-      showToast(data.message || "Không thể tải về.", "err", !!data.canNapDiem);
-    }
-  } catch (e) {
-    showToast("Không thể kết nối máy chủ.", "err");
-  } finally {
-    if (btnEl) { btnEl.disabled = false; btnEl.textContent = "Tải về"; }
+  if (oldPass !== currentUser.password) {
+    showToast("Mật khẩu cũ không chính xác", "err");
+    return;
   }
-}
+  if (!newPass || newPass.length < 4) {
+    showToast("Mật khẩu mới phải từ 4 ký tự", "err");
+    return;
+  }
 
-/* ============ CHỐNG SAO CHÉP ============ */
-document.addEventListener("contextmenu", e => { if (e.target.tagName === "IMG") { e.preventDefault(); showCopyWarning(); } });
-document.addEventListener("dragstart", e => { if (e.target.tagName === "IMG") { e.preventDefault(); showCopyWarning(); } });
-document.addEventListener("keydown", e => {
-  const key = e.key.toLowerCase();
-  if ((e.ctrlKey || e.metaKey) && (key === "s" || key === "u" || key === "p")) { e.preventDefault(); showCopyWarning(); }
-  if (key === "printscreen") { showCopyWarning(); }
+  const data = await callApi({
+    action: "changePassword",
+    username: currentUser.username,
+    password: currentUser.password,
+    newPassword: newPass
+  });
+
+  if (data.success) {
+    currentUser.password = newPass;
+    saveSession();
+    showToast("Đổi mật khẩu thành công!", "ok");
+    document.getElementById("changePassOverlay").style.display = "none";
+    document.getElementById("oldPasswordInput").value = "";
+    document.getElementById("newPasswordInput").value = "";
+  } else {
+    showToast(data.message, "err");
+  }
 });
 
 window.addEventListener("DOMContentLoaded", checkSessionOnLoad);
