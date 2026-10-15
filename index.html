@@ -151,7 +151,12 @@
     padding: 9px 16px;
     font-size: 13px;
     transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
+  .btn:disabled { opacity: 0.7; cursor: wait; }
 
   .btn-primary {
     background: linear-gradient(120deg, var(--aurora-violet), var(--aurora-pink));
@@ -169,6 +174,17 @@
     color: var(--aurora-cyan);
     border: 1px solid rgba(51,230,201,0.45);
   }
+
+  /* Spinner nhỏ trong nút */
+  .spin {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .topup-banner {
     display: flex;
@@ -196,6 +212,7 @@
     background: rgba(255,255,255,0.05);
     color: var(--text-main);
     outline: none;
+    font-size: 16px; /* tránh Safari iOS tự zoom */
   }
 
   #appScreen { display: none; }
@@ -231,6 +248,7 @@
     inset: 0;
     background: rgba(3,2,12,0.72);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     z-index: 100;
     align-items: center;
     justify-content: center;
@@ -238,6 +256,52 @@
   }
   .modal-box { max-width: 440px; width: 100%; overflow: hidden; position: relative; }
   .modal-close { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+
+  .dl-links { display: flex; flex-direction: column; gap: 10px; }
+  .dl-links a { text-decoration: none; padding: 12px; display: flex; }
+  .dl-hint {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin: 14px 0 0;
+    line-height: 1.5;
+  }
+  .dl-status {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--success-soft);
+    border: 1px solid rgba(63,224,165,0.4);
+    color: #8ff5cf;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .dl-status.show { display: block; }
+
+  /* Overlay chờ khi đang xử lý trừ điểm */
+  #busyOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: rgba(3,2,12,0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  #busyOverlay .big-spin {
+    width: 42px; height: 42px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top-color: var(--aurora-cyan);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
 
   #toast {
     position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); padding: 12px 20px; border-radius: 12px; font-size: 13.5px; font-weight: 700; z-index: 200; opacity: 0; pointer-events: none; transition: all 0.25s ease;
@@ -264,11 +328,11 @@
 
     <div class="field">
       <label>Tên đăng nhập</label>
-      <input type="text" id="loginUsername" placeholder="Nhập tài khoản">
+      <input type="text" id="loginUsername" placeholder="Nhập tài khoản" autocapitalize="none" autocomplete="username">
     </div>
     <div class="field">
       <label>Mật khẩu</label>
-      <input type="password" id="loginPassword" placeholder="Nhập mật khẩu">
+      <input type="password" id="loginPassword" placeholder="Nhập mật khẩu" autocomplete="current-password">
     </div>
     <button class="btn btn-primary" id="btnLogin" style="width:100%;">Đăng nhập</button>
     <div id="loginError" style="color:var(--danger); font-size:13px; margin-top:10px;"></div>
@@ -281,6 +345,7 @@
       <div class="user-info">
         <span id="userGreeting"></span>
         <span class="point-pill">⭐ <span id="userPoints">0</span> điểm</span>
+        <button class="btn btn-ghost" id="btnRefresh">🔄 Làm mới</button>
         <button class="btn btn-ghost" id="btnChangePassModal">🔑 Đổi MK</button>
         <button class="btn btn-ghost" id="btnLogout">Đăng xuất</button>
       </div>
@@ -288,7 +353,7 @@
 
     <div class="topup-banner glass">
       <div>Hết điểm tải mẫu? <strong>Liên hệ admin để nạp thêm điểm</strong>.</div>
-      <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" style="text-decoration:none;">💬 Zalo Admin</a>
+      <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">💬 Zalo Admin</a>
     </div>
 
     <div class="grid" id="postsGrid"></div>
@@ -308,33 +373,48 @@
     </div>
     <div class="field">
       <label>Mật khẩu mới</label>
-      <input type="password" id="newPasswordInput" placeholder="Nhập mật khẩu mới">
+      <input type="password" id="newPasswordInput" placeholder="Nhập mật khẩu mới (từ 4 ký tự)">
+    </div>
+    <div class="field">
+      <label>Nhập lại mật khẩu mới</label>
+      <input type="password" id="confirmPasswordInput" placeholder="Nhập lại mật khẩu mới">
     </div>
     <button class="btn btn-primary" id="btnSubmitChangePass" style="width:100%; margin-top:10px;">Cập nhật mật khẩu</button>
   </div>
 </div>
 
-<!-- MODAL BẢO TẢI SLIDE chuẩn iOS -->
+<!-- MODAL TẢI FILE (chuẩn iOS Safari) -->
 <div class="modal-overlay" id="downloadModalOverlay">
   <div class="modal-box glass" style="text-align:center; padding:28px 20px;">
     <button class="modal-close" id="dlModalClose">✕</button>
     <div style="font-size:46px; margin-bottom:8px;">📊</div>
-    <h3>Đã trừ điểm thành công!</h3>
-    <p style="font-size:13px; color:var(--text-dim); margin-bottom:20px;" id="dlModalSubText">Chạm nút bên dưới để tải Slide (.pptx) về máy.</p>
-    <a id="dlModalLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:block; text-decoration:none; padding:12px;">📥 Tải Slide PPTX Ngay</a>
+    <h3 style="margin-top:0;">Đã trừ điểm thành công!</h3>
+    <p style="font-size:13px; color:var(--text-dim); margin-bottom:20px;" id="dlModalSubText">Chạm nút bên dưới để tải file về máy.</p>
+    <div class="dl-links" id="dlLinks"></div>
+    <div class="dl-status" id="dlStatus">⬇️ Đang tải… xem tiến trình ở biểu tượng mũi tên ↓ trên thanh địa chỉ Safari (hoặc mục Tải xuống của trình duyệt).</div>
+    <p class="dl-hint">Nếu Safari hiện hộp thoại “Bạn có muốn tải xuống…?” hãy bấm <b>Tải xuống</b>. Bấm lại nút nếu tải chưa bắt đầu — bạn <b>không bị trừ điểm lần nữa</b>.</p>
   </div>
+</div>
+
+<!-- OVERLAY CHỜ XỬ LÝ -->
+<div id="busyOverlay">
+  <div class="big-spin"></div>
+  <div id="busyText">Đang xử lý…</div>
 </div>
 
 <div id="toast"></div>
 
 <script>
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwzclT9nn4SzbIVg9guGTtrTDu9trrUE1HjaIR2PArq7frs1JOPHkNtGX8XiYCCPcCCBw/exec"
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwzclT9nn4SzbIVg9guGTtrTDu9trrUE1HjaIR2PArq7frs1JOPHkNtGX8XiYCCPcCCBw/exec",
+  API_TIMEOUT_MS: 30000
 };
 
-let currentUser = null; 
+let currentUser = null;
 let posts = [];
+let downloading = false; // chống bấm nhiều lần => tránh trừ điểm nhiều lần
 
+/* ---------------- SESSION ---------------- */
 function saveSession() {
   if (currentUser) localStorage.setItem("tp_user", JSON.stringify(currentUser));
   else localStorage.removeItem("tp_user");
@@ -347,34 +427,69 @@ function checkSessionOnLoad() {
   }
 }
 
+/* ---------------- UI HELPERS ---------------- */
 function showToast(msg, type = "ok") {
   const el = document.getElementById("toast");
   el.textContent = msg;
   el.className = "show " + type;
-  setTimeout(() => { el.className = type; }, 3000);
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => { el.className = type; }, 3500);
 }
 
+function showBusy(text) {
+  document.getElementById("busyText").textContent = text || "Đang xử lý…";
+  document.getElementById("busyOverlay").style.display = "flex";
+}
+function hideBusy() {
+  document.getElementById("busyOverlay").style.display = "none";
+}
+
+function escapeHtml(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+
+/* ---------------- API (có timeout + bắt lỗi, không bao giờ xoay vô hạn) ---------------- */
 async function callApi(params) {
   const url = new URL(CONFIG.APPS_SCRIPT_URL);
   Object.keys(params).forEach(k => url.searchParams.set(k, params[k]));
-  const res = await fetch(url.toString());
-  return res.json();
+
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), CONFIG.API_TIMEOUT_MS);
+  try {
+    const res = await fetch(url.toString(), { signal: ctrl.signal });
+    return await res.json();
+  } catch (err) {
+    const msg = err && err.name === "AbortError"
+      ? "Máy chủ phản hồi quá lâu, vui lòng thử lại."
+      : "Lỗi kết nối mạng, vui lòng thử lại.";
+    return { success: false, message: msg, networkError: true };
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
-document.getElementById("btnLogin").addEventListener("click", async () => {
+/* ---------------- LOGIN / LOGOUT ---------------- */
+async function doLogin() {
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value;
   if (!username || !password) return;
 
+  const btn = document.getElementById("btnLogin");
+  btn.disabled = true;
+  document.getElementById("loginError").textContent = "";
   const data = await callApi({ action: "login", username, password });
+  btn.disabled = false;
+
   if (data.success) {
     currentUser = { username: data.username, password: password, hoTen: data.hoTen, diem: data.diem };
     saveSession();
     enterApp();
   } else {
-    document.getElementById("loginError").textContent = data.message;
+    document.getElementById("loginError").textContent = data.message || "Đăng nhập thất bại";
   }
-});
+}
+document.getElementById("btnLogin").addEventListener("click", doLogin);
+document.getElementById("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
 
 document.getElementById("btnLogout").addEventListener("click", () => {
   currentUser = null; saveSession();
@@ -390,9 +505,11 @@ function enterApp() {
   loadPosts();
 }
 
+/* ---------------- POSTS ---------------- */
 async function loadPosts() {
   const data = await callApi({ action: "getPosts", username: currentUser.username, password: currentUser.password });
   if (data.success) { posts = data.data || []; renderPosts(); }
+  else showToast(data.message || "Không tải được danh sách mẫu", "err");
 }
 
 function renderPosts() {
@@ -403,37 +520,123 @@ function renderPosts() {
     const card = document.createElement("div");
     card.className = "card glass";
     card.innerHTML = `
-      <img class="card-thumb" src="${thumb}">
+      <img class="card-thumb" src="${escapeHtml(thumb)}" loading="lazy" alt="">
       <div class="card-body">
-        <div class="card-title">${post.tieuDe}</div>
-        <div class="card-desc">${post.moTa}</div>
-        <button class="btn btn-primary" onclick="handleDownload('${post.id}')">Tải về (${post.diemCan} điểm)</button>
+        <div class="card-title">${escapeHtml(post.tieuDe)}</div>
+        <div class="card-desc">${escapeHtml(post.moTa)}</div>
+        <button class="btn btn-primary btn-dl" data-id="${escapeHtml(post.id)}">Tải về (${escapeHtml(post.diemCan)} điểm)</button>
       </div>
     `;
     grid.appendChild(card);
   });
 }
 
-// XỬ LÝ TẢI FILE CHUẨN IOS SAFARI
-async function handleDownload(id) {
-  const data = await callApi({ action: "download", username: currentUser.username, password: currentUser.password, id: id });
-  if (data.success) {
-    currentUser.diem = data.diemConLai;
-    document.getElementById("userPoints").textContent = currentUser.diem;
-    saveSession();
+// Bấm nút tải (event delegation, không dùng onclick inline)
+document.getElementById("postsGrid").addEventListener("click", e => {
+  const btn = e.target.closest(".btn-dl");
+  if (btn) handleDownload(btn.dataset.id, btn);
+});
 
-    document.getElementById("dlModalLinkBtn").href = data.link;
-    document.getElementById("downloadModalOverlay").style.display = "flex";
-  } else {
-    showToast(data.message, "err");
+/* ---------------- CHUẨN HOÁ LINK TẢI ----------------
+   Link Google Drive dạng /file/d/ID/view hoặc open?id=ID chỉ MỞ TRANG XEM
+   (Safari hỏi xác nhận rồi thoát / ảnh poster thì xoay mãi).
+   Đổi sang link tải trực tiếp => Safari tải ngay, hiện tiến trình. */
+function normalizeDownloadUrl(raw) {
+  if (!raw) return "";
+  const link = String(raw).trim();
+
+  // Google Slides/Docs -> xuất PPTX
+  let m = link.match(/docs\.google\.com\/presentation\/d\/([\w-]+)/);
+  if (m) return "https://docs.google.com/presentation/d/" + m[1] + "/export/pptx";
+
+  // Google Drive file
+  if (/drive\.google\.com|drive\.usercontent\.google\.com/.test(link)) {
+    m = link.match(/\/file\/d\/([\w-]+)/) || link.match(/[?&]id=([\w-]+)/) || link.match(/\/d\/([\w-]+)/);
+    if (m) return "https://drive.usercontent.google.com/download?id=" + m[1] + "&export=download&confirm=t";
   }
+  return link; // link khác (Apps Script, host riêng...) giữ nguyên
+}
+
+function guessLabel(url, idx, total) {
+  const lower = url.toLowerCase();
+  let name = "📥 Tải file";
+  if (/pptx|presentation/.test(lower)) name = "📥 Tải Slide PPTX";
+  else if (/\.(png|jpe?g|webp|gif)(\?|$)/.test(lower)) name = "🖼️ Tải ảnh Poster";
+  else if (/\.pdf(\?|$)/.test(lower)) name = "📄 Tải PDF";
+  return total > 1 ? name + " (" + (idx + 1) + "/" + total + ")" : name;
+}
+
+function extractLinks(data) {
+  let list = [];
+  const src = data.links || data.link;
+  if (Array.isArray(src)) list = src;
+  else if (typeof src === "string") list = src.split(/[\n,|]+/);
+  return list.map(s => normalizeDownloadUrl(s)).filter(Boolean);
+}
+
+/* ---------------- XỬ LÝ TẢI FILE ---------------- */
+async function handleDownload(id, btn) {
+  if (downloading) return;
+  downloading = true;
+
+  const oldHtml = btn ? btn.innerHTML : "";
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Đang xử lý…'; }
+  showBusy("Đang kiểm tra điểm và chuẩn bị file…");
+
+  let data;
+  try {
+    data = await callApi({ action: "download", username: currentUser.username, password: currentUser.password, id: id });
+  } finally {
+    hideBusy();
+    if (btn) { btn.disabled = false; btn.innerHTML = oldHtml; }
+    downloading = false;
+  }
+
+  if (!data || !data.success) {
+    showToast((data && data.message) || "Tải thất bại, vui lòng thử lại", "err");
+    return;
+  }
+
+  // Cập nhật điểm
+  currentUser.diem = data.diemConLai;
+  document.getElementById("userPoints").textContent = currentUser.diem;
+  saveSession();
+
+  const links = extractLinks(data);
+  if (!links.length) {
+    showToast("Đã trừ điểm nhưng chưa có link tải. Vui lòng liên hệ admin!", "err");
+    return;
+  }
+  openDownloadModal(links);
+}
+
+function openDownloadModal(links) {
+  const box = document.getElementById("dlLinks");
+  box.innerHTML = "";
+  document.getElementById("dlStatus").classList.remove("show");
+
+  links.forEach((url, i) => {
+    const a = document.createElement("a");
+    a.className = "btn btn-primary";
+    a.href = url;
+    a.textContent = guessLabel(url, i, links.length);
+    a.setAttribute("download", "");          // gợi ý trình duyệt tải về
+    a.rel = "noopener noreferrer";
+    // KHÔNG dùng target="_blank": mở tab mới trên Safari làm tab bị thoát/trống và mất tiến trình tải.
+    a.addEventListener("click", () => {
+      document.getElementById("dlStatus").classList.add("show");
+    });
+    box.appendChild(a);
+  });
+
+  document.getElementById("downloadModalOverlay").style.display = "flex";
 }
 
 document.getElementById("dlModalClose").addEventListener("click", () => {
   document.getElementById("downloadModalOverlay").style.display = "none";
 });
 
-// CHỨC NĂNG ĐỔI MẬT KHẨU
+/* ---------------- ĐỔI MẬT KHẨU ---------------- */
 document.getElementById("btnChangePassModal").addEventListener("click", () => {
   document.getElementById("changePassOverlay").style.display = "flex";
 });
@@ -444,34 +647,77 @@ document.getElementById("cpClose").addEventListener("click", () => {
 document.getElementById("btnSubmitChangePass").addEventListener("click", async () => {
   const oldPass = document.getElementById("oldPasswordInput").value;
   const newPass = document.getElementById("newPasswordInput").value;
+  const confirmPass = document.getElementById("confirmPasswordInput").value;
 
-  if (oldPass !== currentUser.password) {
-    showToast("Mật khẩu cũ không chính xác", "err");
-    return;
-  }
-  if (!newPass || newPass.length < 4) {
-    showToast("Mật khẩu mới phải từ 4 ký tự", "err");
-    return;
-  }
+  if (!oldPass) { showToast("Vui lòng nhập mật khẩu cũ", "err"); return; }
+  if (oldPass !== currentUser.password) { showToast("Mật khẩu cũ không chính xác", "err"); return; }
+  if (!newPass || newPass.length < 4) { showToast("Mật khẩu mới phải từ 4 ký tự", "err"); return; }
+  if (newPass !== confirmPass) { showToast("Mật khẩu nhập lại không khớp", "err"); return; }
+  if (newPass === oldPass) { showToast("Mật khẩu mới phải khác mật khẩu cũ", "err"); return; }
 
+  const btn = document.getElementById("btnSubmitChangePass");
+  const oldHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Đang cập nhật…';
+
+  // Server (Apps Script) kiểm tra lại mật khẩu cũ rồi ghi mật khẩu mới vào Google Sheet
   const data = await callApi({
     action: "changePassword",
     username: currentUser.username,
     password: currentUser.password,
+    oldPassword: oldPass,
     newPassword: newPass
   });
 
+  btn.disabled = false;
+  btn.innerHTML = oldHtml;
+
   if (data.success) {
-    currentUser.password = newPass;
+    currentUser.password = newPass; // giữ đăng nhập, cập nhật mật khẩu trong phiên
     saveSession();
     showToast("Đổi mật khẩu thành công!", "ok");
     document.getElementById("changePassOverlay").style.display = "none";
-    document.getElementById("oldPasswordInput").value = "";
-    document.getElementById("newPasswordInput").value = "";
+    ["oldPasswordInput", "newPasswordInput", "confirmPasswordInput"].forEach(id => {
+      document.getElementById(id).value = "";
+    });
   } else {
-    showToast(data.message, "err");
+    showToast(data.message || "Đổi mật khẩu thất bại", "err");
   }
 });
+
+/* ---------------- LÀM MỚI (không đăng xuất) ---------------- */
+let refreshing = false;
+async function refreshData() {
+  if (refreshing || !currentUser) return;
+  refreshing = true;
+  const btn = document.getElementById("btnRefresh");
+  const oldHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Đang làm mới…';
+
+  // Lấy lại điểm + thông tin mới nhất từ Sheet (đăng nhập ngầm bằng phiên đã lưu)
+  const info = await callApi({ action: "login", username: currentUser.username, password: currentUser.password });
+  if (info.success) {
+    currentUser.hoTen = info.hoTen;
+    currentUser.diem = info.diem;
+    saveSession();
+    document.getElementById("userGreeting").textContent = "Xin chào, " + currentUser.hoTen;
+    document.getElementById("userPoints").textContent = currentUser.diem;
+    await loadPosts();
+    showToast("Đã làm mới dữ liệu!", "ok");
+  } else if (info.networkError) {
+    // Lỗi mạng: giữ nguyên phiên, không đăng xuất
+    showToast(info.message, "err");
+  } else {
+    // Mật khẩu đã bị đổi ở nơi khác / tài khoản bị khoá
+    showToast(info.message || "Phiên đăng nhập không còn hợp lệ, vui lòng đăng nhập lại", "err");
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = oldHtml;
+  refreshing = false;
+}
+document.getElementById("btnRefresh").addEventListener("click", refreshData);
 
 window.addEventListener("DOMContentLoaded", checkSessionOnLoad);
 </script>
