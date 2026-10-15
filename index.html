@@ -169,13 +169,6 @@
     border: 1px solid var(--glass-edge-lo);
   }
 
-  .btn-outline {
-    background: transparent;
-    color: var(--aurora-cyan);
-    border: 1px solid rgba(51,230,201,0.45);
-  }
-
-  /* Spinner nhỏ trong nút */
   .spin {
     width: 14px; height: 14px;
     border: 2px solid rgba(255,255,255,0.35);
@@ -212,7 +205,7 @@
     background: rgba(255,255,255,0.05);
     color: var(--text-main);
     outline: none;
-    font-size: 16px; /* tránh Safari iOS tự zoom */
+    font-size: 16px;
   }
 
   #appScreen { display: none; }
@@ -235,7 +228,6 @@
     aspect-ratio: 16/10;
     object-fit: cover;
     background: rgba(255,255,255,0.05);
-    cursor: pointer;
   }
 
   .card-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
@@ -259,52 +251,30 @@
 
   .dl-links { display: flex; flex-direction: column; gap: 10px; }
   .dl-links a { text-decoration: none; padding: 12px; display: flex; }
-  .dl-hint {
-    font-size: 12px;
-    color: var(--text-faint);
-    margin: 14px 0 0;
-    line-height: 1.5;
-  }
+  .dl-hint { font-size: 12px; color: var(--text-faint); margin: 14px 0 0; line-height: 1.5; }
   .dl-status {
-    display: none;
-    margin-top: 12px;
-    padding: 10px 12px;
-    border-radius: var(--radius-sm);
-    background: var(--success-soft);
-    border: 1px solid rgba(63,224,165,0.4);
-    color: #8ff5cf;
-    font-size: 12.5px;
-    font-weight: 600;
+    display: none; margin-top: 12px; padding: 10px 12px;
+    border-radius: var(--radius-sm); background: var(--success-soft);
+    border: 1px solid rgba(63,224,165,0.4); color: #8ff5cf; font-size: 12.5px; font-weight: 600;
   }
   .dl-status.show { display: block; }
 
-  /* Overlay chờ khi đang xử lý trừ điểm */
   #busyOverlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 150;
-    background: rgba(3,2,12,0.6);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 14px;
-    color: var(--text-main);
-    font-size: 14px;
-    font-weight: 600;
+    display: none; position: fixed; inset: 0; z-index: 150;
+    background: rgba(3,2,12,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+    color: var(--text-main); font-size: 14px; font-weight: 600;
   }
   #busyOverlay .big-spin {
     width: 42px; height: 42px;
-    border: 4px solid rgba(255,255,255,0.2);
-    border-top-color: var(--aurora-cyan);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    border: 4px solid rgba(255,255,255,0.2); border-top-color: var(--aurora-cyan);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
   }
 
   #toast {
-    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); padding: 12px 20px; border-radius: 12px; font-size: 13.5px; font-weight: 700; z-index: 200; opacity: 0; pointer-events: none; transition: all 0.25s ease;
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px);
+    padding: 12px 20px; border-radius: 12px; font-size: 13.5px; font-weight: 700;
+    z-index: 200; opacity: 0; pointer-events: none; transition: all 0.25s ease;
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
   #toast.ok { background: rgba(10, 50, 40, 0.8); border: 1px solid rgba(63,224,165,0.6); color: #8ff5cf; }
@@ -319,7 +289,6 @@
 <div class="grain"></div>
 
 <div class="wrap">
-
   <!-- LOGIN -->
   <div id="loginScreen" class="glass">
     <div class="brand" style="justify-content:center; font-size:20px;">TP DESIGN PPTX</div>
@@ -383,7 +352,7 @@
   </div>
 </div>
 
-<!-- MODAL TẢI FILE (chuẩn iOS Safari) -->
+<!-- MODAL TẢI FILE -->
 <div class="modal-overlay" id="downloadModalOverlay">
   <div class="modal-box glass" style="text-align:center; padding:28px 20px;">
     <button class="modal-close" id="dlModalClose">✕</button>
@@ -391,8 +360,8 @@
     <h3 style="margin-top:0;">Đã trừ điểm thành công!</h3>
     <p style="font-size:13px; color:var(--text-dim); margin-bottom:20px;" id="dlModalSubText">Chạm nút bên dưới để tải file về máy.</p>
     <div class="dl-links" id="dlLinks"></div>
-    <div class="dl-status" id="dlStatus">⬇️ Đang tải… xem tiến trình ở biểu tượng mũi tên ↓ trên thanh địa chỉ Safari (hoặc mục Tải xuống của trình duyệt).</div>
-    <p class="dl-hint">Nếu Safari hiện hộp thoại “Bạn có muốn tải xuống…?” hãy bấm <b>Tải xuống</b>. Bấm lại nút nếu tải chưa bắt đầu — bạn <b>không bị trừ điểm lần nữa</b>.</p>
+    <div class="dl-status" id="dlStatus">⬇️ Đang tải… xem tiến trình ở biểu tượng mũi tên ↓ trên thanh địa chỉ Safari.</div>
+    <p class="dl-hint">Nếu Safari hiện hộp thoại “Bạn có muốn tải xuống…?” hãy bấm <b>Tải xuống</b>.</p>
   </div>
 </div>
 
@@ -412,9 +381,8 @@ const CONFIG = {
 
 let currentUser = null;
 let posts = [];
-let downloading = false; // chống bấm nhiều lần => tránh trừ điểm nhiều lần
+let downloading = false;
 
-/* ---------------- SESSION ---------------- */
 function saveSession() {
   if (currentUser) localStorage.setItem("tp_user", JSON.stringify(currentUser));
   else localStorage.removeItem("tp_user");
@@ -427,7 +395,6 @@ function checkSessionOnLoad() {
   }
 }
 
-/* ---------------- UI HELPERS ---------------- */
 function showToast(msg, type = "ok") {
   const el = document.getElementById("toast");
   el.textContent = msg;
@@ -448,15 +415,19 @@ function escapeHtml(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 }
 
-/* ---------------- API (có timeout + bắt lỗi, không bao giờ xoay vô hạn) ---------------- */
+/* ---------------- API HOÀN CHỈNH ---------------- */
 async function callApi(params, timeoutMs) {
   const url = new URL(CONFIG.APPS_SCRIPT_URL);
+  // Ép truyền đầy đủ Query parameters vào đường dẫn URL
   Object.keys(params).forEach(k => url.searchParams.set(k, params[k]));
 
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs || CONFIG.API_TIMEOUT_MS);
   try {
-    const res = await fetch(url.toString(), { signal: ctrl.signal });
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      signal: ctrl.signal
+    });
     return await res.json();
   } catch (err) {
     const msg = err && err.name === "AbortError"
@@ -531,38 +502,30 @@ function renderPosts() {
   });
 }
 
-// Bấm nút tải (event delegation, không dùng onclick inline)
 document.getElementById("postsGrid").addEventListener("click", e => {
   const btn = e.target.closest(".btn-dl");
   if (btn) handleDownload(btn.dataset.id, btn);
 });
 
-/* ---------------- CHUẨN HOÁ LINK TẢI ----------------
-   Link Google Drive dạng /file/d/ID/view hoặc open?id=ID chỉ MỞ TRANG XEM
-   (Safari hỏi xác nhận rồi thoát / ảnh poster thì xoay mãi).
-   Đổi sang link tải trực tiếp => Safari tải ngay, hiện tiến trình. */
 function normalizeDownloadUrl(raw) {
   if (!raw) return "";
   const link = String(raw).trim();
-
-  // Google Slides/Docs -> xuất PPTX
   let m = link.match(/docs\.google\.com\/presentation\/d\/([\w-]+)/);
   if (m) return "https://docs.google.com/presentation/d/" + m[1] + "/export/pptx";
 
-  // Google Drive file
   if (/drive\.google\.com|drive\.usercontent\.google\.com/.test(link)) {
     m = link.match(/\/file\/d\/([\w-]+)/) || link.match(/[?&]id=([\w-]+)/) || link.match(/\/d\/([\w-]+)/);
     if (m) return "https://drive.usercontent.google.com/download?id=" + m[1] + "&export=download&confirm=t";
   }
-  return link; // link khác (Apps Script, host riêng...) giữ nguyên
+  return link;
 }
 
 function guessLabel(url, idx, total) {
   const lower = url.toLowerCase();
   let name = "📥 Tải file";
   if (/pptx|presentation/.test(lower)) name = "📥 Tải Slide PPTX";
-  else if (/\.(png|jpe?g|webp|gif)(\?|$)/.test(lower)) name = "🖼️ Tải ảnh Poster";
-  else if (/\.pdf(\?|$)/.test(lower)) name = "📄 Tải PDF";
+  else if (/\.(png|jpe?g|webp|gif)(\?|\$)/.test(lower)) name = "🖼️ Tải ảnh Poster";
+  else if (/\.pdf(\?|\$)/.test(lower)) name = "📄 Tải PDF";
   return total > 1 ? name + " (" + (idx + 1) + "/" + total + ")" : name;
 }
 
@@ -574,7 +537,7 @@ function extractLinks(data) {
   return list.map(s => normalizeDownloadUrl(s)).filter(Boolean);
 }
 
-/* ---------------- XỬ LÝ TẢI FILE ---------------- */
+/* ---------------- TẢI FILE ---------------- */
 async function handleDownload(id, btn) {
   if (downloading) return;
   downloading = true;
@@ -597,7 +560,6 @@ async function handleDownload(id, btn) {
     return;
   }
 
-  // Cập nhật điểm
   currentUser.diem = data.diemConLai;
   document.getElementById("userPoints").textContent = currentUser.diem;
   saveSession();
@@ -622,7 +584,6 @@ function openDownloadModal(links, postId, files) {
       (/^image\//.test(file.mime) || file.mime === "application/pdf");
 
     if (isImageOrPdf) {
-      // POSTER / ẢNH / PDF: tải qua Apps Script -> lưu thẳng về máy (không phụ thuộc trang Drive)
       const b = document.createElement("button");
       b.className = "btn btn-primary";
       b.style.cssText = "padding:12px; width:100%;";
@@ -631,7 +592,6 @@ function openDownloadModal(links, postId, files) {
       b.addEventListener("click", () => downloadViaScript(postId, file, url, b));
       box.appendChild(b);
     } else {
-      // PPTX / file lớn: link trực tiếp, cùng tab để Safari hiện tiến trình tải
       const a = document.createElement("a");
       a.className = "btn btn-primary";
       a.href = url;
@@ -658,7 +618,7 @@ async function downloadViaScript(postId, file, fallbackUrl, btn) {
   if (btn.disabled) return;
   const status = document.getElementById("dlStatus");
   btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Đang tải file… (vài giây)';
+  btn.innerHTML = '<span class="spin"></span> Đang tải file…';
 
   const data = await callApi(
     { action: "getFile", username: currentUser.username, password: currentUser.password, id: postId, fileId: file.id },
@@ -677,15 +637,13 @@ async function downloadViaScript(postId, file, fallbackUrl, btn) {
       a.remove();
       setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
 
-      status.textContent = "✅ Đã tải xong! File nằm trong mục Tải xuống (ứng dụng Tệp trên iPhone). Nếu chưa thấy, bấm lại nút.";
+      status.textContent = "✅ Đã tải xong! File nằm trong mục Tải xuống của trình duyệt.";
       status.classList.add("show");
       showToast("Đã tải file về máy", "ok");
     } catch (err) {
-      showToast("Không lưu được file, thử mở link dự phòng…", "err");
+      showToast("Lỗi mở file, mở link dự phòng…", "err");
       window.location.href = normalizeDownloadUrl(fallbackUrl);
     }
-  } else if (data.tooBig) {
-    window.location.href = normalizeDownloadUrl(fallbackUrl);
   } else {
     showToast(data.message || "Tải thất bại, vui lòng thử lại", "err");
   }
@@ -722,9 +680,8 @@ document.getElementById("btnSubmitChangePass").addEventListener("click", async (
   btn.disabled = true;
   btn.innerHTML = '<span class="spin"></span> Đang cập nhật…';
 
-  // Server (Apps Script) kiểm tra lại mật khẩu cũ rồi ghi mật khẩu mới vào Google Sheet
   const data = await callApi({
-    action: "changePassword",
+    action: "changepassword",
     username: currentUser.username,
     password: currentUser.password,
     oldPassword: oldPass,
@@ -735,7 +692,7 @@ document.getElementById("btnSubmitChangePass").addEventListener("click", async (
   btn.innerHTML = oldHtml;
 
   if (data.success) {
-    currentUser.password = newPass; // giữ đăng nhập, cập nhật mật khẩu trong phiên
+    currentUser.password = newPass;
     saveSession();
     showToast("Đổi mật khẩu thành công!", "ok");
     document.getElementById("changePassOverlay").style.display = "none";
@@ -747,7 +704,7 @@ document.getElementById("btnSubmitChangePass").addEventListener("click", async (
   }
 });
 
-/* ---------------- LÀM MỚI (không đăng xuất) ---------------- */
+/* ---------------- LÀM MỚI ---------------- */
 let refreshing = false;
 async function refreshData() {
   if (refreshing || !currentUser) return;
@@ -757,7 +714,6 @@ async function refreshData() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spin"></span> Đang làm mới…';
 
-  // Lấy lại điểm + thông tin mới nhất từ Sheet (đăng nhập ngầm bằng phiên đã lưu)
   const info = await callApi({ action: "login", username: currentUser.username, password: currentUser.password });
   if (info.success) {
     currentUser.hoTen = info.hoTen;
@@ -767,12 +723,8 @@ async function refreshData() {
     document.getElementById("userPoints").textContent = currentUser.diem;
     await loadPosts();
     showToast("Đã làm mới dữ liệu!", "ok");
-  } else if (info.networkError) {
-    // Lỗi mạng: giữ nguyên phiên, không đăng xuất
-    showToast(info.message, "err");
   } else {
-    // Mật khẩu đã bị đổi ở nơi khác / tài khoản bị khoá
-    showToast(info.message || "Phiên đăng nhập không còn hợp lệ, vui lòng đăng nhập lại", "err");
+    showToast(info.message || "Không thể cập nhật", "err");
   }
 
   btn.disabled = false;
@@ -783,6 +735,5 @@ document.getElementById("btnRefresh").addEventListener("click", refreshData);
 
 window.addEventListener("DOMContentLoaded", checkSessionOnLoad);
 </script>
-
 </body>
 </html>
