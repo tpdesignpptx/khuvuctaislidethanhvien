@@ -304,9 +304,82 @@
   #toast.err { background: rgba(60, 14, 20, 0.8); border: 1px solid rgba(255,122,122,0.65); color: #ffb3b0; }
 
   footer.credit { text-align: center; color: var(--text-faint); font-size: 12px; margin-top: 32px; }
+
+  /* ---------- MÀN HÌNH CHỜ KHI VÀO TRANG ---------- */
+  #pageLoader {
+    position: fixed; inset: 0; z-index: 300;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    background: radial-gradient(circle at 50% 40%, var(--bg-2), var(--bg-0) 70%);
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+  #pageLoader.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+  #pageLoader .pl-brand {
+    font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: 1px;
+    background: linear-gradient(90deg, var(--aurora-cyan), var(--aurora-violet), var(--aurora-pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: plPulse 1.6s ease-in-out infinite;
+  }
+  #pageLoader .pl-ring {
+    width: 54px; height: 54px; border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.12);
+    border-top-color: var(--aurora-cyan);
+    border-right-color: var(--aurora-violet);
+    border-bottom-color: var(--aurora-pink);
+    animation: spin 0.9s linear infinite;
+  }
+  #pageLoader .pl-text { font-size: 13px; color: var(--text-dim); }
+  #pageLoader .pl-bar { width: 160px; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.1); overflow: hidden; }
+  #pageLoader .pl-bar i {
+    display: block; height: 100%; width: 40%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--aurora-cyan), var(--aurora-violet), var(--aurora-pink));
+    animation: plBar 1.2s ease-in-out infinite;
+  }
+  @keyframes plPulse { 0%,100% { opacity: 0.75; } 50% { opacity: 1; } }
+  @keyframes plBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
+
+  /* ---------- HIỆU ỨNG ĐANG TẢI BÀI VIẾT (SKELETON) ---------- */
+  .loading-note {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-size: 13px; color: var(--text-dim); padding: 2px 0 4px;
+  }
+  .skeleton { pointer-events: none; }
+  .sk-thumb, .sk-line {
+    position: relative; overflow: hidden;
+    background: rgba(255,255,255,0.07);
+  }
+  .sk-thumb { width: 100%; aspect-ratio: 16/10; }
+  .sk-line { height: 12px; border-radius: 8px; }
+  .sk-line.w80 { width: 80%; }
+  .sk-line.w60 { width: 60%; }
+  .sk-line.btn-sk { height: 36px; border-radius: 999px; margin-top: 6px; }
+  .sk-thumb::after, .sk-line::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,0.18) 50%, transparent 80%);
+    transform: translateX(-100%);
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  @keyframes shimmer { to { transform: translateX(100%); } }
+
+  .card.pop { animation: cardIn 0.45s ease both; }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+  .grid-msg {
+    grid-column: 1 / -1; text-align: center; padding: 36px 16px;
+    color: var(--text-dim); font-size: 14px; line-height: 1.7;
+  }
+  .grid-msg .big { font-size: 38px; margin-bottom: 6px; }
+  .grid-msg .btn { margin-top: 12px; }
 </style>
 </head>
 <body>
+
+<div id="pageLoader">
+  <div class="pl-brand">TP DESIGN PPTX</div>
+  <div class="pl-ring"></div>
+  <div class="pl-bar"><i></i></div>
+  <div class="pl-text">Đang tải trang…</div>
+</div>
 
 <div class="aurora"><span></span><span></span><span></span></div>
 <div class="grain"></div>
@@ -480,8 +553,8 @@ function isInvalidActionMsg(data) {
 }
 
 async function callApiAnyAction(actionNames, params, timeoutMs) {
-  const cached = localStorage.getItem("tp_action_changepass");
-  const list = cached ? [cached].concat(actionNames.filter(a => a !== cached)) : actionNames.slice();
+  localStorage.removeItem("tp_action_changepass");
+  const list = actionNames.slice();
   let last = null;
   for (const act of list) {
     const data = await callApi(Object.assign({}, params, { action: act }), timeoutMs);
@@ -495,10 +568,7 @@ async function callApiAnyAction(actionNames, params, timeoutMs) {
   return last;
 }
 
-const CHANGEPASS_ACTIONS = [
-  "changepassword", "changePassword", "change_password", "changepass",
-  "changePass", "updatePassword", "updatepassword", "doimatkhau", "doiMatKhau"
-];
+const CHANGEPASS_ACTIONS = ["changepassword"];
 
 /* ---------------- LOGIN / LOGOUT ---------------- */
 async function doLogin() {
@@ -538,19 +608,65 @@ function enterApp() {
 }
 
 /* ---------------- POSTS ---------------- */
+function renderSkeleton(count) {
+  const grid = document.getElementById("postsGrid");
+  let html = '<div class="loading-note"><span class="spin"></span> Đang tải bài viết…</div>';
+  for (let i = 0; i < (count || 6); i++) {
+    html += `
+      <div class="card glass skeleton">
+        <div class="sk-thumb"></div>
+        <div class="card-body">
+          <div class="sk-line w80"></div>
+          <div class="sk-line"></div>
+          <div class="sk-line w60"></div>
+          <div class="sk-line btn-sk"></div>
+        </div>
+      </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function renderGridMessage(icon, text, withRetry) {
+  const grid = document.getElementById("postsGrid");
+  grid.innerHTML = `
+    <div class="grid-msg">
+      <div class="big">${icon}</div>
+      <div>${text}</div>
+      ${withRetry ? '<button class="btn btn-primary" id="btnRetryPosts">🔄 Thử lại</button>' : ""}
+    </div>`;
+  if (withRetry) document.getElementById("btnRetryPosts").addEventListener("click", loadPosts);
+}
+
+let loadingPosts = false;
 async function loadPosts() {
+  if (loadingPosts || !currentUser) return;
+  loadingPosts = true;
+  renderSkeleton(6);
+
   const data = await callApi({ action: "getPosts", username: currentUser.username, password: currentUser.password });
-  if (data.success) { posts = data.data || []; renderPosts(); }
-  else showToast(data.message || "Không tải được danh sách mẫu", "err");
+  loadingPosts = false;
+
+  if (data.success) {
+    posts = data.data || [];
+    renderPosts();
+  } else {
+    renderGridMessage("😕", escapeHtml(data.message || "Không tải được danh sách mẫu."), true);
+    showToast(data.message || "Không tải được danh sách mẫu", "err");
+  }
 }
 
 function renderPosts() {
   const grid = document.getElementById("postsGrid");
   grid.innerHTML = "";
-  posts.forEach(post => {
+  if (!posts.length) {
+    renderGridMessage("📭", "Hiện chưa có mẫu nào dành cho bạn.", false);
+    return;
+  }
+  posts.forEach((post, idx) => {
     const thumb = (post.anhPreview && post.anhPreview[0]) || "";
     const card = document.createElement("div");
-    card.className = "card glass";
+    card.className = "card glass pop";
+    card.style.animationDelay = Math.min(idx * 60, 600) + "ms";
     card.innerHTML = `
       <img class="card-thumb" src="${escapeHtml(thumb)}" loading="lazy" alt="">
       <div class="card-body">
@@ -798,6 +914,27 @@ async function refreshData() {
 document.getElementById("btnRefresh").addEventListener("click", refreshData);
 
 window.addEventListener("DOMContentLoaded", checkSessionOnLoad);
+
+/* ---------------- ẨN MÀN HÌNH CHỜ ---------------- */
+(function () {
+  const startedAt = Date.now();
+  const MIN_SHOW_MS = 700;
+  let done = false;
+  function hideLoader() {
+    if (done) return;
+    done = true;
+    const wait = Math.max(0, MIN_SHOW_MS - (Date.now() - startedAt));
+    setTimeout(() => {
+      const el = document.getElementById("pageLoader");
+      if (el) {
+        el.classList.add("hide");
+        setTimeout(() => el.remove(), 700);
+      }
+    }, wait);
+  }
+  window.addEventListener("load", hideLoader);
+  setTimeout(hideLoader, 4000); // dự phòng: tối đa 4 giây
+})();
 </script>
 </body>
 </html>
