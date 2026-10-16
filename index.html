@@ -154,23 +154,33 @@
     border-radius: 999px;
     padding: 9px 16px;
     font-size: 13px;
-    transition: all 0.15s ease;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
   }
   .btn:disabled { opacity: 0.7; cursor: wait; }
+  .btn:active { transform: scale(0.97); }
 
   .btn-primary {
     background: linear-gradient(120deg, var(--aurora-violet), var(--aurora-pink));
     color: #fff;
+    box-shadow: 0 4px 14px rgba(124,92,255,0.3);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(255,92,176,0.4);
+    filter: brightness(1.08);
   }
 
   .btn-ghost {
     background: rgba(255,255,255,0.07);
     color: var(--text-main);
     border: 1px solid var(--glass-edge-lo);
+  }
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.25);
   }
 
   .spin {
@@ -192,7 +202,7 @@
     margin-bottom: 14px;
   }
 
-  /* ---------- KHUNG LƯU Ý TẢI FILE (trong suốt, nhỏ gọn) ---------- */
+  /* ---------- KHUNG LƯU Ý TẢI FILE ---------- */
   .notice-box {
     margin: 0 0 22px;
     padding: 12px 16px;
@@ -239,28 +249,111 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
   }
 
+  /* ---------- CARD BÀI VIẾT TỐI ƯU GIAO DIỆN ---------- */
   .card {
     overflow: hidden;
     display: flex;
     flex-direction: column;
     border-radius: var(--radius-md);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 14px 30px -8px rgba(0,0,0,0.6);
   }
 
+  .thumb-wrap {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    aspect-ratio: 16/10;
+    background: rgba(0,0,0,0.2);
+  }
   .card-thumb {
     width: 100%;
-    aspect-ratio: 16/10;
+    height: 100%;
     object-fit: cover;
-    background: rgba(255,255,255,0.05);
+    transition: transform 0.35s ease;
+  }
+  .thumb-wrap:hover .card-thumb {
+    transform: scale(1.05);
   }
 
-  .card-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-  .card-title { font-size: 14.5px; font-weight: 600; }
-  .card-desc { font-size: 12.5px; color: var(--text-dim); }
+  .thumb-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700;
+    background: rgba(5,4,15,0.65); border: 1px solid var(--glass-edge-lo);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--text-main);
+  }
 
+  .point-tag {
+    position: absolute;
+    bottom: 10px; left: 10px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 800;
+    background: linear-gradient(135deg, rgba(255,92,176,0.9), rgba(124,92,255,0.9));
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    backdrop-filter: blur(6px);
+  }
+
+  .card-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .card-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text-main);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 6px;
+  }
+  .btn-view {
+    padding: 8px 10px;
+    font-size: 12px;
+    flex: 0 0 auto;
+    border-radius: var(--radius-sm);
+  }
+  .btn-dl-main {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+  }
+
+  /* MODAL */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -309,7 +402,7 @@
 
   footer.credit { text-align: center; color: var(--text-faint); font-size: 12px; margin-top: 32px; }
 
-  /* ---------- MÀN HÌNH CHỜ KHI VÀO TRANG ---------- */
+  /* MÀN HÌNH CHỜ */
   #pageLoader {
     position: fixed; inset: 0; z-index: 300;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
@@ -341,7 +434,7 @@
   @keyframes plPulse { 0%,100% { opacity: 0.75; } 50% { opacity: 1; } }
   @keyframes plBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
 
-  /* ---------- HIỆU ỨNG ĐANG TẢI BÀI VIẾT (SKELETON) ---------- */
+  /* SKELETON */
   .loading-note {
     grid-column: 1 / -1;
     display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -375,18 +468,7 @@
   .grid-msg .big { font-size: 38px; margin-bottom: 6px; }
   .grid-msg .btn { margin-top: 12px; }
 
-  /* ---------- THẺ BÀI VIẾT: ẢNH + NÚT XEM CHI TIẾT ---------- */
-  .thumb-wrap { position: relative; cursor: pointer; }
-  .thumb-badge {
-    position: absolute; right: 10px; bottom: 10px;
-    padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700;
-    background: rgba(5,4,15,0.62); border: 1px solid var(--glass-edge-lo);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff;
-  }
-  .card-actions { display: flex; gap: 8px; margin-top: auto; }
-  .card-actions .btn { flex: 1; padding: 10px 8px; }
-
-  /* ---------- XEM NHIỀU ẢNH (GALLERY) ---------- */
+  /* GALLERY OVERLAY */
   #galleryOverlay {
     display: none; position: fixed; inset: 0; z-index: 90;
     background: rgba(3,2,12,0.86);
@@ -710,18 +792,21 @@ function renderPosts() {
     card.className = "card glass pop";
     card.style.animationDelay = Math.min(idx * 60, 600) + "ms";
     const imgs = (post.anhPreview || []).filter(Boolean);
-    const badge = imgs.length > 1 ? `<span class="thumb-badge">📷 ${imgs.length} ảnh</span>` : "";
+    const badge = imgs.length > 1 ? `<span class="thumb-badge">📷 ${imgs.length}</span>` : "";
+    const pointBadge = `<span class="point-tag">⭐ ${escapeHtml(post.diemCan)} đ</span>`;
+    
     card.innerHTML = `
       <div class="thumb-wrap" data-view="${escapeHtml(post.id)}">
         <img class="card-thumb" src="${escapeHtml(thumb)}" loading="lazy" alt="">
         ${badge}
+        ${pointBadge}
       </div>
       <div class="card-body">
         <div class="card-title">${escapeHtml(post.tieuDe)}</div>
         <div class="card-desc">${escapeHtml(post.moTa)}</div>
         <div class="card-actions">
-          <button class="btn btn-ghost btn-view" data-view="${escapeHtml(post.id)}">🔍 Xem chi tiết</button>
-          <button class="btn btn-primary btn-dl" data-id="${escapeHtml(post.id)}">Tải về (${escapeHtml(post.diemCan)} điểm)</button>
+          <button class="btn btn-ghost btn-view" data-view="${escapeHtml(post.id)}" title="Xem chi tiết">🔍 Xem</button>
+          <button class="btn btn-primary btn-dl-main btn-dl" data-id="${escapeHtml(post.id)}">Tải về mẫu</button>
         </div>
       </div>
     `;
@@ -761,7 +846,7 @@ function openGallery(postId, startIdx) {
 
   const dl = document.getElementById("galDownload");
   dl.dataset.id = post.id;
-  dl.textContent = "Tải về (" + post.diemCan + " điểm)";
+  dl.textContent = "Tải về mẫu (" + post.diemCan + " điểm)";
 
   document.getElementById("galleryOverlay").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -849,8 +934,8 @@ function guessLabel(url, idx, total) {
   const lower = url.toLowerCase();
   let name = "📥 Tải file";
   if (/pptx|presentation/.test(lower)) name = "📥 Tải Slide PPTX";
-  else if (/\.(png|jpe?g|webp|gif)(\?|$)/.test(lower)) name = "🖼️ Tải ảnh Poster";
-  else if (/\.pdf(\?|$)/.test(lower)) name = "📄 Tải PDF";
+  else if (/\.(png|jpe?g|webp|gif)(\?|\$)/.test(lower)) name = "🖼️ Tải ảnh Poster";
+  else if (/\.pdf(\?|\$)/.test(lower)) name = "📄 Tải PDF";
   return total > 1 ? name + " (" + (idx + 1) + "/" + total + ")" : name;
 }
 
@@ -868,7 +953,7 @@ async function handleDownload(id, btn) {
   downloading = true;
 
   const oldHtml = btn ? btn.innerHTML : "";
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Đang xử lý…'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Xử lý…'; }
   showBusy("Đang kiểm tra điểm và chuẩn bị file…");
 
   let data;
