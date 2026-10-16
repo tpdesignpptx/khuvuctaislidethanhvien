@@ -185,8 +185,31 @@
     justify-content: space-between;
     gap: 14px;
     padding: 16px 20px;
-    margin-bottom: 22px;
+    margin-bottom: 14px;
   }
+
+  /* ---------- KHUNG LƯU Ý TẢI FILE (trong suốt, nhỏ gọn) ---------- */
+  .notice-box {
+    margin: 0 0 22px;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-edge-lo);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+  .notice-box .notice-title {
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 12.5px;
+    margin-bottom: 4px;
+  }
+  .notice-box ul { margin: 0; padding-left: 18px; }
+  .notice-box li { margin: 2px 0; }
+  .notice-box b { color: var(--text-main); font-weight: 600; }
 
   #loginScreen {
     max-width: 380px;
@@ -325,6 +348,15 @@
       <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">💬 Zalo Admin</a>
     </div>
 
+    <div class="notice-box">
+      <div class="notice-title">📌 Lưu ý khi tải file</div>
+      <ul>
+        <li>📊 <b>File PowerPoint (PPTX):</b> hỗ trợ tải trên <b>laptop</b> và <b>iOS</b>.</li>
+        <li>🖼️ <b>File Poster:</b> bắt buộc tải trên <b>laptop hệ điều hành Windows</b>.</li>
+        <li>💬 Nếu không tải được, hãy <b>liên hệ admin</b> để được hỗ trợ.</li>
+      </ul>
+    </div>
+
     <div class="grid" id="postsGrid"></div>
   </div>
 
@@ -362,6 +394,7 @@
     <div class="dl-links" id="dlLinks"></div>
     <div class="dl-status" id="dlStatus">⬇️ Đang tải… xem tiến trình ở biểu tượng mũi tên ↓ trên thanh địa chỉ Safari.</div>
     <p class="dl-hint">Nếu Safari hiện hộp thoại “Bạn có muốn tải xuống…?” hãy bấm <b>Tải xuống</b>.</p>
+    <p class="dl-hint" style="margin-top:8px;">PPTX tải được trên laptop/iOS · Poster chỉ tải trên laptop Windows. Không tải được? Hãy liên hệ admin.</p>
   </div>
 </div>
 
@@ -418,7 +451,6 @@ function escapeHtml(s) {
 /* ---------------- API HOÀN CHỈNH ---------------- */
 async function callApi(params, timeoutMs) {
   const url = new URL(CONFIG.APPS_SCRIPT_URL);
-  // Ép truyền đầy đủ Query parameters vào đường dẫn URL
   Object.keys(params).forEach(k => url.searchParams.set(k, params[k]));
 
   const ctrl = new AbortController();
@@ -438,6 +470,35 @@ async function callApi(params, timeoutMs) {
     clearTimeout(timer);
   }
 }
+
+/* Gọi API với nhiều tên action dự phòng: nếu server trả "action không hợp lệ"
+   thì tự thử tên action kế tiếp (Code.gs có thể đặt tên khác nhau). */
+function isInvalidActionMsg(data) {
+  if (!data || data.success) return false;
+  const m = String(data.message || data.error || "").toLowerCase();
+  return m.indexOf("action") !== -1 && (m.indexOf("không hợp lệ") !== -1 || m.indexOf("khong hop le") !== -1 || m.indexOf("invalid") !== -1 || m.indexOf("unknown") !== -1);
+}
+
+async function callApiAnyAction(actionNames, params, timeoutMs) {
+  const cached = localStorage.getItem("tp_action_changepass");
+  const list = cached ? [cached].concat(actionNames.filter(a => a !== cached)) : actionNames.slice();
+  let last = null;
+  for (const act of list) {
+    const data = await callApi(Object.assign({}, params, { action: act }), timeoutMs);
+    last = data;
+    if (data.networkError) return data;
+    if (!isInvalidActionMsg(data)) {
+      if (data.success) localStorage.setItem("tp_action_changepass", act);
+      return data;
+    }
+  }
+  return last;
+}
+
+const CHANGEPASS_ACTIONS = [
+  "changepassword", "changePassword", "change_password", "changepass",
+  "changePass", "updatePassword", "updatepassword", "doimatkhau", "doiMatKhau"
+];
 
 /* ---------------- LOGIN / LOGOUT ---------------- */
 async function doLogin() {
@@ -524,8 +585,8 @@ function guessLabel(url, idx, total) {
   const lower = url.toLowerCase();
   let name = "📥 Tải file";
   if (/pptx|presentation/.test(lower)) name = "📥 Tải Slide PPTX";
-  else if (/\.(png|jpe?g|webp|gif)(\?|\$)/.test(lower)) name = "🖼️ Tải ảnh Poster";
-  else if (/\.pdf(\?|\$)/.test(lower)) name = "📄 Tải PDF";
+  else if (/\.(png|jpe?g|webp|gif)(\?|$)/.test(lower)) name = "🖼️ Tải ảnh Poster";
+  else if (/\.pdf(\?|$)/.test(lower)) name = "📄 Tải PDF";
   return total > 1 ? name + " (" + (idx + 1) + "/" + total + ")" : name;
 }
 
@@ -645,7 +706,7 @@ async function downloadViaScript(postId, file, fallbackUrl, btn) {
       window.location.href = normalizeDownloadUrl(fallbackUrl);
     }
   } else {
-    showToast(data.message || "Tải thất bại, vui lòng thử lại", "err");
+    showToast(data.message || "Tải thất bại, vui lòng liên hệ admin nếu vẫn không tải được", "err");
   }
 
   btn.disabled = false;
@@ -680,12 +741,15 @@ document.getElementById("btnSubmitChangePass").addEventListener("click", async (
   btn.disabled = true;
   btn.innerHTML = '<span class="spin"></span> Đang cập nhật…';
 
-  const data = await callApi({
-    action: "changepassword",
+  const data = await callApiAnyAction(CHANGEPASS_ACTIONS, {
     username: currentUser.username,
     password: currentUser.password,
     oldPassword: oldPass,
-    newPassword: newPass
+    newPassword: newPass,
+    oldPass: oldPass,
+    newPass: newPass,
+    matKhauCu: oldPass,
+    matKhauMoi: newPass
   });
 
   btn.disabled = false;
