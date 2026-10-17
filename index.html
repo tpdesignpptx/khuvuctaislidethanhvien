@@ -626,6 +626,7 @@ let downloading = false;
    BẢO VỆ NGIÊM NGẶT: CHỐNG F12 / PHÍM TẮT / CHUỘT PHẢI
    ========================================== */
 let violationCount = 0;
+let lockingNow = false;
 
 // 1. Chặn chuột phải & Chặn kéo thả ảnh
 document.addEventListener("contextmenu", e => {
@@ -635,26 +636,47 @@ document.addEventListener("contextmenu", e => {
 document.addEventListener("dragstart", e => e.preventDefault());
 
 // 2. Theo dõi và chặn triệt để tất cả các phím tắt vi phạm
+//    Chỉ báo "đã khóa" khi server XÁC NHẬN đã ghi trạng thái vào Sheet.
 async function triggerViolation(reason) {
+  if (lockingNow || !currentUser || !currentUser.username) return;
   violationCount++;
 
   if (violationCount < 3) {
-    showToast(`⛔ CẢNH BẢO VI PHẠM (${violationCount}/3): Cấm thao tác ${reason}! Vi phạm 3 lần tài khoản sẽ bị TỰ ĐỘNG KHÓA.`, "err");
+    showToast(`⛔ CẢNH BÁO VI PHẠM (${violationCount}/3): Cấm thao tác ${reason}! Vi phạm 3 lần tài khoản sẽ bị TỰ ĐỘNG KHÓA.`, "err");
+    return;
+  }
+
+  lockingNow = true;
+  showBusy("Đang khóa tài khoản do vi phạm...");
+
+  const lockParams = {
+    action: "lockUser",
+    username: currentUser.username,
+    password: currentUser.password
+  };
+  let res = await callApi(lockParams);
+  if (!res || !res.success) {
+    // Thử lại 1 lần nếu lỗi mạng / máy chủ bận
+    res = await callApi(lockParams);
+  }
+  hideBusy();
+
+  if (!res || !res.success) {
+    lockingNow = false;
+    violationCount = 2; // lần vi phạm kế tiếp sẽ thử khóa lại
+    showToast("⚠️ Chưa ghi nhận được việc khóa tài khoản: " + ((res && res.message) || "lỗi không xác định"), "err");
     return;
   }
 
   showToast("⛔ TÀI KHOẢN ĐÃ BỊ KHÓA DO CỐ TÌNH VI PHẠM BẢO MẬT NHIỀU LẦN!", "err");
-  if (currentUser && currentUser.username) {
-    showBusy("Đang khóa tài khoản do vi phạm...");
-    await callApi({ action: "lockUser", username: currentUser.username });
-    hideBusy();
-  }
   currentUser = null;
   saveSession();
   setTimeout(() => {
     document.getElementById("appScreen").style.display = "none";
     document.getElementById("loginScreen").style.display = "block";
     document.getElementById("loginError").innerHTML = "⛔ TÀI KHOẢN CỦA BẠN ĐÃ BỊ ĐÌNH CHỈ DO VI PHẠM NGUYÊN TẮC. LIÊN HỆ ADMIN ĐỂ GỠ KHÓA.";
+    lockingNow = false;
+    violationCount = 0;
   }, 1000);
 }
 
@@ -763,6 +785,8 @@ async function doLogin() {
 
   if (data.success) {
     currentUser = { username: data.username, password: password, hoTen: data.hoTen, diem: data.diem };
+    violationCount = 0;
+    lockingNow = false;
     saveSession();
     enterApp();
   } else {
