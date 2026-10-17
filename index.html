@@ -36,7 +36,7 @@
     --font-body: 'Be Vietnam Pro', sans-serif;
   }
 
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
 
   body {
     margin: 0;
@@ -202,7 +202,6 @@
     margin-bottom: 14px;
   }
 
-  /* ---------- KHUNG LƯU Ý TẢI FILE ---------- */
   .notice-box {
     margin: 0 0 22px;
     padding: 12px 16px;
@@ -243,10 +242,9 @@
     color: var(--text-main);
     outline: none;
     font-size: 15px;
+    user-select: text; -webkit-user-select: text;
   }
-  .field input:focus {
-    border-color: var(--aurora-cyan);
-  }
+  .field input:focus { border-color: var(--aurora-cyan); }
 
   #appScreen { display: none; }
 
@@ -256,7 +254,6 @@
     gap: 18px;
   }
 
-  /* ---------- CARD BÀI VIẾT ---------- */
   .card {
     overflow: hidden;
     display: flex;
@@ -270,6 +267,7 @@
     box-shadow: 0 14px 30px -8px rgba(0,0,0,0.6);
   }
 
+  /* WATERMARK CHỐNG SAO CHÉP ẢNH */
   .thumb-wrap {
     position: relative;
     cursor: pointer;
@@ -280,20 +278,36 @@
     align-items: center;
     justify-content: center;
   }
+  .thumb-wrap::before {
+    content: "TP DESIGN PPTX";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.25);
+    transform: rotate(-30deg);
+    pointer-events: none;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px rgba(0,0,0,0.6);
+  }
+
   .card-thumb {
     width: 100%;
     height: auto;
     max-height: 400px;
     object-fit: contain;
     transition: transform 0.35s ease;
+    pointer-events: none;
   }
-  .thumb-wrap:hover .card-thumb {
-    transform: scale(1.03);
-  }
+  .thumb-wrap:hover .card-thumb { transform: scale(1.03); }
 
   .thumb-badge {
     position: absolute;
-    top: 10px; right: 10px;
+    top: 10px; right: 10px; z-index: 6;
     padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700;
     background: rgba(5,4,15,0.65); border: 1px solid var(--glass-edge-lo);
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--text-main);
@@ -301,7 +315,7 @@
 
   .point-tag {
     position: absolute;
-    bottom: 10px; left: 10px;
+    bottom: 10px; left: 10px; z-index: 6;
     padding: 4px 10px;
     border-radius: 999px;
     font-size: 11.5px;
@@ -346,21 +360,9 @@
     margin-top: auto;
     padding-top: 6px;
   }
-  .btn-view {
-    padding: 8px 10px;
-    font-size: 12px;
-    flex: 0 0 auto;
-    border-radius: var(--radius-sm);
-  }
-  .btn-dl-main {
-    flex: 1;
-    padding: 8px 12px;
-    font-size: 13px;
-    font-weight: 700;
-    border-radius: var(--radius-sm);
-  }
+  .btn-view { padding: 8px 10px; font-size: 12px; flex: 0 0 auto; border-radius: var(--radius-sm); }
+  .btn-dl-main { flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 700; border-radius: var(--radius-sm); }
 
-  /* MODAL CHUNG */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -405,77 +407,11 @@
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
   #toast.ok { background: rgba(10, 50, 40, 0.8); border: 1px solid rgba(63,224,165,0.6); color: #8ff5cf; }
-  #toast.err { background: rgba(60, 14, 20, 0.8); border: 1px solid rgba(255,122,122,0.65); color: #ffb3b0; }
+  #toast.err { background: rgba(80, 14, 20, 0.9); border: 1px solid rgba(255,122,122,0.85); color: #ffb3b0; }
 
   footer.credit { text-align: center; color: var(--text-faint); font-size: 12px; margin-top: 32px; }
 
-  /* MÀN HÌNH CHỜ */
-  #pageLoader {
-    position: fixed; inset: 0; z-index: 300;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
-    background: radial-gradient(circle at 50% 40%, var(--bg-2), var(--bg-0) 70%);
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-  }
-  #pageLoader.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-  #pageLoader .pl-brand {
-    font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: 1px;
-    background: linear-gradient(90deg, var(--aurora-cyan), var(--aurora-violet), var(--aurora-pink));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    animation: plPulse 1.6s ease-in-out infinite;
-  }
-  #pageLoader .pl-ring {
-    width: 54px; height: 54px; border-radius: 50%;
-    border: 4px solid rgba(255,255,255,0.12);
-    border-top-color: var(--aurora-cyan);
-    border-right-color: var(--aurora-violet);
-    border-bottom-color: var(--aurora-pink);
-    animation: spin 0.9s linear infinite;
-  }
-  #pageLoader .pl-text { font-size: 13px; color: var(--text-dim); }
-  #pageLoader .pl-bar { width: 160px; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.1); overflow: hidden; }
-  #pageLoader .pl-bar i {
-    display: block; height: 100%; width: 40%; border-radius: 4px;
-    background: linear-gradient(90deg, var(--aurora-cyan), var(--aurora-violet), var(--aurora-pink));
-    animation: plBar 1.2s ease-in-out infinite;
-  }
-  @keyframes plPulse { 0%,100% { opacity: 0.75; } 50% { opacity: 1; } }
-  @keyframes plBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
-
-  /* SKELETON */
-  .loading-note {
-    grid-column: 1 / -1;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    font-size: 13px; color: var(--text-dim); padding: 2px 0 4px;
-  }
-  .skeleton { pointer-events: none; }
-  .sk-thumb, .sk-line {
-    position: relative; overflow: hidden;
-    background: rgba(255,255,255,0.07);
-  }
-  .sk-thumb { width: 100%; height: 260px; }
-  .sk-line { height: 12px; border-radius: 8px; }
-  .sk-line.w80 { width: 80%; }
-  .sk-line.w60 { width: 60%; }
-  .sk-line.btn-sk { height: 36px; border-radius: 999px; margin-top: 6px; }
-  .sk-thumb::after, .sk-line::after {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,0.18) 50%, transparent 80%);
-    transform: translateX(-100%);
-    animation: shimmer 1.4s ease-in-out infinite;
-  }
-  @keyframes shimmer { to { transform: translateX(100%); } }
-
-  .card.pop { animation: cardIn 0.45s ease both; }
-  @keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
-
-  .grid-msg {
-    grid-column: 1 / -1; text-align: center; padding: 36px 16px;
-    color: var(--text-dim); font-size: 14px; line-height: 1.7;
-  }
-  .grid-msg .big { font-size: 38px; margin-bottom: 6px; }
-  .grid-msg .btn { margin-top: 12px; }
-
-  /* GALLERY OVERLAY */
+  /* GALLERY WATERMARK */
   #galleryOverlay {
     display: none; position: fixed; inset: 0; z-index: 90;
     background: rgba(3,2,12,0.86);
@@ -484,31 +420,42 @@
     padding: 14px; gap: 12px;
   }
   #galleryOverlay.open { display: flex; }
-  .gal-top {
-    width: 100%; max-width: 980px; display: flex; align-items: flex-start;
-    justify-content: space-between; gap: 12px;
-  }
-  .gal-title { font-weight: 700; font-size: 15px; }
-  .gal-desc { font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
-  .gal-close {
-    flex: none; width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
-    background: rgba(255,255,255,0.15); color: #fff; font-size: 15px;
-  }
   .gal-stage {
     position: relative; width: 100%; max-width: 980px;
     display: flex; align-items: center; justify-content: center;
     min-height: 0; flex: 1 1 auto; max-height: 68vh;
   }
+  .gal-stage::before {
+    content: "TP DESIGN PPTX";
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.22);
+    transform: rotate(-30deg);
+    pointer-events: none;
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px rgba(0,0,0,0.8);
+  }
   .gal-img {
     max-width: 100%; max-height: 68vh; object-fit: contain;
     border-radius: var(--radius-md); box-shadow: 0 20px 60px -10px rgba(0,0,0,0.7);
-    opacity: 1; transition: opacity 0.18s ease; user-select: none; -webkit-user-drag: none;
+    opacity: 1; transition: opacity 0.18s ease; pointer-events: none;
   }
+
+  .gal-top { width: 100%; max-width: 980px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .gal-title { font-weight: 700; font-size: 15px; }
+  .gal-desc { font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
+  .gal-close { flex: none; width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer; background: rgba(255,255,255,0.15); color: #fff; font-size: 15px; }
   .gal-img.fade { opacity: 0; }
   .gal-spinner { position: absolute; display: none; }
   .gal-spinner.show { display: block; }
   .gal-nav {
-    position: absolute; top: 50%; transform: translateY(-50%);
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 15;
     width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--glass-edge-lo);
     background: rgba(5,4,15,0.55); color: #fff; font-size: 18px; cursor: pointer;
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -517,14 +464,8 @@
   .gal-nav.next { right: 6px; }
   .gal-nav:disabled { opacity: 0.25; cursor: default; }
   .gal-counter { font-size: 12.5px; color: var(--text-dim); font-weight: 600; }
-  .gal-thumbs {
-    display: flex; gap: 8px; max-width: 980px; width: 100%;
-    overflow-x: auto; padding: 4px 2px; justify-content: center;
-  }
-  .gal-thumbs img {
-    flex: none; width: 64px; height: 44px; object-fit: cover; border-radius: 8px; cursor: pointer;
-    border: 2px solid transparent; opacity: 0.55; transition: all 0.15s ease;
-  }
+  .gal-thumbs { display: flex; gap: 8px; max-width: 980px; width: 100%; overflow-x: auto; padding: 4px 2px; justify-content: center; }
+  .gal-thumbs img { flex: none; width: 64px; height: 44px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; opacity: 0.55; transition: all 0.15s ease; pointer-events: none; }
   .gal-thumbs img.active { opacity: 1; border-color: var(--aurora-cyan); }
   .gal-bottom { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
 </style>
@@ -557,7 +498,7 @@
       <input type="password" id="loginPassword" placeholder="Nhập mật khẩu" autocomplete="current-password">
     </div>
     <button class="btn btn-primary" id="btnLogin" style="width:100%;">Đăng nhập</button>
-    <div id="loginError" style="color:var(--danger); font-size:13px; margin-top:10px;"></div>
+    <div id="loginError" style="color:var(--danger); font-weight:700; font-size:13px; margin-top:12px; line-height:1.5;"></div>
   </div>
 
   <!-- MAIN APP -->
@@ -669,6 +610,49 @@ let currentUser = null;
 let posts = [];
 let downloading = false;
 
+/* ==========================================
+   BẢO VỆ: CHỐNG MỞ DEVTOOLS / F12 / CHUỘT PHẢI
+   ========================================== */
+let f12Count = 0;
+
+// 1. Chặn chuột phải & Chặn kéo thả ảnh
+document.addEventListener("contextmenu", e => {
+  e.preventDefault();
+  showToast("⛔ CẤM CHUỘT PHẢI! Vui lòng không sao chép hình ảnh.", "err");
+});
+document.addEventListener("dragstart", e => e.preventDefault());
+
+// 2. Theo dõi phím F12 & Phím tắt soi mã nguồn
+document.addEventListener("keydown", async e => {
+  const isF12 = e.key === "F12" || e.keyCode === 123;
+  const isDevShortcut = (e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "I" || e.key === "i" || e.key === "J" || e.key === "j" || e.key === "C" || e.key === "c");
+  const isViewSource = (e.ctrlKey || e.metaKey) && (e.key === "U" || e.key === "u");
+
+  if (isF12 || isDevShortcut || isViewSource) {
+    e.preventDefault();
+    e.stopPropagation();
+    f12Count++;
+
+    if (f12Count < 3) {
+      showToast(`⛔ CẢNH BÁO VI PHẠM (${f12Count}/3): Cấm mở DevTools/F12! Nếu cố tình bấm ${3 - f12Count} lần nữa tài khoản sẽ BỊ ĐÌNH CHỈ!`, "err");
+    } else {
+      showToast("⛔ TÀI KHOẢN ĐÃ BỊ KHÓA DO CỐ TÌNH MỞ F12 NHIỀU LẦN!", "err");
+      if (currentUser && currentUser.username) {
+        showBusy("Đang khóa tài khoản do vi phạm...");
+        await callApi({ action: "lockUser", username: currentUser.username });
+        hideBusy();
+      }
+      currentUser = null;
+      saveSession();
+      setTimeout(() => {
+        document.getElementById("appScreen").style.display = "none";
+        document.getElementById("loginScreen").style.display = "block";
+        document.getElementById("loginError").innerHTML = "⛔ TÀI KHOẢN CỦA BẠN ĐÃ BỊ ĐÌNH CHỈ DO VI PHẠM NGUYÊN TẮC (MỞ F12 NHIỀU LẦN). LIÊN HỆ ADMIN ĐỂ GỠ KHÓA.";
+      }, 1200);
+    }
+  }
+});
+
 function saveSession() {
   if (currentUser) localStorage.setItem("tp_user", JSON.stringify(currentUser));
   else localStorage.removeItem("tp_user");
@@ -686,7 +670,7 @@ function showToast(msg, type = "ok") {
   el.textContent = msg;
   el.className = "show " + type;
   clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => { el.className = type; }, 3500);
+  showToast._t = setTimeout(() => { el.className = type; }, 4000);
 }
 
 function showBusy(text) {
@@ -701,7 +685,6 @@ function escapeHtml(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 }
 
-/* ---------------- API HOÀN CHỈNH ---------------- */
 async function callApi(params, timeoutMs) {
   const url = new URL(CONFIG.APPS_SCRIPT_URL);
   Object.keys(params).forEach(k => url.searchParams.set(k, params[k]));
@@ -724,7 +707,6 @@ async function callApi(params, timeoutMs) {
   }
 }
 
-/* ---------------- LOGIN / LOGOUT ---------------- */
 async function doLogin() {
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value;
@@ -733,6 +715,7 @@ async function doLogin() {
   const btn = document.getElementById("btnLogin");
   btn.disabled = true;
   document.getElementById("loginError").textContent = "";
+  
   const data = await callApi({ action: "login", username, password });
   btn.disabled = false;
 
@@ -741,7 +724,7 @@ async function doLogin() {
     saveSession();
     enterApp();
   } else {
-    document.getElementById("loginError").textContent = data.message || "Đăng nhập thất bại";
+    document.getElementById("loginError").innerHTML = escapeHtml(data.message || "Đăng nhập thất bại");
   }
 }
 document.getElementById("btnLogin").addEventListener("click", doLogin);
@@ -761,7 +744,7 @@ function enterApp() {
   loadPosts();
 }
 
-/* ---------------- ĐỔI MẬT KHẨU ---------------- */
+/* ĐỔI MẬT KHẨU */
 const changePwModal = document.getElementById("changePasswordModalOverlay");
 const changePwErr = document.getElementById("changePwError");
 
@@ -790,7 +773,7 @@ async function doChangePassword() {
   }
 
   if (newPassword !== confirmNewPassword) {
-    changePwErr.textContent = "Mật khẩu mới và Xác nhận mật khẩu không khớp nhau.";
+    changePwErr.textContent = "Mật khẩu mới và Xác nhận mật khẩu không khớp.";
     return;
   }
 
@@ -819,13 +802,13 @@ async function doChangePassword() {
     changePwModal.style.display = "none";
     showToast("Đổi mật khẩu thành công!", "ok");
   } else {
-    changePwErr.textContent = data.message || "Đổi mật khẩu thất bại. Vui lòng kiểm tra lại.";
+    changePwErr.textContent = data.message || "Đổi mật khẩu thất bại.";
   }
 }
 
 document.getElementById("btnSubmitChangePw").addEventListener("click", doChangePassword);
 
-/* ---------------- POSTS ---------------- */
+/* HIỂN THỊ DANH SÁCH BÀI VIẾT */
 function renderSkeleton(count) {
   const grid = document.getElementById("postsGrid");
   let html = '<div class="loading-note"><span class="spin"></span> Đang tải bài viết…</div>';
@@ -891,7 +874,7 @@ function renderPosts() {
     
     card.innerHTML = `
       <div class="thumb-wrap" data-view="${escapeHtml(post.id)}">
-        <img class="card-thumb" src="${escapeHtml(thumb)}" loading="lazy" alt="">
+        <img class="card-thumb" src="${escapeHtml(thumb)}" loading="lazy" alt="" ondragstart="return false;">
         ${badge}
         ${pointBadge}
       </div>
@@ -915,7 +898,7 @@ document.getElementById("postsGrid").addEventListener("click", e => {
   if (btn) handleDownload(btn.dataset.id, btn);
 });
 
-/* ---------------- XEM NHIỀU ẢNH ---------------- */
+/* XEM GALLERY */
 const gal = { post: null, imgs: [], i: 0 };
 
 function openGallery(postId, startIdx) {
@@ -934,6 +917,7 @@ function openGallery(postId, startIdx) {
   imgs.forEach((u, idx) => {
     const t = document.createElement("img");
     t.src = u; t.alt = ""; t.loading = "lazy";
+    t.ondragstart = () => false;
     t.addEventListener("click", () => showGalleryImage(idx));
     thumbs.appendChild(t);
   });
@@ -976,8 +960,6 @@ function showGalleryImage(idx) {
     t.classList.toggle("active", k === idx);
     if (k === idx) t.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
   });
-
-  [idx - 1, idx + 1].forEach(k => { if (gal.imgs[k]) { const pre = new Image(); pre.src = gal.imgs[k]; } });
 }
 
 function closeGallery() {
@@ -994,22 +976,6 @@ document.getElementById("galleryOverlay").addEventListener("click", e => {
 document.getElementById("galDownload").addEventListener("click", e => {
   handleDownload(e.currentTarget.dataset.id, e.currentTarget);
 });
-document.addEventListener("keydown", e => {
-  if (!document.getElementById("galleryOverlay").classList.contains("open")) return;
-  if (e.key === "Escape") closeGallery();
-  else if (e.key === "ArrowLeft") showGalleryImage(gal.i - 1);
-  else if (e.key === "ArrowRight") showGalleryImage(gal.i + 1);
-});
-(function () {
-  let sx = 0, sy = 0;
-  const stage = document.getElementById("galStage");
-  stage.addEventListener("touchstart", e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
-  stage.addEventListener("touchend", e => {
-    const dx = e.changedTouches[0].clientX - sx;
-    const dy = e.changedTouches[0].clientY - sy;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) showGalleryImage(gal.i + (dx < 0 ? 1 : -1));
-  }, { passive: true });
-})();
 
 function normalizeDownloadUrl(raw) {
   if (!raw) return "";
@@ -1041,7 +1007,7 @@ function extractLinks(data) {
   return list.map(s => normalizeDownloadUrl(s)).filter(Boolean);
 }
 
-/* ---------------- TẢI FILE ---------------- */
+/* TẢI FILE */
 async function handleDownload(id, btn) {
   if (downloading) return;
   downloading = true;
@@ -1149,7 +1115,7 @@ async function downloadViaScript(postId, file, fallbackUrl, btn) {
       window.location.href = normalizeDownloadUrl(fallbackUrl);
     }
   } else {
-    showToast(data.message || "Tải thất bại, vui lòng liên hệ admin nếu vẫn không tải được", "err");
+    showToast(data.message || "Tải thất bại.", "err");
   }
 
   btn.disabled = false;
@@ -1160,7 +1126,7 @@ document.getElementById("dlModalClose").addEventListener("click", () => {
   document.getElementById("downloadModalOverlay").style.display = "none";
 });
 
-/* ---------------- LÀM MỚI ---------------- */
+/* LÀM MỚI DỮ LIỆU */
 let refreshing = false;
 async function refreshData() {
   if (refreshing || !currentUser) return;
@@ -1191,7 +1157,7 @@ document.getElementById("btnRefresh").addEventListener("click", refreshData);
 
 window.addEventListener("DOMContentLoaded", checkSessionOnLoad);
 
-/* ---------------- ẨN MÀN HÌNH CHỜ ---------------- */
+/* ẨN LOADER CHỜ */
 (function () {
   const startedAt = Date.now();
   const MIN_SHOW_MS = 700;
