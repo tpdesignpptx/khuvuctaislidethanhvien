@@ -27,6 +27,7 @@
     --text-faint: #7c76a3;
     --danger: #ff7a7a;
     --danger-soft: rgba(255,122,122,0.14);
+    --warn: #ffc15c;
     --success: #3fe0a5;
     --success-soft: rgba(63,224,165,0.14);
     --radius-lg: 28px;
@@ -402,6 +403,64 @@
   .modal-box { max-width: 440px; width: 100%; overflow: hidden; position: relative; }
   .modal-close { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
 
+  /* ==========================================
+     KHUNG THÔNG BÁO ĐĂNG NHẬP THẤT BẠI (TÀI KHOẢN BỊ KHÓA / HẠN CHẾ / TẠM NGƯNG)
+     ========================================== */
+  #blockedModalOverlay { z-index: 180; }
+  #blockedModalOverlay.open { display: flex; }
+  .blocked-box {
+    max-width: 420px;
+    text-align: center;
+    padding: 32px 24px 26px;
+    animation: blockedPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes blockedPop {
+    from { opacity: 0; transform: translateY(14px) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .blocked-icon {
+    width: 72px; height: 72px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 34px;
+    background: var(--danger-soft);
+    border: 1px solid rgba(255,122,122,0.45);
+  }
+  .blocked-box.type-limit .blocked-icon { background: rgba(255,193,92,0.14); border-color: rgba(255,193,92,0.5); }
+  .blocked-box.type-suspended .blocked-icon { background: rgba(178,172,224,0.16); border-color: rgba(178,172,224,0.5); }
+  .blocked-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin: 0 0 6px;
+    color: var(--danger);
+  }
+  .blocked-box.type-limit .blocked-title { color: var(--warn); }
+  .blocked-box.type-suspended .blocked-title { color: var(--text-main); }
+  .blocked-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 0 0 10px;
+  }
+  .blocked-reason {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-dim);
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-edge-lo);
+    margin-bottom: 18px;
+    text-align: left;
+  }
+  .blocked-actions { display: flex; flex-direction: column; gap: 10px; }
+  .blocked-actions a { text-decoration: none; padding: 12px; }
+  .blocked-actions .btn { width: 100%; }
+
   .dl-links { display: flex; flex-direction: column; gap: 10px; }
   .dl-links a { text-decoration: none; padding: 12px; display: flex; }
   .dl-hint { font-size: 12px; color: var(--text-faint); margin: 14px 0 0; line-height: 1.5; }
@@ -543,6 +602,20 @@
   <footer class="credit">© TP Design PPTX — Khu vực thành viên</footer>
 </div>
 
+<!-- KHUNG THÔNG BÁO ĐĂNG NHẬP THẤT BẠI (TÀI KHOẢN BỊ KHÓA / HẠN CHẾ / TẠM NGƯNG) -->
+<div class="modal-overlay" id="blockedModalOverlay">
+  <div class="modal-box glass blocked-box" id="blockedBox">
+    <div class="blocked-icon" id="blockedIcon">⛔</div>
+    <h3 class="blocked-title">Đăng nhập thất bại</h3>
+    <div class="blocked-label" id="blockedLabel">Lý do</div>
+    <div class="blocked-reason" id="blockedReason"></div>
+    <div class="blocked-actions">
+      <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer">💬 Liên hệ Admin</a>
+      <button class="btn btn-ghost" id="blockedClose">Đóng</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL TẢI FILE -->
 <div class="modal-overlay" id="downloadModalOverlay">
   <div class="modal-box glass" style="text-align:center; padding:28px 20px;">
@@ -614,13 +687,59 @@
 
 <script>
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyl_1p5__wsKLDAinJNWuc11Ss3jWbJ4zb6i2drbmHBtxF1d93zrKUaEX53VcxlnDvhnw/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwIN09W_TABcmwuM9wsnbWstB4iL_akaP4txUlKZ2dlJOTUsNhuLQi0oBkUru62R1r0/exec",
   API_TIMEOUT_MS: 30000
 };
 
 let currentUser = null;
 let posts = [];
 let downloading = false;
+
+/* ==========================================
+   KHUNG THÔNG BÁO "ĐĂNG NHẬP THẤT BẠI"
+   type: "ban" | "limit" | "suspended"
+   ========================================== */
+const BLOCKED_ICONS = { ban: "⛔", limit: "⏳", suspended: "💤" };
+
+function showBlockedModal(message, type) {
+  const t = BLOCKED_ICONS[type] ? type : "ban";
+  const box = document.getElementById("blockedBox");
+  box.className = "modal-box glass blocked-box type-" + t;
+  document.getElementById("blockedIcon").textContent = BLOCKED_ICONS[t];
+  document.getElementById("blockedReason").textContent = message || "Tài khoản của bạn hiện không thể đăng nhập. Vui lòng liên hệ Admin để được hỗ trợ.";
+  document.getElementById("blockedModalOverlay").classList.add("open");
+}
+
+function closeBlockedModal() {
+  document.getElementById("blockedModalOverlay").classList.remove("open");
+}
+
+document.getElementById("blockedClose").addEventListener("click", closeBlockedModal);
+document.getElementById("blockedModalOverlay").addEventListener("click", e => {
+  if (e.target.id === "blockedModalOverlay") closeBlockedModal();
+});
+
+// Đưa người dùng về màn hình đăng nhập (dùng khi tài khoản bị chặn giữa phiên)
+function forceLogoutToLogin() {
+  currentUser = null;
+  saveSession();
+  closeGallery();
+  document.getElementById("downloadModalOverlay").style.display = "none";
+  document.getElementById("changePasswordModalOverlay").style.display = "none";
+  document.getElementById("appScreen").style.display = "none";
+  document.getElementById("loginScreen").style.display = "block";
+  document.getElementById("loginError").textContent = "";
+}
+
+// Nếu phản hồi từ server là "bị chặn" -> hiện khung thông báo và trả về true
+function handleBlockedResponse(data) {
+  if (data && data.isBlocked) {
+    forceLogoutToLogin();
+    showBlockedModal(data.message, data.blockType);
+    return true;
+  }
+  return false;
+}
 
 /* ==========================================
    BẢO VỆ NGIÊM NGẶT: CHỐNG F12 / PHÍM TẮT / CHUỘT PHẢI
@@ -668,16 +787,13 @@ async function triggerViolation(reason) {
     return;
   }
 
-  showToast("⛔ TÀI KHOẢN ĐÃ BỊ KHÓA DO CỐ TÌNH VI PHẠM BẢO MẬT NHIỀU LẦN!", "err");
-  currentUser = null;
-  saveSession();
-  setTimeout(() => {
-    document.getElementById("appScreen").style.display = "none";
-    document.getElementById("loginScreen").style.display = "block";
-    document.getElementById("loginError").innerHTML = "⛔ TÀI KHOẢN CỦA BẠN ĐÃ BỊ ĐÌNH CHỈ DO VI PHẠM NGUYÊN TẮC. LIÊN HỆ ADMIN ĐỂ GỠ KHÓA.";
-    lockingNow = false;
-    violationCount = 0;
-  }, 1000);
+  forceLogoutToLogin();
+  showBlockedModal(
+    "Tài khoản của bạn đã bị đình chỉ do vi phạm quy định bảo mật nhiều lần (mở F12/DevTools/Lưu trang). Vui lòng liên hệ Admin để được gỡ khóa.",
+    "ban"
+  );
+  lockingNow = false;
+  violationCount = 0;
 }
 
 document.addEventListener("keydown", async e => {
@@ -789,6 +905,9 @@ async function doLogin() {
     lockingNow = false;
     saveSession();
     enterApp();
+  } else if (data.isBlocked) {
+    // Tài khoản bị khóa / hạn chế 24h / tạm ngưng -> khung "Đăng nhập thất bại" ở giữa màn hình
+    showBlockedModal(data.message, data.blockType);
   } else {
     document.getElementById("loginError").innerHTML = escapeHtml(data.message || "Đăng nhập thất bại");
   }
@@ -867,6 +986,8 @@ async function doChangePassword() {
     saveSession();
     changePwModal.style.display = "none";
     showToast("Đổi mật khẩu thành công!", "ok");
+  } else if (handleBlockedResponse(data)) {
+    return;
   } else {
     changePwErr.textContent = data.message || "Đổi mật khẩu thất bại.";
   }
@@ -897,6 +1018,8 @@ async function loadPosts() {
   if (data.success) {
     posts = data.data || [];
     renderPosts();
+  } else if (handleBlockedResponse(data)) {
+    return;
   } else {
     renderGridMessage("😕", escapeHtml(data.message || "Không tải được danh sách mẫu."), true);
     showToast(data.message || "Không tải được danh sách mẫu", "err");
@@ -1075,6 +1198,8 @@ async function handleDownload(id, btn) {
     downloading = false;
   }
 
+  if (handleBlockedResponse(data)) return;
+
   if (!data || !data.success) {
     showToast((data && data.message) || "Tải thất bại, vui lòng thử lại", "err");
     return;
@@ -1145,6 +1270,8 @@ async function downloadViaScript(postId, file, fallbackUrl, btn) {
     90000
   );
 
+  if (handleBlockedResponse(data)) return;
+
   if (data.success && data.base64) {
     try {
       const blob = base64ToBlob(data.base64, data.mime);
@@ -1198,6 +1325,8 @@ async function refreshData() {
     document.getElementById("userPoints").textContent = currentUser.diem;
     await loadPosts();
     showToast("Đã làm mới dữ liệu!", "ok");
+  } else if (handleBlockedResponse(info)) {
+    // đã hiện khung thông báo và đưa về màn hình đăng nhập
   } else {
     showToast(info.message || "Không thể cập nhật", "err");
   }
