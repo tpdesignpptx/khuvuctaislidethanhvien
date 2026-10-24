@@ -438,6 +438,8 @@
   }
   .blocked-box.type-limit .blocked-title { color: var(--warn); }
   .blocked-box.type-suspended .blocked-title { color: var(--text-main); }
+  .blocked-box.type-security .blocked-icon { background: rgba(124,92,255,0.18); border-color: rgba(124,92,255,0.55); }
+  .blocked-box.type-security .blocked-title { color: #c9b8ff; }
   .blocked-label {
     font-size: 11.5px;
     font-weight: 700;
@@ -541,12 +543,80 @@
   .gal-thumbs img { flex: none; width: 64px; height: 44px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; opacity: 0.55; transition: all 0.15s ease; pointer-events: none; }
   .gal-thumbs img.active { opacity: 1; border-color: var(--aurora-cyan); }
   .gal-bottom { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+  /* ==========================================
+     MÀN HÌNH CHỜ: THANH TIẾN TRÌNH TRƯỚC KHI VÀO TRANG ĐĂNG NHẬP
+     ========================================== */
+  #splash {
+    position: fixed; inset: 0; z-index: 300;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 22px; padding: 24px;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(124,92,255,0.22), transparent 55%),
+      radial-gradient(ellipse at 50% 120%, rgba(51,230,201,0.12), transparent 55%),
+      linear-gradient(180deg, var(--bg-1), var(--bg-0) 70%);
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  #splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+  .splash-brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 28px;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, var(--aurora-cyan), var(--aurora-violet), var(--aurora-pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-align: center;
+  }
+  .splash-sub { font-size: 13px; color: var(--text-dim); margin-top: -12px; text-align: center; }
+  .splash-bar-wrap {
+    width: min(320px, 80vw);
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--glass-edge-lo);
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+  }
+  .splash-bar {
+    width: 0%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--aurora-cyan), var(--aurora-violet), var(--aurora-pink));
+    box-shadow: 0 0 14px rgba(124,92,255,0.6);
+    position: relative;
+    overflow: hidden;
+  }
+  .splash-bar::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.45) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: shimmer 1.2s ease-in-out infinite;
+  }
+  @keyframes shimmer { to { transform: translateX(100%); } }
+  .splash-info {
+    width: min(320px, 80vw);
+    display: flex; justify-content: space-between;
+    font-size: 12.5px; color: var(--text-dim); font-weight: 600;
+    margin-top: -10px;
+  }
+  #splashPct { color: var(--text-main); font-weight: 700; }
 </style>
 </head>
 <body>
 
 <div class="aurora"><span></span><span></span><span></span></div>
 <div class="grain"></div>
+
+<!-- MÀN HÌNH CHỜ (THANH TIẾN TRÌNH) -->
+<div id="splash">
+  <div class="splash-brand">TP DESIGN PPTX</div>
+  <div class="splash-sub">Khu Vực Thành Viên</div>
+  <div class="splash-bar-wrap"><div class="splash-bar" id="splashBar"></div></div>
+  <div class="splash-info"><span id="splashText">Đang khởi động…</span><span id="splashPct">0%</span></div>
+</div>
 
 <div class="wrap">
   <!-- LOGIN -->
@@ -687,7 +757,7 @@
 
 <script>
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwIN09W_TABcmwuM9wsnbWstB4iL_akaP4txUlKZ2dlJOTUsNhuLQi0oBkUru62R1r0/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyl_1p5__wsKLDAinJNWuc11Ss3jWbJ4zb6i2drbmHBtxF1d93zrKUaEX53VcxlnDvhnw/exec",
   API_TIMEOUT_MS: 30000
 };
 
@@ -699,7 +769,7 @@ let downloading = false;
    KHUNG THÔNG BÁO "ĐĂNG NHẬP THẤT BẠI"
    type: "ban" | "limit" | "suspended"
    ========================================== */
-const BLOCKED_ICONS = { ban: "⛔", limit: "⏳", suspended: "💤" };
+const BLOCKED_ICONS = { ban: "⛔", limit: "⏳", suspended: "💤", security: "🔒" };
 
 function showBlockedModal(message, type) {
   const t = BLOCKED_ICONS[type] ? type : "ban";
@@ -1340,7 +1410,91 @@ async function refreshData() {
 }
 document.getElementById("btnRefresh").addEventListener("click", refreshData);
 
-window.addEventListener("DOMContentLoaded", checkSessionOnLoad);
+/* ==========================================
+   MÀN HÌNH CHỜ: THANH TIẾN TRÌNH
+   Các bước: tải font -> tải xong trang -> kết nối máy chủ -> hiện trang đăng nhập
+   ========================================== */
+(function () {
+  const splash = document.getElementById("splash");
+  const bar = document.getElementById("splashBar");
+  const pctEl = document.getElementById("splashPct");
+  const textEl = document.getElementById("splashText");
+
+  let shown = 0;       // % đang hiển thị
+  let target = 6;      // % cần đạt tới
+  let finished = false;
+  let started = false;
+
+  // Làm thanh chạy mượt về phía target
+  const animTimer = setInterval(() => {
+    const diff = target - shown;
+    if (diff > 0) shown = Math.min(target, shown + Math.max(0.35, diff * 0.12));
+    bar.style.width = shown.toFixed(1) + "%";
+    pctEl.textContent = Math.floor(shown) + "%";
+    if (finished && shown >= 100) {
+      clearInterval(animTimer);
+      setTimeout(closeSplash, 250);
+    }
+  }, 30);
+
+  // Trong lúc chờ máy chủ, thanh nhích dần (tối đa 92%) để người dùng thấy đang chạy
+  const creepTimer = setInterval(() => {
+    if (target < 92) target += 1;
+  }, 250);
+
+  function setStep(pct, msg) {
+    if (pct > target) target = pct;
+    if (msg) textEl.textContent = msg;
+  }
+
+  function closeSplash() {
+    splash.classList.add("hide");
+    setTimeout(() => { splash.style.display = "none"; }, 450);
+    checkSessionOnLoad();
+  }
+
+  function finish() {
+    if (finished) return;
+    finished = true;
+    clearInterval(creepTimer);
+    target = 100;
+    textEl.textContent = "Hoàn tất!";
+  }
+
+  async function run() {
+    if (started) return;
+    started = true;
+    const t0 = Date.now();
+
+    // Bước 1: font chữ
+    setStep(20, "Đang tải giao diện…");
+    try { if (document.fonts && document.fonts.ready) await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 4000))]); } catch (e) {}
+    setStep(40, "Đang tải giao diện…");
+
+    // Bước 2: tải xong toàn bộ trang
+    if (document.readyState !== "complete") {
+      await Promise.race([
+        new Promise(r => window.addEventListener("load", r, { once: true })),
+        new Promise(r => setTimeout(r, 5000))
+      ]);
+    }
+    setStep(60, "Đang kết nối máy chủ…");
+
+    // Bước 3: đánh thức máy chủ Apps Script (lỗi mạng vẫn cho vào trang)
+    try { await callApi({ action: "ping" }, 10000); } catch (e) {}
+    setStep(95, "Sắp xong…");
+
+    // Giữ màn hình chờ tối thiểu 700ms để không bị nháy
+    const wait = Math.max(0, 700 - (Date.now() - t0));
+    setTimeout(finish, wait);
+  }
+
+  // Chốt chặn an toàn: tối đa 14 giây là vào trang
+  setTimeout(finish, 14000);
+
+  if (document.readyState === "loading") window.addEventListener("DOMContentLoaded", run);
+  else run();
+})();
 </script>
 </body>
 </html>
