@@ -603,6 +603,46 @@
     margin-top: -10px;
   }
   #splashPct { color: var(--text-main); font-weight: 700; }
+  /* ==========================================
+     NÚT ĐĂNG NHẬP KHI ĐANG XỬ LÝ: ANIMATION (KHÔNG LÀM MỜ NÚT)
+     ========================================== */
+  .btn.btn-loading,
+  .btn.btn-loading:disabled {
+    opacity: 1;
+    cursor: progress;
+    pointer-events: none;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(110deg, var(--aurora-violet), var(--aurora-pink), var(--aurora-cyan), var(--aurora-violet));
+    background-size: 200% 100%;
+    animation: btnFlow 1.4s linear infinite, btnGlow 0.9s ease-in-out infinite alternate;
+  }
+  .btn.btn-loading::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: shimmer 1.1s ease-in-out infinite;
+  }
+  @keyframes btnFlow { from { background-position: 0 0; } to { background-position: -200% 0; } }
+  @keyframes btnGlow {
+    from { box-shadow: 0 4px 14px rgba(124,92,255,0.35); transform: scale(1); }
+    to   { box-shadow: 0 6px 26px rgba(255,92,176,0.6); transform: scale(1.02); }
+  }
+  .dots { display: inline-flex; align-items: center; gap: 4px; }
+  .dots i {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #fff;
+    display: inline-block;
+    animation: dotBounce 0.9s ease-in-out infinite;
+  }
+  .dots i:nth-child(2) { animation-delay: 0.15s; }
+  .dots i:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes dotBounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.6; }
+    40% { transform: translateY(-6px); opacity: 1; }
+  }
 </style>
 </head>
 <body>
@@ -757,7 +797,7 @@
 
 <script>
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzfShz6DwKr7JYGnOSgCLyLtayCKchheL_GyLG15uxOBWdCarYiLGPS70zr5ufFjeXV1Q/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyng573KAZy0nS9pV_Z7sGKHG2lmV_wsQ_dW0WZJWR4TxlPrcqpj1gnw1NUrAKWvoU4sQ/exec",
   API_TIMEOUT_MS: 30000
 };
 
@@ -767,7 +807,7 @@ let downloading = false;
 
 /* ==========================================
    KHUNG THÔNG BÁO "ĐĂNG NHẬP THẤT BẠI"
-   type: "ban" | "limit" | "suspended"
+   type: "ban" | "limit" | "suspended" | "security"
    ========================================== */
 const BLOCKED_ICONS = { ban: "⛔", limit: "⏳", suspended: "💤", security: "🔒" };
 
@@ -957,17 +997,30 @@ async function callApi(params, timeoutMs) {
   }
 }
 
+let loggingIn = false;
 async function doLogin() {
+  if (loggingIn) return; // chặn gửi trùng (bấm nhiều lần / giữ phím Enter)
+
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value;
   if (!username || !password) return;
 
+  loggingIn = true;
   const btn = document.getElementById("btnLogin");
   btn.disabled = true;
+  btn.classList.add("btn-loading");
+  btn.innerHTML = '<span class="dots"><i></i><i></i><i></i></span><span>Đang đăng nhập…</span>';
   document.getElementById("loginError").textContent = "";
-  
-  const data = await callApi({ action: "login", username, password });
-  btn.disabled = false;
+
+  let data;
+  try {
+    data = await callApi({ action: "login", username, password }, 45000);
+  } finally {
+    loggingIn = false;
+    btn.disabled = false;
+    btn.classList.remove("btn-loading");
+    btn.textContent = "Đăng nhập";
+  }
 
   if (data.success) {
     currentUser = { username: data.username, password: password, hoTen: data.hoTen, diem: data.diem };
@@ -976,14 +1029,14 @@ async function doLogin() {
     saveSession();
     enterApp();
   } else if (data.isBlocked) {
-    // Tài khoản bị khóa / hạn chế 24h / tạm ngưng -> khung "Đăng nhập thất bại" ở giữa màn hình
+    // Tài khoản bị khóa / hạn chế 24h / tạm ngưng / tạm khóa bảo mật -> khung "Đăng nhập thất bại" ở giữa màn hình
     showBlockedModal(data.message, data.blockType);
   } else {
     document.getElementById("loginError").innerHTML = escapeHtml(data.message || "Đăng nhập thất bại");
   }
 }
 document.getElementById("btnLogin").addEventListener("click", doLogin);
-document.getElementById("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+document.getElementById("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter" && !e.repeat) doLogin(); });
 
 document.getElementById("btnLogout").addEventListener("click", () => {
   currentUser = null; saveSession();
