@@ -620,6 +620,79 @@
     30%, 80% { opacity: 1; }
     100% { opacity: 0; }
   }
+
+  /* ==========================================
+     AI SLIDE (TP DESIGN PPTX INTELLIGENCE - BETA 1)
+     ========================================== */
+  #chatView { display: none; }
+  .ai-stage { position: relative; display: flex; flex-direction: column; height: calc(100vh - 140px); min-height: 520px; }
+  .ai-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--glass-edge-lo); }
+  .ai-head-title { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; }
+  .ai-head-title small { display: block; font-family: var(--font-body); font-weight: 500; font-size: 11.5px; color: var(--text-dim); }
+  #aiMsgs { flex: 1; overflow: auto; padding: 16px; scroll-behavior: smooth; }
+  .ai-m, .ai-m *, .ai-plan, .ai-plan *, .ai-input { user-select: text; -webkit-user-select: text; }
+  .ai-m { max-width: 88%; margin: 0 0 12px; padding: 10px 14px; border-radius: 16px; line-height: 1.55; font-size: 14px; white-space: pre-wrap; word-break: break-word; }
+  .ai-m.bot { background: rgba(255,255,255,0.08); border: 1px solid var(--glass-edge-lo); border-top-left-radius: 6px; }
+  .ai-m.user { margin-left: auto; background: linear-gradient(120deg, var(--aurora-violet), #4a7dff); border-top-right-radius: 6px; }
+  .ai-m .ai-th { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .ai-m .ai-th img { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; border: 1px solid var(--glass-edge-lo); }
+  .ai-prog { color: var(--text-dim); font-size: 13px; display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
+  .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--aurora-cyan); animation: aiPulse 1s infinite; }
+  @keyframes aiPulse { 50% { opacity: 0.25; transform: scale(0.7); } }
+
+  .ai-plan { margin: 0 0 14px; padding: 14px; border: 1px solid var(--glass-edge-lo); border-radius: var(--radius-md); background: rgba(8,6,28,0.45); }
+  .ai-plan h3 { margin: 0 0 4px; font-size: 15px; }
+  .ai-pal { display: flex; gap: 6px; margin: 6px 0 10px; }
+  .ai-pal b { width: 22px; height: 22px; border-radius: 7px; border: 1px solid var(--glass-edge-lo); }
+  .ai-flow { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px 24px; margin: 12px 0 14px; }
+  .ai-node { position: relative; border: 1px solid var(--glass-edge-lo); border-radius: 12px; padding: 8px; background: rgba(255,255,255,0.05); cursor: pointer; transition: 0.15s; }
+  .ai-node:hover { border-color: var(--aurora-violet); transform: translateY(-2px); }
+  .ai-node svg { width: 100%; height: auto; display: block; color: var(--aurora-cyan); border-radius: 6px; background: rgba(255,255,255,0.06); }
+  .ai-node .ai-no { position: absolute; top: -8px; left: -8px; width: 22px; height: 22px; border-radius: 50%; background: var(--aurora-violet); font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+  .ai-node .ai-tt { font-size: 12px; margin-top: 6px; font-weight: 600; line-height: 1.3; }
+  .ai-node:not(:last-child)::after { content: "➜"; position: absolute; right: -20px; top: 38%; font-size: 14px; color: var(--text-faint); }
+  .ai-det { border-top: 1px solid var(--glass-edge-lo); padding: 10px 6px; }
+  .ai-det.hl { background: rgba(124,92,255,0.14); border-radius: 10px; }
+  .ai-det b { font-size: 14px; }
+  .ai-det .ai-pu { color: var(--text-dim); font-size: 13px; margin: 2px 0 4px; }
+  .ai-det ul { margin: 4px 0; padding-left: 18px; font-size: 13.5px; }
+  .ai-det .ai-vi { font-size: 12.5px; color: #9be7ff; }
+  .ai-lay { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--glass-edge-lo); color: var(--text-dim); margin-left: 6px; }
+  .ai-acts { display: flex; gap: 8px; margin-top: 10px; }
+
+  .ai-bar { padding: 10px 12px; border-top: 1px solid var(--glass-edge-lo); background: rgba(5,4,15,0.35); }
+  #aiThumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+  #aiThumbs:not(:empty) { margin-bottom: 8px; }
+  #aiThumbs div { position: relative; }
+  #aiThumbs img { width: 54px; height: 54px; object-fit: cover; border-radius: 10px; border: 1px solid var(--glass-edge-lo); }
+  #aiThumbs button { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; border: 0; background: #ff5f7e; color: #fff; font-size: 12px; cursor: pointer; line-height: 1; }
+  .ai-row { display: flex; gap: 8px; align-items: flex-end; }
+  .ai-input { flex: 1; resize: none; max-height: 150px; min-height: 44px; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--glass-edge-lo); background: rgba(255,255,255,0.06); color: var(--text-main); font: inherit; font-size: 14px; outline: none; }
+  .ai-input:focus { border-color: var(--aurora-cyan); }
+  .ai-ib { width: 44px; height: 44px; padding: 0; border-radius: var(--radius-sm); font-size: 17px; flex: none; }
+  .ai-hint { font-size: 11.5px; color: var(--text-faint); margin-top: 6px; }
+
+  /* LIQUID GLASS: bảng mờ khi tài khoản chưa phải VIP */
+  #aiGlass {
+    position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; padding: 18px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04) 45%, rgba(255,255,255,0.12));
+    -webkit-backdrop-filter: blur(22px) saturate(190%) brightness(1.08); backdrop-filter: blur(22px) saturate(190%) brightness(1.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(255,255,255,0.12), inset 0 0 60px rgba(255,255,255,0.08);
+    transition: opacity 0.45s ease, visibility 0.45s;
+  }
+  #aiGlass::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 60% at 20% -10%, rgba(255,255,255,0.35), transparent 55%), radial-gradient(80% 50% at 90% 110%, rgba(120,200,255,0.22), transparent 60%); }
+  #aiGlass.off { opacity: 0; visibility: hidden; pointer-events: none; }
+  .ai-gcard {
+    position: relative; width: min(380px, 100%); padding: 26px 22px 20px; border-radius: 26px; text-align: center;
+    background: linear-gradient(160deg, rgba(255,255,255,0.28), rgba(255,255,255,0.08)); border: 1px solid rgba(255,255,255,0.45);
+    -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.35), inset 0 1.5px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(255,255,255,0.2);
+  }
+  .ai-lock { width: 54px; height: 54px; margin: 0 auto 10px; border-radius: 18px; display: grid; place-items: center; font-size: 26px; background: linear-gradient(135deg, rgba(255,226,154,0.9), rgba(255,160,90,0.85)); box-shadow: 0 8px 22px rgba(255,170,80,0.4), inset 0 1px 0 rgba(255,255,255,0.7); }
+  .ai-gcard h2 { margin: 0 0 6px; font-size: 18px; font-family: var(--font-display); }
+  .ai-gcard p { margin: 0 0 14px; font-size: 13px; color: #e4e7ff; line-height: 1.55; }
+  .ai-gcard .btn { width: 100%; margin-top: 8px; padding: 12px; text-decoration: none; }
+  @media (max-width: 560px) { .ai-m { max-width: 96%; } .ai-flow { grid-template-columns: repeat(2, 1fr); } .ai-stage { height: calc(100vh - 110px); } }
 </style>
 </head>
 <body>
@@ -661,6 +734,8 @@
       <div class="user-info">
         <span id="userGreeting"></span>
         <span class="point-pill">⭐ <span id="userPoints">0</span> điểm</span>
+        <button class="btn btn-primary" id="btnOpenChat">🤖 AI Slide</button>
+        <button class="btn btn-ghost" id="btnBackPosts" style="display:none;">📚 Kho mẫu</button>
         <button class="btn btn-ghost btn-refresh" id="btnRefresh">
           <span class="refresh-icon">🔄</span> Làm mới
         </button>
@@ -669,6 +744,7 @@
       </div>
     </header>
 
+    <div id="postsView">
     <div class="topup-banner glass">
       <div>Hết điểm tải mẫu? <strong>Liên hệ admin để nạp thêm điểm</strong>.</div>
       <a class="btn btn-primary" href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">💬 Zalo Admin</a>
@@ -684,6 +760,39 @@
     </div>
 
     <div class="grid" id="postsGrid"></div>
+    </div>
+
+    <!-- KHU VỰC AI SLIDE (chỉ khách VIP, cột H sheet Users) -->
+    <div id="chatView">
+      <div class="ai-stage glass">
+        <div class="ai-head">
+          <div class="ai-head-title">TP DESIGN PPTX INTELLIGENCE<small>BETA 1 · Gửi nội dung / ảnh, AI chia bố cục từng slide</small></div>
+          <button class="btn btn-ghost" id="aiNew">✨ Cuộc trò chuyện mới</button>
+        </div>
+        <div id="aiMsgs"></div>
+        <div class="ai-bar">
+          <div id="aiThumbs"></div>
+          <div class="ai-row">
+            <input type="file" id="aiFile" accept="image/*" multiple hidden>
+            <button class="btn btn-ghost ai-ib" id="aiAttach" title="Gửi ảnh (tối đa 3)">📎</button>
+            <textarea id="aiTxt" class="ai-input" rows="1" placeholder="Dán nội dung bài, mô tả chủ đề hoặc gửi ảnh. Ví dụ: chia bố cục 10 slide..."></textarea>
+            <button class="btn btn-primary ai-ib" id="aiSend" title="Gửi">➤</button>
+          </div>
+          <div class="ai-hint">Enter để gửi, Shift+Enter xuống dòng. Dán ảnh (Ctrl+V) hoặc kéo thả vào khung chat. Tối đa 3 ảnh.</div>
+        </div>
+
+        <!-- Bảng kính mờ liquid glass: hiện khi chưa phải VIP -->
+        <div id="aiGlass">
+          <div class="ai-gcard">
+            <div class="ai-lock">🔒</div>
+            <h2>Tính năng dành cho khách VIP</h2>
+            <p id="aiGlassMsg">Đang kiểm tra quyền VIP…</p>
+            <a class="btn btn-primary" id="aiZalo" href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer" style="display:none;">💬 Liên hệ Admin đăng ký VIP</a>
+            <button class="btn btn-ghost" id="aiRecheck" style="display:none;">🔄 Kiểm tra lại</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <footer class="credit">© TP Design PPTX — Khu vực thành viên</footer>
@@ -808,6 +917,7 @@ document.getElementById("blockedModalOverlay").addEventListener("click", e => {
 
 // Đưa người dùng về màn hình đăng nhập (dùng khi tài khoản bị chặn giữa phiên)
 function forceLogoutToLogin() {
+  aiReset();
   currentUser = null;
   saveSession();
   closeGallery();
@@ -1016,6 +1126,7 @@ document.getElementById("btnLogin").addEventListener("click", doLogin);
 document.getElementById("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter" && !e.repeat) doLogin(); });
 
 document.getElementById("btnLogout").addEventListener("click", () => {
+  aiReset();
   currentUser = null; saveSession();
   document.getElementById("appScreen").style.display = "none";
   document.getElementById("loginScreen").style.display = "block";
@@ -1439,6 +1550,250 @@ async function refreshData() {
   }, 400);
 }
 document.getElementById("btnRefresh").addEventListener("click", refreshData);
+
+/* ==========================================
+   AI SLIDE: TP DESIGN PPTX INTELLIGENCE - BETA 1
+   Dùng chung tài khoản đang đăng nhập. VIP lấy từ cột H sheet Users.
+   ========================================== */
+const AI = { vip: false, busy: false, checked: false, files: [] };
+const $ai = id => document.getElementById(id);
+
+async function callApiPost(params, timeoutMs) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs || 100000);
+  try {
+    const res = await fetch(CONFIG.APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(params),
+      signal: ctrl.signal
+    });
+    return await res.json();
+  } catch (err) {
+    return { success: false, message: err && err.name === "AbortError" ? "Máy chủ phản hồi quá lâu, vui lòng thử lại." : "Lỗi kết nối mạng hoặc ảnh quá lớn, vui lòng thử lại.", networkError: true };
+  } finally { clearTimeout(timer); }
+}
+
+function showView(v) {
+  const chat = v === "chat";
+  $ai("postsView").style.display = chat ? "none" : "";
+  $ai("chatView").style.display = chat ? "block" : "none";
+  $ai("btnOpenChat").style.display = chat ? "none" : "";
+  $ai("btnBackPosts").style.display = chat ? "" : "none";
+  $ai("btnRefresh").style.display = chat ? "none" : "";
+}
+
+function aiLock(locked) {
+  AI.vip = !locked;
+  $ai("aiGlass").classList.toggle("off", !locked);
+  $ai("aiTxt").disabled = $ai("aiSend").disabled = $ai("aiAttach").disabled = locked;
+  if (!locked) $ai("aiTxt").focus();
+}
+
+function aiReset() {
+  AI.vip = false; AI.busy = false; AI.checked = false; AI.files = [];
+  aiDrawThumbs();
+  $ai("aiMsgs").innerHTML = "";
+  aiLock(true);
+  showView("posts");
+}
+
+function aiAddMsg(who, text, imgs) {
+  const d = document.createElement("div");
+  d.className = "ai-m " + who;
+  d.textContent = text;
+  if (imgs && imgs.length) {
+    const t = document.createElement("div"); t.className = "ai-th";
+    imgs.forEach(u => { const i = new Image(); i.src = u; t.appendChild(i); });
+    d.appendChild(t);
+  }
+  $ai("aiMsgs").appendChild(d); aiScroll(); return d;
+}
+function aiScroll() { const m = $ai("aiMsgs"); m.scrollTop = m.scrollHeight; }
+function aiGreet(name) {
+  aiAddMsg("bot", "Xin chào " + name + "! Mình là TP DESIGN PPTX INTELLIGENCE.\nHãy dán nội dung bài hoặc gửi ảnh (tài liệu, slide cũ, phác thảo). Mình sẽ đọc rồi chia bố cục: slide 1 là gì, slide 2 là gì... kèm sơ đồ minh họa.");
+}
+// Nội dung mẫu nằm phía sau lớp kính mờ để hiệu ứng nhìn rõ
+function aiDemo() {
+  aiAddMsg("user", "Chia bố cục 6 slide về bảo vệ môi trường cho lớp 11");
+  aiAddMsg("bot", "Mình đã chia bố cục 6 slide cho bạn:");
+  aiRenderPlan({ title: "Bảo vệ môi trường", palette: ["#2ecc71", "#1abc9c", "#34495e"], slides: [
+    { no: 1, title: "Tiêu đề", purpose: "Mở đầu", layout: "title", bullets: [], visual: "" },
+    { no: 2, title: "Thực trạng", purpose: "Nêu vấn đề", layout: "image-left", bullets: ["Rác thải nhựa", "Ô nhiễm không khí"], visual: "Ảnh minh họa" },
+    { no: 3, title: "Nguyên nhân", purpose: "Phân tích", layout: "grid", bullets: [], visual: "" },
+    { no: 4, title: "Tác động", purpose: "Hậu quả", layout: "chart", bullets: [], visual: "" },
+    { no: 5, title: "Giải pháp", purpose: "Hành động", layout: "timeline", bullets: [], visual: "" },
+    { no: 6, title: "Kết luận", purpose: "Tổng kết", layout: "closing", bullets: [], visual: "" } ] });
+}
+
+/* Kiểm tra quyền VIP khi mở khu vực AI */
+async function aiCheck() {
+  aiLock(true);
+  $ai("aiMsgs").innerHTML = ""; aiDemo();
+  $ai("aiGlassMsg").textContent = "Đang kiểm tra quyền VIP…";
+  $ai("aiZalo").style.display = "none"; $ai("aiRecheck").style.display = "none";
+
+  const data = await callApi({ action: "chatStatus", username: currentUser.username, password: currentUser.password });
+  if (handleBlockedResponse(data)) return;
+
+  if (data.success && data.vip) {
+    AI.checked = true;
+    $ai("aiMsgs").innerHTML = "";
+    aiLock(false);
+    aiGreet(data.name || currentUser.hoTen);
+  } else if (data.success) {
+    AI.checked = true;
+    $ai("aiGlassMsg").textContent = "Tài khoản của bạn chưa được kích hoạt VIP. Liên hệ Admin để đăng ký VIP và mở khóa tính năng gửi ảnh, phân tích nội dung và chia bố cục slide bằng AI.";
+    $ai("aiZalo").style.display = ""; $ai("aiRecheck").style.display = "";
+  } else {
+    $ai("aiGlassMsg").textContent = data.message || "Không kiểm tra được quyền VIP, vui lòng thử lại.";
+    $ai("aiRecheck").style.display = "";
+  }
+}
+
+$ai("btnOpenChat").addEventListener("click", () => { showView("chat"); if (!AI.checked) aiCheck(); });
+$ai("btnBackPosts").addEventListener("click", () => showView("posts"));
+$ai("aiRecheck").addEventListener("click", () => { AI.checked = false; aiCheck(); });
+$ai("aiNew").addEventListener("click", async () => {
+  if (!AI.vip || AI.busy) return;
+  $ai("aiMsgs").innerHTML = "";
+  aiGreet(currentUser.hoTen);
+  callApiPost({ action: "chatReset", username: currentUser.username, password: currentUser.password }, 20000);
+});
+
+/* ---------- vẽ sơ đồ bố cục từng slide (wireframe SVG) ---------- */
+function aiWf(l) {
+  const R = (x, y, w, h, o) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="3" fill="currentColor" opacity="' + (o || 0.5) + '"/>';
+  const L = (x, y, w) => R(x, y, w, 4, 0.55);
+  let s = "";
+  switch (l) {
+    case "title": s = R(30, 32, 100, 10, 0.9) + R(50, 50, 60, 5, 0.5) + R(65, 62, 30, 4, 0.35); break;
+    case "section": s = R(0, 0, 8, 90, 0.9) + R(26, 36, 90, 10, 0.85) + R(26, 54, 50, 5, 0.4); break;
+    case "two-col": s = R(10, 8, 80, 7, 0.9) + L(10, 26, 62) + L(10, 36, 56) + L(10, 46, 62) + L(10, 56, 48) + L(88, 26, 62) + L(88, 36, 56) + L(88, 46, 62) + L(88, 56, 48); break;
+    case "image-left": s = R(8, 8, 66, 74, 0.35) + '<path d="M14 70l16-22 12 14 10-10 14 18z" fill="currentColor" opacity=".6"/>' + R(84, 12, 66, 7, 0.9) + L(84, 30, 66) + L(84, 40, 56) + L(84, 50, 62) + L(84, 60, 44); break;
+    case "image-right": s = R(86, 8, 66, 74, 0.35) + '<path d="M92 70l16-22 12 14 10-10 14 18z" fill="currentColor" opacity=".6"/>' + R(8, 12, 66, 7, 0.9) + L(8, 30, 66) + L(8, 40, 56) + L(8, 50, 62) + L(8, 60, 44); break;
+    case "grid": s = R(10, 6, 80, 7, 0.9) + [0, 1, 2, 3].map(i => { const x = 10 + (i % 2) * 74, y = 24 + Math.floor(i / 2) * 34; return R(x, y, 66, 28, 0.3) + '<circle cx="' + (x + 12) + '" cy="' + (y + 14) + '" r="6" fill="currentColor" opacity=".7"/>' + L(x + 24, y + 9, 36) + L(x + 24, y + 18, 28); }).join(""); break;
+    case "timeline": s = R(10, 6, 80, 7, 0.9) + R(14, 45, 132, 3, 0.5) + [0, 1, 2, 3].map(i => { const x = 24 + i * 40; return '<circle cx="' + x + '" cy="46" r="6" fill="currentColor" opacity=".9"/>' + L(x - 14, (i % 2 ? 58 : 26), 28) + L(x - 10, (i % 2 ? 67 : 35), 20); }).join(""); break;
+    case "chart": s = R(10, 6, 80, 7, 0.9) + [28, 44, 36, 58, 50].map((h, i) => R(20 + i * 22, 82 - h, 14, h, 0.5 + i * 0.08)).join("") + R(14, 82, 132, 2, 0.5); break;
+    case "comparison": s = R(10, 6, 80, 7, 0.9) + R(10, 24, 66, 54, 0.25) + R(84, 24, 66, 54, 0.25) + R(16, 30, 40, 6, 0.8) + R(90, 30, 40, 6, 0.8) + L(16, 46, 50) + L(16, 56, 40) + L(90, 46, 50) + L(90, 56, 40); break;
+    case "quote": s = '<text x="14" y="52" font-size="48" fill="currentColor" opacity=".7" font-family="Georgia,serif">“</text>' + R(40, 34, 100, 7, 0.85) + R(40, 48, 84, 7, 0.6) + R(40, 66, 40, 4, 0.4); break;
+    case "closing": s = R(40, 28, 80, 10, 0.9) + R(55, 46, 50, 5, 0.5) + '<circle cx="80" cy="68" r="8" fill="currentColor" opacity=".6"/>'; break;
+    default: s = R(10, 8, 90, 8, 0.9) + [0, 1, 2, 3].map(i => '<circle cx="16" cy="' + (32 + i * 14) + '" r="2.5" fill="currentColor"/>' + L(24, 30 + i * 14, 90 - i * 8)).join("");
+  }
+  return '<svg viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg">' + s + '</svg>';
+}
+const AI_LAYNAME = { title: "Tiêu đề", section: "Chuyển mục", bullets: "Danh sách ý", "two-col": "Hai cột", "image-left": "Ảnh trái", "image-right": "Ảnh phải", grid: "Lưới ô", timeline: "Mốc / quy trình", chart: "Biểu đồ", comparison: "So sánh", quote: "Thông điệp", closing: "Kết luận" };
+
+function aiRenderPlan(p) {
+  if (!p.slides || !p.slides.length) return;
+  const box = document.createElement("div"); box.className = "ai-plan";
+  let h = "<h3>" + escapeHtml(p.title || "Dàn ý bài thuyết trình") + " · " + p.slides.length + " slide</h3>";
+  if (p.palette && p.palette.length) h += '<div class="ai-pal">' + p.palette.map(c => '<b title="' + escapeHtml(c) + '" style="background:' + escapeHtml(c) + '"></b>').join("") + "</div>";
+  h += '<div class="ai-flow">' + p.slides.map(s =>
+    '<div class="ai-node" data-n="' + s.no + '"><span class="ai-no">' + s.no + "</span>" + aiWf(s.layout) + '<div class="ai-tt">' + escapeHtml(s.title) + "</div></div>").join("") + "</div>";
+  h += p.slides.map(s =>
+    '<div class="ai-det" data-n="' + s.no + '"><b>Slide ' + s.no + ": " + escapeHtml(s.title) + '</b><span class="ai-lay">' + escapeHtml(AI_LAYNAME[s.layout] || s.layout) + "</span>" +
+    (s.purpose ? '<div class="ai-pu">' + escapeHtml(s.purpose) + "</div>" : "") +
+    (s.bullets.length ? "<ul>" + s.bullets.map(b => "<li>" + escapeHtml(b) + "</li>").join("") + "</ul>" : "") +
+    (s.visual ? '<div class="ai-vi">🖼 ' + escapeHtml(s.visual) + "</div>" : "") + "</div>").join("");
+  h += '<div class="ai-acts"><button class="btn btn-ghost" data-a="copy">📋 Sao chép dàn ý</button></div>';
+  box.innerHTML = h;
+  box.addEventListener("click", e => {
+    const n = e.target.closest(".ai-node");
+    if (n) {
+      const d = box.querySelector('.ai-det[data-n="' + n.dataset.n + '"]');
+      if (d) { d.scrollIntoView({ behavior: "smooth", block: "center" }); d.classList.add("hl"); setTimeout(() => d.classList.remove("hl"), 1400); }
+    }
+    const b = e.target.closest("[data-a=copy]");
+    if (b) {
+      const t = (p.title ? p.title + "\n\n" : "") + p.slides.map(s => "Slide " + s.no + ": " + s.title + (s.purpose ? " (" + s.purpose + ")" : "") + "\n" + s.bullets.map(x => "- " + x).join("\n") + (s.visual ? "\nHình: " + s.visual : "")).join("\n\n");
+      (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { b.textContent = "✅ Đã sao chép"; }, () => { b.textContent = "Không sao chép được"; });
+    }
+  });
+  $ai("aiMsgs").appendChild(box); aiScroll();
+}
+
+/* ---------- ảnh: chọn, dán, kéo thả, nén ---------- */
+function aiAddFiles(list) {
+  Array.prototype.slice.call(list).forEach(f => {
+    if (!/^image\//.test(f.type) || AI.files.length >= 3) return;
+    AI.files.push(f);
+  });
+  aiDrawThumbs();
+}
+function aiDrawThumbs() {
+  const t = $ai("aiThumbs"); t.innerHTML = "";
+  AI.files.forEach((f, i) => {
+    const d = document.createElement("div"), im = new Image(); im.src = URL.createObjectURL(f);
+    const b = document.createElement("button"); b.textContent = "×"; b.onclick = () => { AI.files.splice(i, 1); aiDrawThumbs(); };
+    d.appendChild(im); d.appendChild(b); t.appendChild(d);
+  });
+}
+function aiCompress(f) {
+  return new Promise((ok, bad) => {
+    const im = new Image(), u = URL.createObjectURL(f);
+    im.onload = () => {
+      const k = Math.min(1, 1400 / Math.max(im.width, im.height)), c = document.createElement("canvas");
+      c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+      const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height);
+      const url = c.toDataURL("image/jpeg", 0.82); URL.revokeObjectURL(u);
+      ok({ mime: "image/jpeg", data: url.split(",")[1], url });
+    };
+    im.onerror = () => bad(new Error("img")); im.src = u;
+  });
+}
+$ai("aiAttach").addEventListener("click", () => $ai("aiFile").click());
+$ai("aiFile").addEventListener("change", function () { aiAddFiles(this.files); this.value = ""; });
+$ai("aiTxt").addEventListener("paste", e => {
+  const fs = [];
+  Array.prototype.forEach.call((e.clipboardData || {}).items || [], it => { if (it.kind === "file") fs.push(it.getAsFile()); });
+  if (fs.length) { e.preventDefault(); aiAddFiles(fs); }
+});
+["dragover", "drop"].forEach(ev => $ai("chatView").addEventListener(ev, e => {
+  e.preventDefault();
+  if (ev === "drop" && AI.vip && e.dataTransfer) aiAddFiles(e.dataTransfer.files);
+}));
+$ai("aiTxt").addEventListener("input", function () { this.style.height = "auto"; this.style.height = Math.min(150, this.scrollHeight) + "px"; });
+$ai("aiTxt").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); aiSend(); } });
+$ai("aiSend").addEventListener("click", aiSend);
+
+/* ---------- gửi ---------- */
+async function aiSend() {
+  if (!AI.vip || AI.busy || !currentUser) return;
+  const text = $ai("aiTxt").value.trim();
+  if (!text && !AI.files.length) return;
+  AI.busy = true; $ai("aiSend").disabled = true;
+  const fl = AI.files.slice(); AI.files = []; aiDrawThumbs();
+  $ai("aiTxt").value = ""; $ai("aiTxt").style.height = "auto";
+
+  let imgs = [];
+  try { imgs = await Promise.all(fl.map(aiCompress)); } catch (e) { /* ảnh lỗi thì bỏ qua */ }
+  aiAddMsg("user", text || "(Gửi ảnh)", imgs.map(i => i.url));
+
+  const rid = "r" + Math.random().toString(36).slice(2, 10);
+  const pr = document.createElement("div");
+  pr.className = "ai-prog";
+  pr.innerHTML = '<span class="ai-dot"></span><span id="aiPl">Đang đọc nội dung và chia bố cục slide</span>';
+  $ai("aiMsgs").appendChild(pr); aiScroll();
+  const iv = setInterval(async () => {
+    const r = await callApi({ action: "chatProgress", username: currentUser.username, rid }, 8000);
+    if (r && r.steps && r.steps[0] && $ai("aiPl")) $ai("aiPl").textContent = r.steps[0].label;
+  }, 1500);
+
+  const data = await callApiPost({
+    action: "chat", username: currentUser.username, password: currentUser.password, rid, text,
+    images: imgs.map(i => ({ mime: i.mime, data: i.data }))
+  });
+  clearInterval(iv); pr.remove();
+
+  AI.busy = false; $ai("aiSend").disabled = !AI.vip;
+  if (handleBlockedResponse(data)) return;
+  if (data.notVip) { AI.checked = false; aiCheck(); return; }
+  if (data.authError) { showToast(data.message || "Phiên đăng nhập không hợp lệ", "err"); forceLogoutToLogin(); return; }
+  if (!data.success) { aiAddMsg("bot", data.message || "Có lỗi xảy ra, bạn thử lại nhé."); return; }
+  aiAddMsg("bot", data.reply || "");
+  if (data.slides && data.slides.length) aiRenderPlan(data);
+}
 
 /* ==========================================
    MÀN HÌNH CHỜ: THANH TIẾN TRÌNH
