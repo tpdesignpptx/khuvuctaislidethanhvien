@@ -693,6 +693,10 @@
   .ai-gcard p { margin: 0 0 14px; font-size: 13px; color: #e4e7ff; line-height: 1.55; }
   .ai-gcard .btn { width: 100%; margin-top: 8px; padding: 12px; text-decoration: none; }
   @media (max-width: 560px) { .ai-m { max-width: 96%; } .ai-flow { grid-template-columns: repeat(2, 1fr); } .ai-stage { height: calc(100vh - 110px); } }
+
+  /* HUY HIỆU VIP TRÊN TÊN KHÁCH */
+  .user-greet { display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1.25; }
+  .vip-badge { font-size: 10px; font-weight: 800; letter-spacing: 0.9px; padding: 1px 9px; margin-bottom: 3px; border-radius: 999px; color: #3a2300; background: linear-gradient(120deg, #ffe08a, #ffa94d); box-shadow: 0 2px 10px rgba(255,170,60,0.45), inset 0 1px 0 rgba(255,255,255,0.6); }
 </style>
 </head>
 <body>
@@ -732,7 +736,7 @@
     <header class="topbar glass">
       <div class="brand">TP DESIGN PPTX</div>
       <div class="user-info">
-        <span id="userGreeting"></span>
+        <span id="userGreeting" class="user-greet"></span>
         <span class="point-pill">⭐ <span id="userPoints">0</span> điểm</span>
         <button class="btn btn-primary" id="btnOpenChat">🤖 AI Slide</button>
         <button class="btn btn-ghost" id="btnBackPosts" style="display:none;">📚 Kho mẫu</button>
@@ -883,7 +887,7 @@
 
 <script>
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzgQAN-8wPHivVHFHNVmSjuBQU1UisvlGKzQJA_WqP62HWk7z75tuRwV4-8t7Kj9Gwr/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxeQQBeNNS47lE7JwyWEGNZvxEqwRbcaXGV2w7KB23mDdXEMkrslkJ3hmyeP-zqJSY/exec",
   API_TIMEOUT_MS: 30000
 };
 
@@ -1110,7 +1114,7 @@ async function doLogin() {
   }
 
   if (data.success) {
-    currentUser = { username: data.username, password: password, hoTen: data.hoTen, diem: data.diem };
+    currentUser = { username: data.username, password: password, hoTen: data.hoTen, diem: data.diem, vip: !!data.vip };
     violationCount = 0;
     lockingNow = false;
     saveSession();
@@ -1135,9 +1139,10 @@ document.getElementById("btnLogout").addEventListener("click", () => {
 function enterApp() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("appScreen").style.display = "block";
-  document.getElementById("userGreeting").textContent = "Xin chào, " + currentUser.hoTen;
+  renderGreeting();
   document.getElementById("userPoints").textContent = currentUser.diem;
   loadPosts();
+  if (currentUser.vip === undefined) aiSyncVip();
 }
 
 /* ĐỔI MẬT KHẨU */
@@ -1531,8 +1536,9 @@ async function refreshData() {
   if (info.success) {
     currentUser.hoTen = info.hoTen;
     currentUser.diem = info.diem;
+    currentUser.vip = !!info.vip;
     saveSession();
-    document.getElementById("userGreeting").textContent = "Xin chào, " + currentUser.hoTen;
+    renderGreeting();
     document.getElementById("userPoints").textContent = currentUser.diem;
     await loadPosts();
     showToast("Đã làm mới dữ liệu!", "ok");
@@ -1550,6 +1556,26 @@ async function refreshData() {
   }, 400);
 }
 document.getElementById("btnRefresh").addEventListener("click", refreshData);
+
+/* ---------- huy hiệu VIP ---------- */
+function renderGreeting() {
+  const el = document.getElementById("userGreeting");
+  if (!el || !currentUser) return;
+  el.innerHTML = (currentUser.vip ? '<span class="vip-badge">★ VIP</span>' : "") +
+    '<span class="greet-name">Xin chào, ' + escapeHtml(currentUser.hoTen) + "</span>";
+}
+function setVipFlag(v) {
+  if (!currentUser) return;
+  v = !!v;
+  if (currentUser.vip !== v) { currentUser.vip = v; saveSession(); }
+  renderGreeting();
+}
+// Phiên đăng nhập cũ (lưu trước khi có huy hiệu) chưa biết VIP: hỏi máy chủ một lần
+async function aiSyncVip() {
+  if (!currentUser) return;
+  const d = await callApi({ action: "chatStatus", username: currentUser.username, password: currentUser.password });
+  if (d && d.success) setVipFlag(d.vip);
+}
 
 /* ==========================================
    AI SLIDE: TP DESIGN PPTX INTELLIGENCE - BETA 1
@@ -1638,15 +1664,20 @@ async function aiCheck() {
 
   if (data.success && data.vip) {
     AI.checked = true;
+    setVipFlag(true);
     $ai("aiMsgs").innerHTML = "";
     aiLock(false);
     aiGreet(data.name || currentUser.hoTen);
   } else if (data.success) {
     AI.checked = true;
+    setVipFlag(false);
     $ai("aiGlassMsg").textContent = "Tài khoản của bạn chưa được kích hoạt VIP. Liên hệ Admin để đăng ký VIP và mở khóa tính năng gửi ảnh, phân tích nội dung và chia bố cục slide bằng AI.";
     $ai("aiZalo").style.display = ""; $ai("aiRecheck").style.display = "";
   } else {
-    $ai("aiGlassMsg").textContent = data.message || "Không kiểm tra được quyền VIP, vui lòng thử lại.";
+    const old = /Action không hợp lệ/i.test(data.message || "");
+    $ai("aiGlassMsg").textContent = old
+      ? "Hệ thống AI đang được cập nhật, vui lòng thử lại sau ít phút. (Mã: backend-old: Admin cần Triển khai PHIÊN BẢN MỚI cho Apps Script)"
+      : (data.message || "Không kiểm tra được quyền VIP, vui lòng thử lại.");
     $ai("aiRecheck").style.display = "";
   }
 }
