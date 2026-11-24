@@ -1020,7 +1020,7 @@
 
 <script>
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbw4qiG7ED6VkD4dD748xpP4D_9QhjB5KsHTMVvQN-ElAF4xvj_DFCDZvoumgUo5EfD9rw/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxTnjr2_phfgIeyMlZpy2EwcQVpq2eeeML0m5HEDwfvTQRQXheQ_GaBKvVC6CXq8dJ0fw/exec",
   API_TIMEOUT_MS: 30000
 };
 
@@ -1730,6 +1730,9 @@ function renderGreeting() {
     html += '<span class="vip-badge"' + (until ? ' title="VIP đến ' + fmtVipDate(until) + '"' : "") + ">★ VIP" + (u.vipPlan ? " · " + escapeHtml(u.vipPlan) : "") + "</span>";
   } else if (wasVip) {
     html += '<span class="vip-badge expired" title="Gói VIP đã hết hạn' + (until ? " lúc " + fmtVipDate(until) : "") + '">★ VIP đã hết hạn</span>';
+  } else {
+    // Không còn VIP (hết hạn hoặc chưa kích hoạt): luôn hiện huy hiệu xám để khách thấy trạng thái
+    html += '<span class="vip-badge expired" title="Tài khoản chưa kích hoạt VIP hoặc gói VIP đã hết hạn">★ VIP chưa kích hoạt</span>';
   }
 
   html += '<span class="greet-name">Xin chào, ' + escapeHtml(u.hoTen) + "</span>";
