@@ -800,21 +800,212 @@
   .ai-think summary { cursor: pointer; color: var(--text-dim); outline: none; }
   .ai-think.done .ai-th-l { margin-top: 6px; }
 
-  /* HUY HIỆU VIP TRÊN TÊN KHÁCH */
-  .user-greet { display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1.25; }
-  .vip-badge { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; letter-spacing: 0.9px; padding: 2px 10px; margin-bottom: 3px; border-radius: 999px; color: #3a2300; background: linear-gradient(120deg, #ffe08a, #ffa94d, #ffe08a); background-size: 200% 100%; box-shadow: 0 2px 10px rgba(255,170,60,0.45), inset 0 1px 0 rgba(255,255,255,0.6); animation: vipFlow 3s linear infinite, vipGlow 2.2s ease-in-out infinite; }
-  .vip-badge::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.8) 50%, transparent 70%); transform: translateX(-120%); animation: vipShine 2.4s ease-in-out infinite; }
-  @keyframes vipFlow { to { background-position: 200% 0; } }
-  @keyframes vipGlow { 0%, 100% { box-shadow: 0 2px 8px rgba(255,170,60,0.35), inset 0 1px 0 rgba(255,255,255,0.6); } 50% { box-shadow: 0 2px 18px rgba(255,195,70,0.85), inset 0 1px 0 rgba(255,255,255,0.6); } }
-  @keyframes vipShine { to { transform: translateX(120%); } }
-  .vip-badge.expired { background: linear-gradient(120deg, #8a8a96, #6f6f7b); color: #f1f1f5; border: 1px solid rgba(255,255,255,0.35); box-shadow: none; animation: none; filter: grayscale(1); }
-  .vip-badge.expired::after { display: none; }
-  /* DÒNG NGÀY ĐĂNG KÝ / HẾT HẠN DƯỚI TÊN KHÁCH */
-  .vip-dates { margin-top: 2px; font-size: 11.5px; line-height: 1.45; color: #ffd98a; }
-  .vip-dates b { font-weight: 700; color: #fff0c9; }
-  .vip-dates.expired { color: #b4b4c0; }
-  .vip-dates.expired b { color: #dcdce4; }
-  @media (prefers-reduced-motion: reduce) { .vip-badge, .vip-badge::after { animation: none; } }
+
+  /* =====================================================================
+     LIQUID GLASS V2: kính lỏng, viền sáng, hiệu ứng nổi
+     ===================================================================== */
+  @keyframes popIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+  .aurora { opacity: 0.7; }
+  .glass {
+    background: linear-gradient(145deg, rgba(255,255,255,0.17), rgba(255,255,255,0.05) 45%, rgba(255,255,255,0.10));
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(28px) saturate(190%) brightness(1.06);
+    -webkit-backdrop-filter: blur(28px) saturate(190%) brightness(1.06);
+    box-shadow:
+      inset 1.5px 1.5px 1px -0.5px rgba(255,255,255,0.6),
+      inset -1px -1px 1px -0.5px rgba(255,255,255,0.22),
+      inset 0 0 24px rgba(255,255,255,0.04),
+      0 22px 50px -14px rgba(3,2,12,0.6);
+  }
+  .glass::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(90% 60% at 8% -10%, rgba(255,255,255,0.22), transparent 55%),
+      radial-gradient(70% 50% at 100% 120%, rgba(120,200,255,0.12), transparent 60%);
+  }
+  .pop { animation: popIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+  #loginScreen { animation: popIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+  .card.glass:hover { box-shadow: inset 1.5px 1.5px 1px -0.5px rgba(255,255,255,0.7), inset 0 0 24px rgba(255,255,255,0.05), 0 26px 54px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.12); }
+
+  header.topbar { position: sticky; top: 10px; z-index: 30; overflow: visible; border-radius: 26px; }
+  .btn { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .btn-ghost { background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,0.35); }
+  .btn-ghost:hover { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.09)); }
+  .btn-primary { box-shadow: 0 8px 22px -6px rgba(124,92,255,0.6), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .field input { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: inset 0 1px 2px rgba(0,0,0,0.25); transition: border-color 0.2s, box-shadow 0.2s; }
+  .field input:focus { border-color: var(--aurora-cyan); box-shadow: inset 0 1px 2px rgba(0,0,0,0.25), 0 0 0 4px rgba(51,230,201,0.14); }
+  .point-pill { box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 16px -6px rgba(124,92,255,0.6); }
+
+  .login-terms, .foot-terms { font-size: 12px; color: var(--text-faint); line-height: 1.55; }
+  .login-terms { margin-top: 16px; }
+  .login-terms a, .foot-terms a { color: #9be7ff; text-decoration: underline; cursor: pointer; }
+  footer.credit .foot-terms { margin-top: 6px; }
+
+  /* =====================================================================
+     HUY HIỆU VIP 3D (bấm vào để xem thông tin)
+     ===================================================================== */
+  .user-greet { display: inline-flex; flex-direction: row; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .greet-name { color: var(--text-dim); }
+  .vip3d-wrap {
+    position: relative; display: inline-block; perspective: 520px; transform-style: preserve-3d;
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 0.18s ease-out;
+  }
+  .vip-badge {
+    position: relative; display: inline-block; border: 0; background: none; padding: 0; margin: 0; font: inherit; cursor: pointer;
+    transform-style: preserve-3d; animation: vipTurn 5.5s ease-in-out infinite; -webkit-tap-highlight-color: transparent;
+  }
+  @keyframes vipTurn { 0%, 100% { transform: rotateY(-17deg) rotateX(5deg); } 50% { transform: rotateY(17deg) rotateX(-4deg); } }
+  .vip-edge {
+    position: absolute; inset: 2px 0 -3px 0; border-radius: 999px; transform: translateZ(-7px);
+    background: linear-gradient(180deg, #a3600f, #5f3303); box-shadow: 0 8px 18px rgba(255,160,50,0.38);
+  }
+  .vip-face {
+    position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 11px; border-radius: 999px; overflow: hidden;
+    font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #3a2300; white-space: nowrap; transform: translateZ(9px);
+    background: linear-gradient(115deg, #fff0b8, #ffc04d 35%, #ff9f2e 60%, #ffe08a); background-size: 220% 100%;
+    animation: vipFlow 3.2s linear infinite, vipGlow 2.4s ease-in-out infinite;
+    box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.85), inset 0 -2px 3px rgba(150,80,0,0.35), 0 0 22px rgba(255,185,60,0.55);
+    transition: filter 0.2s, transform 0.2s;
+  }
+  .vip-face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.85) 50%, transparent 70%); transform: translateX(-130%); animation: vipShine 2.6s ease-in-out infinite; }
+  .vip-badge:hover .vip-face { filter: brightness(1.1); }
+  .vip-badge:active .vip-face { transform: translateZ(3px) scale(0.96); }
+  .vip-star { display: inline-block; animation: starSpin 3s linear infinite; font-size: 12px; }
+  .vip-chev { font-size: 9px; opacity: 0.7; margin-left: 1px; }
+  .vip-sp { position: absolute; color: #ffe9a8; font-style: normal; font-size: 10px; pointer-events: none; text-shadow: 0 0 8px #ffbf4d; animation: twinkle 2.2s ease-in-out infinite; transform: translateZ(14px); }
+  .vip-sp.s1 { left: -7px; top: -6px; }
+  .vip-sp.s2 { right: -6px; top: -8px; font-size: 8px; animation-delay: 0.7s; }
+  .vip-sp.s3 { right: 10px; bottom: -9px; font-size: 9px; animation-delay: 1.4s; }
+  @keyframes vipFlow { to { background-position: 220% 0; } }
+  @keyframes vipGlow { 0%, 100% { box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.85), inset 0 -2px 3px rgba(150,80,0,0.35), 0 0 14px rgba(255,185,60,0.4); } 50% { box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.85), inset 0 -2px 3px rgba(150,80,0,0.35), 0 0 30px rgba(255,200,80,0.95); } }
+  @keyframes vipShine { to { transform: translateX(130%); } }
+  @keyframes starSpin { to { transform: rotateY(360deg); } }
+  @keyframes twinkle { 0%, 100% { opacity: 0; transform: translateZ(14px) scale(0.4); } 50% { opacity: 1; transform: translateZ(14px) scale(1.15); } }
+  /* Hết hạn / chưa kích hoạt: xám, đứng yên */
+  .vip-badge.off { animation: none; }
+  .vip-badge.off .vip-edge { background: #4a4a54; box-shadow: none; }
+  .vip-badge.off .vip-face { background: linear-gradient(120deg, #9a9aa6, #6d6d79); color: #f3f3f7; animation: none; filter: grayscale(1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 0 0 1px rgba(255,255,255,0.18); }
+  .vip-badge.off .vip-face::after { display: none; }
+  .vip-badge.off .vip-star { animation: none; }
+
+  /* ---------- bảng thông tin VIP: hiện ra khi bấm vào huy hiệu ---------- */
+  #vipPop {
+    position: fixed; z-index: 160; width: min(330px, calc(100vw - 24px)); padding: 16px 16px 14px; border-radius: 24px; color: #fff6e0;
+    background: linear-gradient(155deg, rgba(255,214,120,0.22), rgba(255,255,255,0.07) 45%, rgba(255,160,60,0.12)), rgba(18,12,36,0.58);
+    border: 1px solid rgba(255,214,140,0.38); backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%);
+    box-shadow: inset 1.5px 1.5px 1px -0.5px rgba(255,255,255,0.6), inset 0 0 30px rgba(255,200,100,0.07), 0 30px 70px -14px rgba(0,0,0,0.7), 0 0 40px rgba(255,170,60,0.18);
+    opacity: 0; visibility: hidden; pointer-events: none; transform-origin: var(--ox, 30px) -10px; perspective: 700px;
+    transform: translateY(-10px) scale(0.86) rotateX(-14deg); filter: blur(8px);
+    transition: opacity 0.28s ease, transform 0.45s cubic-bezier(0.16, 1.2, 0.3, 1), filter 0.3s ease, visibility 0s linear 0.45s;
+  }
+  #vipPop.open { opacity: 1; visibility: visible; pointer-events: auto; transform: none; filter: none; transition: opacity 0.28s ease, transform 0.55s cubic-bezier(0.16, 1.2, 0.3, 1), filter 0.3s ease, visibility 0s; }
+  #vipPop::before { content: ""; position: absolute; top: -7px; left: var(--ax, 28px); width: 12px; height: 12px; transform: rotate(45deg); background: #3a2d3c; border-left: 1px solid rgba(255,214,140,0.45); border-top: 1px solid rgba(255,214,140,0.45); border-radius: 3px 0 0 0; }
+  #vipPop.grey { background: linear-gradient(155deg, rgba(220,220,235,0.18), rgba(255,255,255,0.06) 45%, rgba(160,160,180,0.10)), rgba(18,14,32,0.62); border-color: rgba(220,220,235,0.3); color: #ececf3; }
+  #vipPop.grey::before { background: #2f2c3c; border-color: rgba(220,220,235,0.35); }
+  .vp-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .vp-coin {
+    width: 46px; height: 46px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 22px; color: #6b3d00;
+    background: radial-gradient(circle at 32% 28%, #fff6c8, #ffc94d 45%, #d98400); box-shadow: inset 0 -4px 6px rgba(120,60,0,0.4), 0 0 24px rgba(255,180,60,0.6);
+    animation: coinSpin 3.6s linear infinite; transform-style: preserve-3d;
+  }
+  .vp-coin.off { background: radial-gradient(circle at 32% 28%, #f2f2f6, #a7a7b3 50%, #6d6d79); color: #3d3d46; box-shadow: inset 0 -4px 6px rgba(0,0,0,0.3); animation: none; }
+  @keyframes coinSpin { to { transform: rotateY(360deg); } }
+  .vp-title { font-family: var(--font-display); font-weight: 800; font-size: 15px; line-height: 1.25; }
+  .vp-chip { display: inline-block; margin-top: 5px; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; background: rgba(63,224,165,0.18); border: 1px solid rgba(63,224,165,0.5); color: #8ff5cf; }
+  .vp-chip.off { background: rgba(190,190,205,0.16); border-color: rgba(200,200,215,0.4); color: #d4d4de; }
+  .vp-rows { display: flex; flex-direction: column; gap: 2px; }
+  .vp-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 8px 2px; border-bottom: 1px dashed rgba(255,255,255,0.14); font-size: 12.5px; }
+  .vp-row:last-child { border-bottom: 0; }
+  .vp-row span { opacity: 0.78; white-space: nowrap; }
+  .vp-row b { font-weight: 700; text-align: right; min-width: 0; word-break: break-word; }
+  .vp-bar { height: 8px; margin: 12px 0 6px; border-radius: 999px; background: rgba(255,255,255,0.12); overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.35); }
+  .vp-bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #ffd978, #ff9f2e); box-shadow: 0 0 12px rgba(255,180,60,0.7); }
+  .vp-bar.off i { background: linear-gradient(90deg, #b9b9c5, #8a8a96); box-shadow: none; }
+  .vp-bar.inf i { background: linear-gradient(90deg, #ffd978, #fff3c2, #ff9f2e, #ffd978); background-size: 200% 100%; animation: vipFlow 2s linear infinite; }
+  #vipPop.open .vp-bar i { width: var(--w, 100%); transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.35s; }
+  .vp-left { font-size: 12px; opacity: 0.9; }
+  .vp-note { font-size: 12.5px; line-height: 1.55; opacity: 0.88; margin: 2px 0 0; }
+  .vp-cta { display: flex; width: 100%; margin-top: 12px; padding: 11px; text-decoration: none; }
+  #vipPop.open .vp-head, #vipPop.open .vp-row, #vipPop.open .vp-bar, #vipPop.open .vp-left, #vipPop.open .vp-note, #vipPop.open .vp-cta {
+    animation: vpRow 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 70ms + 90ms);
+  }
+  #vipPop.open .vp-coin { animation: coinSpin 3.6s linear infinite; }
+  #vipPop.open .vp-coin.off { animation: none; }
+  @keyframes vpRow { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* =====================================================================
+     KHUNG CHAT HIỆN ĐẠI
+     ===================================================================== */
+  .ai-stage { height: calc(100vh - 150px); min-height: 560px; border-radius: 30px; }
+  .ai-stage.glass {
+    background:
+      radial-gradient(80% 50% at 12% -10%, rgba(124,92,255,0.30), transparent 60%),
+      radial-gradient(70% 50% at 100% 110%, rgba(51,230,201,0.16), transparent 60%),
+      linear-gradient(180deg, rgba(14,11,32,0.88), rgba(5,4,14,0.95)) !important;
+    backdrop-filter: blur(30px) saturate(180%) !important; -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+    border-color: rgba(255,255,255,0.16);
+  }
+  .ai-stage.glass::before { opacity: 0.5; }
+  .ai-head { background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.10); padding: 14px 18px; position: relative; z-index: 1; }
+  .ai-head-l { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .ai-orb { width: 38px; height: 38px; border-radius: 50%; flex: none; background: radial-gradient(circle at 30% 28%, #fff, #9be7ff 25%, #7c5cff 60%, #ff5cb0); box-shadow: 0 0 22px rgba(124,92,255,0.7), inset 0 -4px 8px rgba(0,0,0,0.3); animation: orbFloat 4s ease-in-out infinite; }
+  @keyframes orbFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.07); box-shadow: 0 0 32px rgba(255,92,176,0.7), inset 0 -4px 8px rgba(0,0,0,0.3); } }
+  .ai-pills { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 18px 0; position: relative; z-index: 1; }
+  .ai-pills span { font-size: 11.5px; padding: 4px 11px; border-radius: 999px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: var(--text-dim); }
+  #aiMsgs { background: transparent; padding: 18px; position: relative; z-index: 1; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.22) transparent; }
+  .ai-line { display: flex; gap: 10px; align-items: flex-end; margin: 0 0 14px; animation: msgIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .ai-line.user { flex-direction: row-reverse; }
+  .ai-av { width: 30px; height: 30px; border-radius: 50%; flex: none; background: radial-gradient(circle at 30% 28%, #fff, #9be7ff 25%, #7c5cff 60%, #ff5cb0); box-shadow: 0 0 14px rgba(124,92,255,0.6); }
+  .ai-line .ai-m { margin: 0; max-width: min(680px, 82%); }
+  .ai-m.bot { background: linear-gradient(160deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); border: 1px solid rgba(255,255,255,0.14); border-radius: 20px 20px 20px 6px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.25); }
+  .ai-m.user { background: linear-gradient(135deg, #7c5cff, #4a7dff 55%, #33b6e6); border-radius: 20px 20px 6px 20px; box-shadow: 0 10px 24px -8px rgba(90,100,255,0.6), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .ai-sugg { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 14px 40px; position: relative; z-index: 1; }
+  .ai-sugg .ai-chip { white-space: normal; text-align: left; line-height: 1.35; border-radius: 16px; padding: 8px 14px; }
+  .ai-think { background: linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 18px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); margin-left: 40px; }
+  .ai-plan { background: linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.14); border-radius: 24px; padding: 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2); position: relative; z-index: 1; }
+  .ai-node { background: rgba(255,255,255,0.05); border-radius: 16px; }
+  .ai-src { background: rgba(255,255,255,0.05); border-radius: 16px; }
+  .ai-bar { background: transparent; border-top: 0; padding: 10px 16px 14px; position: relative; z-index: 1; }
+  .ai-row { padding: 8px; border-radius: 26px; background: linear-gradient(160deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.18); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.35), 0 12px 30px -10px rgba(0,0,0,0.6); transition: border-color 0.2s, box-shadow 0.2s; }
+  .ai-row:focus-within { border-color: rgba(51,230,201,0.55); box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.35), 0 12px 30px -10px rgba(0,0,0,0.6), 0 0 0 4px rgba(51,230,201,0.12); }
+  .ai-row .ai-input { background: transparent; border: 0; padding: 11px 8px; }
+  .ai-row .ai-input:focus { border: 0; }
+  .ai-ib { width: 42px; height: 42px; border-radius: 50%; }
+  .ai-hint { padding: 0 8px; }
+  @media (max-width: 560px) { .ai-line .ai-m { max-width: 88%; } .ai-sugg { margin-left: 0; } .ai-think { margin-left: 0; max-width: 100%; } }
+
+  /* =====================================================================
+     ĐIỀU KHOẢN SỬ DỤNG
+     ===================================================================== */
+  #termsOverlay { z-index: 175; }
+  .terms-box { max-width: 600px; width: 100%; max-height: min(88vh, 740px); display: flex; flex-direction: column; padding: 0; animation: popIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+  .terms-head { display: flex; align-items: center; gap: 12px; padding: 20px 22px 12px; position: relative; z-index: 1; }
+  .terms-ico { width: 44px; height: 44px; flex: none; border-radius: 14px; display: grid; place-items: center; font-size: 22px; background: linear-gradient(135deg, rgba(124,92,255,0.5), rgba(255,92,176,0.4)); border: 1px solid rgba(255,255,255,0.25); box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); }
+  .terms-head h3 { margin: 0; font-family: var(--font-display); font-size: 17px; }
+  .terms-head small { display: block; color: var(--text-faint); font-size: 12px; margin-top: 2px; }
+  .terms-body { flex: 1; min-height: 0; overflow: auto; padding: 4px 22px 14px; font-size: 13.5px; line-height: 1.7; color: var(--text-dim); position: relative; z-index: 1; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.25) transparent; }
+  .terms-body h4 { margin: 16px 0 6px; color: #fff; font-size: 14.5px; font-family: var(--font-display); }
+  .terms-body p { margin: 0 0 8px; }
+  .terms-body ul { margin: 4px 0 8px; padding-left: 20px; }
+  .terms-body li { margin: 3px 0; }
+  .terms-body .terms-agree { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); color: var(--text-main); font-weight: 600; }
+  .terms-foot { padding: 12px 22px 18px; border-top: 1px solid rgba(255,255,255,0.10); position: relative; z-index: 1; }
+  .terms-foot .row { display: flex; gap: 10px; }
+  .terms-foot .row .btn { flex: 1; padding: 12px; }
+  #termsHint { font-size: 12px; color: var(--warn); margin: 0 0 8px; text-align: center; }
+  #termsAccept:disabled { cursor: not-allowed; opacity: 0.45; }
+  #termsCloseX { z-index: 3; }
+
+  .user-info { margin-left: auto; justify-content: flex-end; gap: 8px; }
+  .user-info .btn { padding: 8px 13px; }
+  .grid-msg { grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .grid-msg .big { font-size: 42px; }
+  @media (max-width: 700px) { header.topbar { position: static; } }
+  @media (prefers-reduced-motion: reduce) {
+    .vip-badge, .vip-face, .vip-face::after, .vip-star, .vip-sp, .vp-coin, .ai-orb, .ai-line, .pop { animation: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -847,6 +1038,7 @@
     </div>
     <button class="btn btn-primary" id="btnLogin" style="width:100%; margin-top: 10px;">Đăng nhập</button>
     <div id="loginError" style="color:var(--danger); font-weight:700; font-size:13px; margin-top:12px; line-height:1.5;"></div>
+    <div class="login-terms">Bằng việc đăng nhập, bạn đồng ý với <a href="#" id="linkTermsLogin">Điều khoản sử dụng tài khoản</a>.</div>
   </div>
 
   <!-- MAIN APP -->
@@ -862,6 +1054,7 @@
           <span class="refresh-icon">🔄</span> Làm mới
         </button>
         <button class="btn btn-ghost" id="btnOpenChangePw">🔑 Đổi mật khẩu</button>
+        <button class="btn btn-ghost" id="btnTerms">📜 Điều khoản</button>
         <button class="btn btn-ghost" id="btnLogout">Đăng xuất</button>
       </div>
     </header>
@@ -888,9 +1081,10 @@
     <div id="chatView">
       <div class="ai-stage glass">
         <div class="ai-head">
-          <div class="ai-head-title">TP DESIGN PPTX INTELLIGENCE<small>BETA 1 · Tra cứu trên mạng, suy nghĩ sâu, vẽ từng slide kèm ảnh thật</small></div>
+          <div class="ai-head-l"><span class="ai-orb"></span><div class="ai-head-title">TP DESIGN PPTX INTELLIGENCE<small>BETA 1 · Tra cứu trên mạng, suy nghĩ sâu, vẽ từng slide kèm ảnh thật</small></div></div>
           <button class="btn btn-ghost" id="aiNew">✨ Cuộc trò chuyện mới</button>
         </div>
+        <div class="ai-pills"><span>🌐 Tra cứu web</span><span>🧠 Suy nghĩ sâu</span><span>🖼 Ảnh thật cho slide</span></div>
         <div id="aiMsgs"></div>
         <div class="ai-bar">
           <div id="aiThumbs"></div>
@@ -917,7 +1111,7 @@
     </div>
   </div>
 
-  <footer class="credit">© TP Design PPTX — Khu vực thành viên</footer>
+  <footer class="credit">© TP Design PPTX — Khu vực thành viên<div class="foot-terms"><a href="#" id="linkTermsFoot">Điều khoản sử dụng tài khoản</a></div></footer>
 </div>
 
 <!-- TRÌNH XEM TỪNG SLIDE (AI) -->
@@ -1016,11 +1210,69 @@
   <div id="busyText">Đang xử lý…</div>
 </div>
 
+<!-- BẢNG THÔNG TIN VIP (hiện khi bấm vào huy hiệu VIP) -->
+<div id="vipPop" role="dialog" aria-label="Thông tin gói VIP"></div>
+
+<!-- ĐIỀU KHOẢN SỬ DỤNG TÀI KHOẢN -->
+<div class="modal-overlay" id="termsOverlay">
+  <div class="modal-box glass terms-box">
+    <button class="modal-close" id="termsCloseX" aria-label="Đóng">✕</button>
+    <div class="terms-head">
+      <div class="terms-ico">📜</div>
+      <div>
+        <h3>Điều khoản sử dụng tài khoản</h3>
+        <small>TP Design PPTX · Khu vực thành viên</small>
+      </div>
+    </div>
+    <div class="terms-body" id="termsBody">
+      <h4>1. Quy định bảo mật tài khoản</h4>
+      <p>Người dùng có trách nhiệm tuyệt đối bảo mật tài khoản, thông tin đăng nhập và mọi thông tin liên quan đến tài khoản. Không cung cấp, chia sẻ hoặc để người khác sử dụng tài khoản dưới bất kỳ hình thức nào.</p>
+      <p>Mọi hoạt động phát sinh từ tài khoản được xem là trách nhiệm của chủ tài khoản.</p>
+
+      <h4>2. Các hành vi bị hệ thống cảnh báo</h4>
+      <p>Tài khoản có thể bị hệ thống ghi nhận và cảnh báo khi phát hiện các hành vi vi phạm, bao gồm nhưng không giới hạn:</p>
+      <ul>
+        <li>Nhấn phím F12 hoặc thực hiện các thao tác có dấu hiệu can thiệp vào hệ thống.</li>
+        <li>Thực hiện các hành vi bất thường, gian lận hoặc cố tình vượt qua cơ chế bảo vệ của hệ thống.</li>
+        <li>Có hành vi làm ảnh hưởng đến hoạt động, tính bảo mật hoặc quyền lợi của hệ thống.</li>
+      </ul>
+
+      <h4>3. Quy định về số lần cảnh báo</h4>
+      <p>Khi hệ thống phát hiện hành vi vi phạm, tài khoản sẽ được nhắc nhở/cảnh báo.</p>
+      <p>Nếu tài khoản bị hệ thống cảnh báo quá 3 lần do các hành vi vi phạm nêu trên, hệ thống có quyền áp dụng biện pháp khóa tài khoản để đảm bảo an toàn và bảo mật.</p>
+
+      <h4>4. Hành vi gian lận</h4>
+      <p>Trường hợp hệ thống phát hiện tài khoản có hành vi gian lận, cố tình né tránh hoặc vượt qua cơ chế bảo mật, tài khoản có thể bị khóa ngay tùy theo mức độ vi phạm mà không nhất thiết phải chờ đủ số lần cảnh báo.</p>
+
+      <h4>5. Quy định về tài khoản bị khóa</h4>
+      <p>Nếu tài khoản bị hệ thống khóa do vi phạm các điều khoản trên:</p>
+      <ul>
+        <li>Rất tiếc, Admin không thể gỡ bỏ hoặc khôi phục trạng thái tài khoản đã bị hệ thống khóa do vi phạm.</li>
+        <li>Việc khóa tài khoản được thực hiện nhằm bảo vệ hệ thống và đảm bảo quyền lợi, an toàn cho toàn bộ người dùng.</li>
+        <li>Người dùng có trách nhiệm đọc, hiểu và tuân thủ các điều khoản trước khi sử dụng tài khoản.</li>
+      </ul>
+      <p class="terms-agree">Bằng việc tiếp tục sử dụng tài khoản, người dùng xác nhận đã đọc và đồng ý với các điều khoản sử dụng trên.</p>
+    </div>
+    <div class="terms-foot">
+      <div id="termsMustBox">
+        <div id="termsHint">Cuộn xuống cuối để bật nút đồng ý</div>
+        <div class="row">
+          <button class="btn btn-ghost" id="termsLogout">Đăng xuất</button>
+          <button class="btn btn-primary" id="termsAccept" disabled>✓ Tôi đã đọc và đồng ý</button>
+        </div>
+      </div>
+      <div id="termsViewBox" style="display:none;">
+        <div class="row"><button class="btn btn-primary" id="termsCloseBtn">Đã hiểu</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxTnjr2_phfgIeyMlZpy2EwcQVpq2eeeML0m5HEDwfvTQRQXheQ_GaBKvVC6CXq8dJ0fw/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbw4qiG7ED6VkD4dD748xpP4D_9QhjB5KsHTMVvQN-ElAF4xvj_DFCDZvoumgUo5EfD9rw/exec",
   API_TIMEOUT_MS: 30000
 };
 
@@ -1054,6 +1306,7 @@ document.getElementById("blockedModalOverlay").addEventListener("click", e => {
 
 // Đưa người dùng về màn hình đăng nhập (dùng khi tài khoản bị chặn giữa phiên)
 function forceLogoutToLogin() {
+  closeVipPop(); closeTerms();
   aiReset();
   currentUser = null;
   saveSession();
@@ -1274,6 +1527,7 @@ document.getElementById("btnLogin").addEventListener("click", doLogin);
 document.getElementById("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter" && !e.repeat) doLogin(); });
 
 document.getElementById("btnLogout").addEventListener("click", () => {
+  closeVipPop(); closeTerms();
   aiReset();
   svClose();
   currentUser = null; saveSession();
@@ -1287,6 +1541,7 @@ function enterApp() {
   renderGreeting();
   document.getElementById("userPoints").textContent = currentUser.diem;
   loadPosts();
+  maybeShowTerms();
   // Phiên đăng nhập cũ (lưu trước khi có thông tin ngày VIP) thì hỏi máy chủ một lần
   if (currentUser.vip === undefined || currentUser.vipSince === undefined) aiSyncVip();
 }
@@ -1716,44 +1971,159 @@ function fmtVipDay(ms) {
   try { return new Date(ms).toLocaleDateString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", day: "2-digit", month: "2-digit", year: "numeric" }); }
   catch (e) { return new Date(ms).toLocaleDateString(); }
 }
-function renderGreeting() {
-  const el = document.getElementById("userGreeting");
-  if (!el || !currentUser) return;
-  const u = currentUser;
+/* ==========================================
+   HUY HIỆU VIP 3D + BẢNG THÔNG TIN (bấm vào huy hiệu để xem ngày đăng ký, ngày hết hạn)
+   ========================================== */
+const $e = id => document.getElementById(id);
+let vipPopOpen = false;
+
+function vipState() {
+  const u = currentUser || {};
   const since = Number(u.vipSince) || 0, until = Number(u.vipUntil) || 0;
-  // Hết hạn: máy chủ báo vipExpired, hoặc đã có ngày hết hạn nằm trong quá khứ (dự phòng) thì vẫn hiện huy hiệu xám
-  const isVip = !!u.vip && !(until && until < Date.now());
-  const wasVip = !isVip && (!!u.vipExpired || !!(until && until < Date.now()));
-  let html = "";
-
-  if (isVip) {
-    html += '<span class="vip-badge"' + (until ? ' title="VIP đến ' + fmtVipDate(until) + '"' : "") + ">★ VIP" + (u.vipPlan ? " · " + escapeHtml(u.vipPlan) : "") + "</span>";
-  } else if (wasVip) {
-    html += '<span class="vip-badge expired" title="Gói VIP đã hết hạn' + (until ? " lúc " + fmtVipDate(until) : "") + '">★ VIP đã hết hạn</span>';
-  } else {
-    // Không còn VIP (hết hạn hoặc chưa kích hoạt): luôn hiện huy hiệu xám để khách thấy trạng thái
-    html += '<span class="vip-badge expired" title="Tài khoản chưa kích hoạt VIP hoặc gói VIP đã hết hạn">★ VIP chưa kích hoạt</span>';
-  }
-
-  html += '<span class="greet-name">Xin chào, ' + escapeHtml(u.hoTen) + "</span>";
-
-  if (isVip || wasVip) {
-    const parts = [];
-    if (since) parts.push("Đăng ký: <b>" + fmtVipDay(since) + "</b>");
-    if (until) {
-      let t = (isVip ? "Hết hạn: " : "Đã hết hạn: ") + "<b>" + fmtVipDay(until) + "</b>";
-      if (isVip) {
-        const left = Math.max(0, Math.ceil((until - Date.now()) / 86400000));
-        t += left <= 1 ? " (hôm nay là ngày cuối)" : " (còn " + left + " ngày)";
-      }
-      parts.push(t);
-    } else if (isVip) {
-      parts.push("Thời hạn: <b>không giới hạn</b>");
-    }
-    if (parts.length) html += '<span class="vip-dates' + (isVip ? "" : " expired") + '">' + parts.join(" · ") + "</span>";
-  }
-  el.innerHTML = html;
+  const past = !!(until && until < Date.now());
+  const isVip = !!u.vip && !past;
+  const expired = !isVip && (!!u.vipExpired || past);
+  return { u, since, until, isVip, expired };
 }
+
+function renderGreeting() {
+  const el = $e("userGreeting");
+  if (!el || !currentUser) return;
+  const s = vipState();
+  const label = s.isVip ? "VIP" + (s.u.vipPlan ? " · " + escapeHtml(s.u.vipPlan) : "") : (s.expired ? "VIP đã hết hạn" : "VIP chưa kích hoạt");
+  el.innerHTML =
+    '<span class="vip3d-wrap"><button type="button" class="vip-badge' + (s.isVip ? "" : " off") + '" aria-haspopup="dialog" aria-label="Xem thông tin gói VIP">' +
+    '<i class="vip-edge"></i><span class="vip-face"><span class="vip-star">★</span>' + label + '<span class="vip-chev">▾</span></span></button>' +
+    (s.isVip ? '<i class="vip-sp s1">✦</i><i class="vip-sp s2">✦</i><i class="vip-sp s3">✦</i>' : "") + "</span>" +
+    '<span class="greet-name">Xin chào, ' + escapeHtml(currentUser.hoTen) + "</span>";
+  if (vipPopOpen) fillVipPop();
+}
+
+function fillVipPop() {
+  const s = vipState(), pop = $e("vipPop"), E = escapeHtml;
+  const day = 86400000, now = Date.now();
+  const off = !s.isVip;
+  pop.classList.toggle("grey", off);
+  let n = 0;
+  const idx = () => ' style="--i:' + (n++) + '"';
+
+  const title = s.isVip ? "Thành viên VIP" + (s.u.vipPlan ? " · " + E(s.u.vipPlan) : "") : (s.expired ? "Gói VIP đã hết hạn" : "Chưa kích hoạt VIP");
+  const chip = s.isVip ? "● Đang hoạt động" : (s.expired ? "● Đã hết hạn" : "● Chưa đăng ký");
+  let h = '<div class="vp-head"' + idx() + '><div class="vp-coin' + (off ? " off" : "") + '">★</div><div><div class="vp-title">' + title + '</div><span class="vp-chip' + (off ? " off" : "") + '">' + chip + "</span></div></div>";
+
+  const rows = [["👤 Khách hàng", E(s.u.hoTen)]];
+  rows.push(["📅 Ngày đăng ký", s.since ? fmtVipDay(s.since) : "Chưa có"]);
+  rows.push([s.expired ? "⌛ Đã hết hạn vào" : "⏳ Ngày hết hạn", s.until ? fmtVipDay(s.until) : (s.isVip ? "Không giới hạn" : "Chưa có")]);
+  h += '<div class="vp-rows">' + rows.map(r => "<div class=\"vp-row\"" + idx() + "><span>" + r[0] + "</span><b>" + r[1] + "</b></div>").join("") + "</div>";
+
+  if (s.isVip) {
+    if (s.until) {
+      const total = s.since ? Math.max(day, s.until - s.since) : 0;
+      const pct = total ? Math.max(3, Math.min(100, (s.until - now) / total * 100)) : 100;
+      const left = Math.max(0, Math.ceil((s.until - now) / day));
+      h += '<div class="vp-bar"' + idx() + '><i style="--w:' + pct.toFixed(1) + '%"></i></div>';
+      h += '<div class="vp-left"' + idx() + ">" + (left <= 1 ? "Hôm nay là ngày cuối của gói VIP" : "Còn <b>" + left + " ngày</b> sử dụng VIP") + "</div>";
+    } else {
+      h += '<div class="vp-bar inf"' + idx() + '><i style="--w:100%"></i></div><div class="vp-left"' + idx() + ">Không giới hạn thời gian</div>";
+    }
+  } else if (s.expired) {
+    const ago = s.until ? Math.max(0, Math.floor((now - s.until) / day)) : 0;
+    h += '<div class="vp-bar off"' + idx() + '><i style="--w:0%"></i></div>';
+    h += '<div class="vp-note"' + idx() + ">" + (ago > 0 ? "Gói đã hết hạn " + ago + " ngày. " : "") + "Tính năng AI Slide đang bị khóa. Gia hạn để dùng lại ngay.</div>";
+    h += '<a class="btn btn-primary vp-cta"' + idx() + ' href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer">💬 Liên hệ Admin gia hạn VIP</a>';
+  } else {
+    h += '<div class="vp-note"' + idx() + ">Đăng ký VIP để dùng AI Slide: tra cứu thông tin trên mạng, viết nội dung cụ thể và vẽ slide kèm ảnh thật.</div>";
+    h += '<a class="btn btn-primary vp-cta"' + idx() + ' href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer">💬 Liên hệ Admin đăng ký VIP</a>';
+  }
+  pop.innerHTML = h;
+}
+
+function placeVipPop() {
+  const b = document.querySelector("#userGreeting .vip-badge"), pop = $e("vipPop");
+  if (!b) return;
+  const r = b.getBoundingClientRect(), w = pop.offsetWidth || 330, m = 12;
+  const left = Math.min(Math.max(m, r.left), Math.max(m, window.innerWidth - w - m));
+  pop.style.left = left + "px";
+  pop.style.top = (r.bottom + 14) + "px";
+  const cx = r.left + r.width / 2 - left;
+  pop.style.setProperty("--ax", Math.max(18, Math.min(w - 30, cx - 6)) + "px");
+  pop.style.setProperty("--ox", cx + "px");
+}
+
+function openVipPop() {
+  if (!currentUser) return;
+  const pop = $e("vipPop");
+  pop.classList.remove("open");
+  fillVipPop(); placeVipPop();
+  void pop.offsetWidth;                 // buộc trình duyệt tính lại để animation chạy lại từ đầu
+  pop.classList.add("open");
+  vipPopOpen = true;
+}
+function closeVipPop() { vipPopOpen = false; const p = $e("vipPop"); if (p) p.classList.remove("open"); }
+
+$e("userGreeting").addEventListener("click", e => {
+  if (e.target.closest(".vip-badge")) { e.stopPropagation(); vipPopOpen ? closeVipPop() : openVipPop(); }
+});
+document.addEventListener("click", e => {
+  if (vipPopOpen && !e.target.closest("#vipPop") && !e.target.closest(".vip-badge")) closeVipPop();
+});
+window.addEventListener("resize", () => { if (vipPopOpen) placeVipPop(); });
+
+// Nghiêng 3D theo con trỏ
+$e("userGreeting").addEventListener("pointermove", e => {
+  const w = $e("userGreeting").querySelector(".vip3d-wrap");
+  if (!w) return;
+  const r = w.getBoundingClientRect();
+  const dx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+  const dy = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
+  w.style.setProperty("--ry", (dx * 14).toFixed(1) + "deg");
+  w.style.setProperty("--rx", (-dy * 10).toFixed(1) + "deg");
+});
+$e("userGreeting").addEventListener("pointerleave", () => {
+  const w = $e("userGreeting").querySelector(".vip3d-wrap");
+  if (w) { w.style.setProperty("--rx", "0deg"); w.style.setProperty("--ry", "0deg"); }
+});
+
+/* ==========================================
+   ĐIỀU KHOẢN SỬ DỤNG TÀI KHOẢN
+   Lần đầu đăng nhập (mỗi tài khoản) bắt buộc đọc hết rồi bấm đồng ý
+   ========================================== */
+let termsMust = false;
+function termsKey() { return "tp_terms_v1_" + (currentUser ? currentUser.username : ""); }
+function termsAccepted() { try { return localStorage.getItem(termsKey()) === "1"; } catch (e) { return false; } }
+function updateTermsBtn() {
+  if (!termsMust) return;
+  const b = $e("termsBody");
+  const ok = b.scrollHeight - b.scrollTop - b.clientHeight < 24;
+  $e("termsAccept").disabled = !ok;
+  $e("termsHint").style.visibility = ok ? "hidden" : "visible";
+}
+function openTerms(must) {
+  termsMust = !!must;
+  $e("termsMustBox").style.display = must ? "" : "none";
+  $e("termsViewBox").style.display = must ? "none" : "";
+  $e("termsCloseX").style.display = must ? "none" : "";
+  $e("termsOverlay").style.display = "flex";
+  $e("termsBody").scrollTop = 0;
+  updateTermsBtn();
+}
+function closeTerms() { termsMust = false; const o = $e("termsOverlay"); if (o) o.style.display = "none"; }
+function maybeShowTerms() { if (currentUser && !termsAccepted()) openTerms(true); }
+
+$e("termsBody").addEventListener("scroll", updateTermsBtn);
+$e("termsAccept").addEventListener("click", () => {
+  try { localStorage.setItem(termsKey(), "1"); } catch (e) {}
+  closeTerms();
+  showToast("Cảm ơn bạn đã đồng ý điều khoản sử dụng", "ok");
+});
+$e("termsLogout").addEventListener("click", () => { closeTerms(); $e("btnLogout").click(); });
+$e("termsCloseX").addEventListener("click", closeTerms);
+$e("termsCloseBtn").addEventListener("click", closeTerms);
+$e("termsOverlay").addEventListener("click", e => { if (e.target.id === "termsOverlay" && !termsMust) closeTerms(); });
+$e("btnTerms").addEventListener("click", () => openTerms(false));
+$e("linkTermsLogin").addEventListener("click", e => { e.preventDefault(); openTerms(false); });
+$e("linkTermsFoot").addEventListener("click", e => { e.preventDefault(); openTerms(false); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeVipPop(); if (!termsMust) closeTerms(); } });
 function setVipInfo(d) {
   if (!currentUser || !d) return;
   currentUser.vip = !!d.vip;
@@ -1826,11 +2196,23 @@ function aiAddMsg(who, text, imgs) {
     imgs.forEach(u => { const i = new Image(); i.src = u; t.appendChild(i); });
     d.appendChild(t);
   }
-  $ai("aiMsgs").appendChild(d); aiScroll(); return d;
+  const row = document.createElement("div"); row.className = "ai-line " + who;
+  if (who === "bot") { const av = document.createElement("span"); av.className = "ai-av"; row.appendChild(av); }
+  row.appendChild(d); $ai("aiMsgs").appendChild(row); aiScroll(); return d;
 }
 function aiScroll() { const m = $ai("aiMsgs"); m.scrollTop = m.scrollHeight; }
 function aiGreet(name) {
   aiAddMsg("bot", "Xin chào " + name + "! Mình là TP DESIGN PPTX INTELLIGENCE.\nBạn chỉ cần nêu chủ đề hoặc dán nội dung bài. Mình sẽ tra cứu thông tin mới trên mạng, đối chiếu cho chính xác, viết nội dung cụ thể rồi vẽ từng slide kèm ảnh thật theo đúng chủ đề bạn muốn. Có thể gửi thêm ảnh tài liệu hoặc slide cũ để mình đọc. Muốn chỉnh gì cứ nhắn tiếp nhé.");
+  aiSuggest();
+}
+function aiSuggest() {
+  const w = document.createElement("div"); w.className = "ai-sugg";
+  ["Làm 10 slide về năng lượng mặt trời ở Việt Nam, có ảnh thật", "Giới thiệu Vịnh Hạ Long cho bài thuyết trình du lịch", "Phân tích xu hướng AI trong giáo dục, kèm số liệu mới nhất", "Bài tuyên truyền an toàn giao thông cho học sinh"].forEach(t => {
+    const b = document.createElement("button"); b.className = "btn btn-ghost ai-chip"; b.textContent = t;
+    b.onclick = () => { if (AI.busy || !AI.vip) return; $ai("aiTxt").value = t; w.remove(); aiSend(); };
+    w.appendChild(b);
+  });
+  $ai("aiMsgs").appendChild(w); aiScroll();
 }
 // Nội dung mẫu nằm phía sau lớp kính mờ để hiệu ứng nhìn rõ
 function aiDemo() {
