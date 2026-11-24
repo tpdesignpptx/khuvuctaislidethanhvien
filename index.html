@@ -807,13 +807,13 @@
   @keyframes vipFlow { to { background-position: 200% 0; } }
   @keyframes vipGlow { 0%, 100% { box-shadow: 0 2px 8px rgba(255,170,60,0.35), inset 0 1px 0 rgba(255,255,255,0.6); } 50% { box-shadow: 0 2px 18px rgba(255,195,70,0.85), inset 0 1px 0 rgba(255,255,255,0.6); } }
   @keyframes vipShine { to { transform: translateX(120%); } }
-  .vip-badge.expired { background: #3b3b42; color: #9b9ba6; box-shadow: none; animation: none; }
+  .vip-badge.expired { background: linear-gradient(120deg, #8a8a96, #6f6f7b); color: #f1f1f5; border: 1px solid rgba(255,255,255,0.35); box-shadow: none; animation: none; filter: grayscale(1); }
   .vip-badge.expired::after { display: none; }
   /* DÒNG NGÀY ĐĂNG KÝ / HẾT HẠN DƯỚI TÊN KHÁCH */
   .vip-dates { margin-top: 2px; font-size: 11.5px; line-height: 1.45; color: #ffd98a; }
   .vip-dates b { font-weight: 700; color: #fff0c9; }
-  .vip-dates.expired { color: #8f8f9b; }
-  .vip-dates.expired b { color: #b3b3be; }
+  .vip-dates.expired { color: #b4b4c0; }
+  .vip-dates.expired b { color: #dcdce4; }
   @media (prefers-reduced-motion: reduce) { .vip-badge, .vip-badge::after { animation: none; } }
 </style>
 </head>
@@ -1721,7 +1721,9 @@ function renderGreeting() {
   if (!el || !currentUser) return;
   const u = currentUser;
   const since = Number(u.vipSince) || 0, until = Number(u.vipUntil) || 0;
-  const isVip = !!u.vip, wasVip = !isVip && !!u.vipExpired;
+  // Hết hạn: máy chủ báo vipExpired, hoặc đã có ngày hết hạn nằm trong quá khứ (dự phòng) thì vẫn hiện huy hiệu xám
+  const isVip = !!u.vip && !(until && until < Date.now());
+  const wasVip = !isVip && (!!u.vipExpired || !!(until && until < Date.now()));
   let html = "";
 
   if (isVip) {
