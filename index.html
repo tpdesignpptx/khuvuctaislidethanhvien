@@ -1002,6 +1002,23 @@
   .user-info .btn { padding: 8px 13px; }
   .grid-msg { grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .grid-msg .big { font-size: 42px; }
+
+  /* Ô nhập mã kích hoạt VIP */
+  #vipPop input, .ai-code input { user-select: text; -webkit-user-select: text; }
+  .vp-code, .ai-code { display: flex; gap: 8px; margin-top: 12px; }
+  .vp-code input, .ai-code input {
+    flex: 1; min-width: 0; padding: 10px 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.10); color: #fff; font: inherit; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; outline: none;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .vp-code input::placeholder, .ai-code input::placeholder { color: rgba(255,255,255,0.5); letter-spacing: 0; text-transform: none; }
+  .vp-code input:focus, .ai-code input:focus { border-color: var(--aurora-cyan); box-shadow: inset 0 1px 2px rgba(0,0,0,0.3), 0 0 0 4px rgba(51,230,201,0.14); }
+  .vp-code .btn, .ai-code .btn { padding: 10px 16px; flex: none; }
+  .vp-msg { display: none; margin-top: 8px; font-size: 12.5px; line-height: 1.5; }
+  .vp-msg.show { display: block; }
+  .vp-msg.ok { color: #8ff5cf; }
+  .vp-msg.err { color: #ffb3b0; }
+  .ai-codebox, #aiCodeBox { margin-bottom: 6px; text-align: left; }
   @media (max-width: 700px) { header.topbar { position: static; } }
   @media (prefers-reduced-motion: reduce) {
     .vip-badge, .vip-face, .vip-face::after, .vip-star, .vip-sp, .vp-coin, .ai-orb, .ai-line, .pop { animation: none !important; }
@@ -1103,6 +1120,7 @@
             <div class="ai-lock">🔒</div>
             <h2>Tính năng dành cho khách VIP</h2>
             <p id="aiGlassMsg">Đang kiểm tra quyền VIP…</p>
+            <div id="aiCodeBox" style="display:none;"><div class="ai-code"><input type="text" id="aiCode" placeholder="Nhập mã kích hoạt VIP" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="btn btn-primary" id="aiCodeBtn">Kích hoạt</button></div><div class="vp-msg" id="aiCodeMsg"></div></div>
             <a class="btn btn-primary" id="aiZalo" href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer" style="display:none;">💬 Liên hệ Admin đăng ký VIP</a>
             <button class="btn btn-ghost" id="aiRecheck" style="display:none;">🔄 Kiểm tra lại</button>
           </div>
@@ -1510,7 +1528,7 @@ async function doLogin() {
     currentUser = {
       username: data.username, password: password, hoTen: data.hoTen, diem: data.diem,
       vip: !!data.vip, vipUntil: data.vipUntil || 0, vipExpired: !!data.vipExpired,
-      vipSince: data.vipSince || 0, vipPlan: data.vipPlan || ""
+      vipSince: data.vipSince || 0, vipPlan: data.vipPlan || "", vipUnlimited: data.vipUnlimited
     };
     violationCount = 0;
     lockingNow = false;
@@ -1942,6 +1960,7 @@ async function refreshData() {
     currentUser.vipExpired = !!info.vipExpired;
     currentUser.vipSince = info.vipSince || 0;
     currentUser.vipPlan = info.vipPlan || "";
+    currentUser.vipUnlimited = info.vipUnlimited;
     saveSession();
     renderGreeting();
     document.getElementById("userPoints").textContent = currentUser.diem;
@@ -2013,7 +2032,7 @@ function fillVipPop() {
 
   const rows = [["👤 Khách hàng", E(s.u.hoTen)]];
   rows.push(["📅 Ngày đăng ký", s.since ? fmtVipDay(s.since) : "Chưa có"]);
-  rows.push([s.expired ? "⌛ Đã hết hạn vào" : "⏳ Ngày hết hạn", s.until ? fmtVipDay(s.until) : (s.isVip ? "Không giới hạn" : "Chưa có")]);
+  rows.push([s.expired ? "⌛ Đã hết hạn vào" : "⏳ Ngày hết hạn", s.until ? fmtVipDay(s.until) : (s.isVip ? (s.u.vipUnlimited === true ? "Không giới hạn" : "Chưa đồng bộ") : "Chưa có")]);
   h += '<div class="vp-rows">' + rows.map(r => "<div class=\"vp-row\"" + idx() + "><span>" + r[0] + "</span><b>" + r[1] + "</b></div>").join("") + "</div>";
 
   if (s.isVip) {
@@ -2024,15 +2043,18 @@ function fillVipPop() {
       h += '<div class="vp-bar"' + idx() + '><i style="--w:' + pct.toFixed(1) + '%"></i></div>';
       h += '<div class="vp-left"' + idx() + ">" + (left <= 1 ? "Hôm nay là ngày cuối của gói VIP" : "Còn <b>" + left + " ngày</b> sử dụng VIP") + "</div>";
     } else {
-      h += '<div class="vp-bar inf"' + idx() + '><i style="--w:100%"></i></div><div class="vp-left"' + idx() + ">Không giới hạn thời gian</div>";
+      if (s.u.vipUnlimited === true) h += '<div class="vp-bar inf"' + idx() + '><i style="--w:100%"></i></div><div class="vp-left"' + idx() + ">Không giới hạn thời gian</div>";
+      else h += '<div class="vp-note"' + idx() + ">Chưa đọc được hạn VIP từ máy chủ. Hãy bấm Làm mới. Nếu vẫn vậy, Admin cần triển khai phiên bản Apps Script mới.</div>";
     }
   } else if (s.expired) {
     const ago = s.until ? Math.max(0, Math.floor((now - s.until) / day)) : 0;
     h += '<div class="vp-bar off"' + idx() + '><i style="--w:0%"></i></div>';
     h += '<div class="vp-note"' + idx() + ">" + (ago > 0 ? "Gói đã hết hạn " + ago + " ngày. " : "") + "Tính năng AI Slide đang bị khóa. Gia hạn để dùng lại ngay.</div>";
+    h += vipCodeBox(idx());
     h += '<a class="btn btn-primary vp-cta"' + idx() + ' href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer">💬 Liên hệ Admin gia hạn VIP</a>';
   } else {
     h += '<div class="vp-note"' + idx() + ">Đăng ký VIP để dùng AI Slide: tra cứu thông tin trên mạng, viết nội dung cụ thể và vẽ slide kèm ảnh thật.</div>";
+    h += vipCodeBox(idx());
     h += '<a class="btn btn-primary vp-cta"' + idx() + ' href="https://zalo.me/84773181186" target="_blank" rel="noopener noreferrer">💬 Liên hệ Admin đăng ký VIP</a>';
   }
   pop.innerHTML = h;
@@ -2124,6 +2146,41 @@ $e("btnTerms").addEventListener("click", () => openTerms(false));
 $e("linkTermsLogin").addEventListener("click", e => { e.preventDefault(); openTerms(false); });
 $e("linkTermsFoot").addEventListener("click", e => { e.preventDefault(); openTerms(false); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") { closeVipPop(); if (!termsMust) closeTerms(); } });
+
+/* ==========================================
+   KÍCH HOẠT VIP BẰNG MÃ (Admin nhập mã ở cột M của Sheet Users)
+   ========================================== */
+function vipCodeBox(i) {
+  return '<div class="vp-code"' + i + '><input type="text" id="vpCode" placeholder="Nhập mã kích hoạt VIP" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false">' +
+    '<button type="button" class="btn btn-primary" id="vpCodeBtn">Kích hoạt</button></div><div class="vp-msg" id="vpCodeMsg"></div>';
+}
+function codeMsg(el, text, ok) { if (!el) return; el.textContent = text; el.className = "vp-msg show " + (ok ? "ok" : "err"); }
+let activating = false;
+async function activateVipCode(code, btn, msgEl) {
+  if (activating || !currentUser) return;
+  code = String(code || "").trim();
+  if (!code) { codeMsg(msgEl, "Bạn chưa nhập mã kích hoạt.", false); return; }
+  activating = true;
+  const old = btn.textContent; btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
+  const d = await callApi({ action: "activateCode", username: currentUser.username, password: currentUser.password, code: code }, 30000);
+  activating = false; btn.disabled = false; btn.textContent = old;
+  if (handleBlockedResponse(d)) return;
+  if (d && d.success) {
+    setVipInfo(d);
+    showToast(d.message || "Kích hoạt VIP thành công!", "ok");
+    if ($e("chatView").style.display === "block") { AI.checked = false; aiCheck(); }
+    if (vipPopOpen) openVipPop();            // mở lại bảng với thông tin VIP mới
+  } else {
+    const m = (d && d.message) || "Không kích hoạt được, vui lòng thử lại.";
+    codeMsg(msgEl, /Action không hợp lệ/i.test(m) ? "Máy chủ chưa cập nhật tính năng mã kích hoạt. Admin cần triển khai phiên bản Apps Script mới." : m, false);
+  }
+}
+$e("vipPop").addEventListener("click", e => {
+  if (e.target.closest("#vpCodeBtn")) activateVipCode($e("vpCode").value, $e("vpCodeBtn"), $e("vpCodeMsg"));
+});
+$e("vipPop").addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.id === "vpCode" && !e.repeat) activateVipCode(e.target.value, $e("vpCodeBtn"), $e("vpCodeMsg"));
+});
 function setVipInfo(d) {
   if (!currentUser || !d) return;
   currentUser.vip = !!d.vip;
@@ -2131,6 +2188,7 @@ function setVipInfo(d) {
   currentUser.vipExpired = !!d.vipExpired;
   currentUser.vipSince = Number(d.vipSince) || 0;
   currentUser.vipPlan = d.vipPlan || "";
+  currentUser.vipUnlimited = d.vipUnlimited;
   saveSession();
   renderGreeting();
 }
@@ -2232,7 +2290,7 @@ async function aiCheck() {
   aiLock(true);
   $ai("aiMsgs").innerHTML = ""; aiDemo();
   $ai("aiGlassMsg").textContent = "Đang kiểm tra quyền VIP…";
-  $ai("aiZalo").style.display = "none"; $ai("aiRecheck").style.display = "none";
+  $ai("aiZalo").style.display = "none"; $ai("aiRecheck").style.display = "none"; $ai("aiCodeBox").style.display = "none"; $ai("aiCodeMsg").className = "vp-msg";
 
   const data = await callApi({ action: "chatStatus", username: currentUser.username, password: currentUser.password });
   if (handleBlockedResponse(data)) return;
@@ -2254,7 +2312,7 @@ async function aiCheck() {
       $ai("aiGlassMsg").textContent = "Tài khoản của bạn chưa được kích hoạt VIP. Liên hệ Admin để đăng ký VIP và mở khóa tính năng gửi ảnh, tra cứu thông tin trên mạng và chia bố cục slide bằng AI.";
       $ai("aiZalo").textContent = "💬 Liên hệ Admin đăng ký VIP";
     }
-    $ai("aiZalo").style.display = ""; $ai("aiRecheck").style.display = "";
+    $ai("aiZalo").style.display = ""; $ai("aiRecheck").style.display = ""; $ai("aiCodeBox").style.display = "";
   } else {
     const old = /Action không hợp lệ/i.test(data.message || "");
     $ai("aiGlassMsg").textContent = old
@@ -2266,6 +2324,8 @@ async function aiCheck() {
 
 $ai("btnOpenChat").addEventListener("click", () => { showView("chat"); if (!AI.checked) aiCheck(); });
 $ai("btnBackPosts").addEventListener("click", () => showView("posts"));
+$ai("aiCodeBtn").addEventListener("click", () => activateVipCode($ai("aiCode").value, $ai("aiCodeBtn"), $ai("aiCodeMsg")));
+$ai("aiCode").addEventListener("keydown", e => { if (e.key === "Enter" && !e.repeat) activateVipCode(e.target.value, $ai("aiCodeBtn"), $ai("aiCodeMsg")); });
 $ai("aiRecheck").addEventListener("click", () => { AI.checked = false; aiCheck(); });
 $ai("aiNew").addEventListener("click", async () => {
   if (!AI.vip || AI.busy) return;
